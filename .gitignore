@@ -1,2 +1,5 @@
 /region
 /test
+*.o
+/output
+*.nbt
