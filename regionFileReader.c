@@ -38,6 +38,34 @@ struct chunk{
 //struct chunk
 typedef struct chunk chunk;
 
+chunk getChunk(int x, int z, FILE* regionFile);
+
+void getChunkData(chunk* thisChunk, FILE* regionFile);
+
+chunk* getChunks(FILE* regionFile);
+
+int main(int argc, char** argv){
+    //foreach argument
+    for(int i = 2; i < argc; i+=2){
+        char* filename = argv[i - 1];
+        FILE* regionFile = fopen(filename, "r");
+        chunk* chunks = getChunks(regionFile);
+        fclose(regionFile);
+        for(int n = 0; n < chunkN; n++){
+            if(chunks[n].offset != 0){
+                char* filename = malloc(10 + strlen(argv[i]));
+                sprintf(filename, "%s/%d.nbt", argv[i], chunks[n].offset);
+                FILE* chunkFile = fopen(filename, "w");
+                free(filename);
+                fwrite(chunks[n].data, chunks[n].byteLength, 1, chunkFile);
+                free(chunks[n].data);
+                fclose(chunkFile);
+            }   
+        }
+        free(chunks);
+    }
+}
+
 /*
 Extracts all the chunks in regionFile.
 Returns a dynamic array of chunks with 1024 chunks.
@@ -68,78 +96,70 @@ chunk* getChunks(FILE* regionFile){
     //foreach chunk we have extracted so far
     for(int i = 0; i < chunkN; i++){
         if(chunks[i].offset != 0){ //if the chunk isn't NULL
-            fseek(regionFile, segmentLength * chunks[i].offset, SEEK_SET); //find the corresponding section
-            //get the byteLength
-            byte bytes[4];
-            fread(&bytes, 1, 4, regionFile);
-            chunks[i].byteLength = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
-            //get the compression type
-            fread(&chunks[i].compression, 1, 1, regionFile);
-            //fseek(regionFile, 1, SEEK_CUR); // roll back the pointer since the byteLength includes that one byte
-            //Then get the data
-            chunks[i].byteLength += 5;
-            byte* data = malloc(chunks[i].byteLength);
-            fread(data, 1, chunks[i].byteLength, regionFile);
-            //fseek(regionFile, (chunks[i].sectorCount * segmentLength) - chunks[i].byteLength, SEEK_CUR);
-            if(chunks[i].compression == Uncompressed){
-                chunks[i].data = data;
-            }
-            else{
-                uLongf buffSize = segmentLength;
-                byte* buff = malloc(buffSize);
-                int res;
-                //decompress the data
-                if(chunks[i].compression == Zlib){
-                    do{
-                        buffSize += segmentLength;
-                        buff = realloc(buff, buffSize);
-                        res = uncompress((Bytef *)buff, &buffSize, data, chunks[i].byteLength);
-                    }
-                    while(res == -5);
-                }
-                else{
-                    uLong sourceLen = (uLong)chunks[i].byteLength;
-                    do{
-                        buffSize += segmentLength;
-                        buff = realloc(buff, buffSize);
-                        res = uncompress2((Bytef *)buff, &buffSize, data, &sourceLen);
-                    }
-                    while(res == -5);
-                }
-                
-                chunks[i].byteLength = buffSize;
-                buff = realloc(buff, buffSize);
-                if(res < 0){
-                    fprintf(stderr, "Inflate returned %d ", res);
-                    perror("Decompression failed.");
-                }
-                chunks[i].data = buff;
-                free(data);
-            }
+            getChunkData(&chunks[i], regionFile);
         }
     }
     return chunks;
 }
 
-int main(int argc, char** argv){
-    //foreach argument
-    for(int i = 2; i < argc; i+=2){
-        char* filename = argv[i - 1];
-        FILE* regionFile = fopen(filename, "r");
-        chunk* chunks = getChunks(regionFile);
-        fclose(regionFile);
-        for(int n = 0; n < chunkN; n++){
-            if(chunks[n].offset != 0){
-                char* filename = malloc(10 + strlen(argv[i]));
-                sprintf(filename, "%s/%d.nbt", argv[i], chunks[n].offset);
-                FILE* chunkFile = fopen(filename, "w");
-                free(filename);
-                fwrite(chunks[n].data, chunks[n].byteLength, 1, chunkFile);
-                fclose(chunkFile);
-            }   
-            
-        }
-        
-        free(chunks);
+
+//Extracts all the data about thisChunk from regionFile and appends that data to thisChunk
+void getChunkData(chunk* thisChunk, FILE* regionFile){
+    fseek(regionFile, segmentLength * thisChunk->offset, SEEK_SET); //find the corresponding section
+    //get the byteLength
+    byte bytes[4];
+    fread(&bytes, 1, 4, regionFile);
+    thisChunk->byteLength = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
+    //get the compression type
+    fread(&thisChunk->compression, 1, 1, regionFile);
+    //fseek(regionFile, 1, SEEK_CUR); // roll back the pointer since the byteLength includes that one byte
+    //Then get the data
+    thisChunk->byteLength += 5;
+    byte* data = malloc(thisChunk->byteLength);
+    fread(data, 1, thisChunk->byteLength, regionFile);
+    //fseek(regionFile, (chunks[i].sectorCount * segmentLength) - chunks[i].byteLength, SEEK_CUR);
+    if(thisChunk->compression == Uncompressed){
+        thisChunk->data = data;
     }
+    else{
+        uLongf buffSize = segmentLength;
+        byte* buff = malloc(buffSize);
+        int res;
+        //decompress the data
+        if(thisChunk->compression == Zlib){
+            do{
+                buffSize += segmentLength;
+                buff = realloc(buff, buffSize);
+                res = uncompress((Bytef *)buff, &buffSize, data, thisChunk->byteLength);
+            }
+            while(res == -5);
+        }
+        else{
+            uLong sourceLen = (uLong)thisChunk->byteLength;
+            do{
+                buffSize += segmentLength;
+                buff = realloc(buff, buffSize);
+                res = uncompress2((Bytef *)buff, &buffSize, data, &sourceLen);
+            }
+            while(res == -5);
+        }
+                
+        thisChunk->byteLength = buffSize;
+        buff = realloc(buff, buffSize);
+        if(res < 0){
+            fprintf(stderr, "Inflate returned %d ", res);
+            perror("Decompression failed.");
+        }
+        thisChunk->data = buff;
+        free(data);
+    }
+}
+
+//Returns a chunk based on coordinates
+chunk getChunk(int x, int z, FILE* regionFile){
+    chunk result;
+    result.x = x;
+    result.z = z;
+    result.offset = coordsToOffset(x, z);
+    getChunkData(&result, regionFile);
 }
