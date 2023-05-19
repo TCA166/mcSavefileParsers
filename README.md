@@ -4,7 +4,11 @@ Multiple programs for extracting data from MC save files written in C for speed.
 
 ## Compilation
 
-In order to compile run compile.sh on linux or WSL or if you wish to cross-compile for Windows run winCompile.sh.  
+In order to compile first run cNBTcompile.sh and then run compile.sh or if you wish to cross-compile for Windows run winCompile.sh.  
+
+## cNBT
+
+For parsing of the nbt files I have chosen to use the [cNBT](https://github.com/chmod222/cNBT/tree/master) library. These files are located in the appropriately named folder and need to be compiled using the script next to them to make the modelGenerator compile properly.
 
 ## regionFileReader
 

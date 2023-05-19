@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "mc.h"
+#include "regionParser.h"
 
 int digits(int i){
     if(i == 0){

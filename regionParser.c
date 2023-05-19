@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <zlib.h>
-#include "mc.h"
+#include "regionParser.h"
 
 int handleFirstSegment(chunk* output, FILE* regionFile){
     //so the numbers are stored as big endian AND as int24

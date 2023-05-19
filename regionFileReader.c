@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include<string.h>
-#include "mc.h"
+#include <string.h>
+#include "regionParser.h"
 
 //https://minecraft.fandom.com/wiki/Region_file_format
 
