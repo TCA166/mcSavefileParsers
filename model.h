@@ -10,25 +10,28 @@ struct block{
 
 //obj file vertex
 struct vertex{
-    int x;
-    int y;
-    int z;
+    float x;
+    float y;
+    float z;
 };
 
 //obj file cube with 6 cubeFaces and 8 defining vertices
 struct cube{
-    int x;
-    int y;
-    int z;
-    int side;
+    float x;
+    float y;
+    float z;
+    float side;
     struct vertex vertices[8];
     struct cubeFace* faces[6]; //array of pointers so that it may be nullable
     char* type;
 };
 
-//A face with only 4 vertices
+//A face with only 4 vertices. V variables point to vertices in the associated cube object
 struct cubeFace{
-    struct vertex vertices[4];
+    int v1;
+    int v2;
+    int v3;
+    int v4;
 };
 
 //obj file face
@@ -62,4 +65,4 @@ struct cube cubeFromBlock(struct block block, const int side);
 void cullFaces(model* thisModel);
 
 //Returns a string that are valid .obj file contents
-char* generateModel(model* thisModel);
+char* generateModel(model* thisModel, size_t* outSize);
