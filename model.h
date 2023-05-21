@@ -52,6 +52,8 @@ typedef struct model model;
 #define mcAir "minecraft:air"
 #define minY -64
 
+#define freeCubeFace(c, n) free(c.faces[n]); c.faces[n] = NULL;
+
 //Initialises a model variable
 model initModel(int x, int y, int z);
 
