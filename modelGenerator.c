@@ -3,6 +3,8 @@
 #include <errno.h>
 #include <string.h>
 
+#include "portable_endian.h"
+
 #include <math.h>
 
 #include "./cNBT/nbt.h"
@@ -140,10 +142,16 @@ int main(int argc, char** argv){
         if(sections[i].paletteLen != 1){
             int m = 0;
             short count = 64/l * sections[i].blockDataLen; //amount of indices in each long
+            /*
+            if(count < 4){
+                count = 4;
+            }*/
             states = malloc(count * sizeof(unsigned int));
             //foreach long
             for(int a=0; a < sections[i].blockDataLen; a++){
                 unsigned long comp = sections[i].blockData[a];
+                //uint64_t htobe64(uint64_t host_64bits);
+                //unsigned long bigComp = htobe64(comp);
                 //foreach set of l bits
                 for(short b = 0; b + l < 64; b+=l){
                     unsigned long mask = createMask(b, l);
