@@ -64,7 +64,7 @@ struct vertex newVertex(int x, int y, int z);
 struct cube cubeFromBlock(struct block block, const int side);
 
 //Removes all outward or internal faces from a model
-void cullFaces(model* thisModel);
+void cullFaces(model* thisModel, char cullChunkBorder);
 
 //Returns a string that are valid .obj file contents
 char* generateModel(model* thisModel, size_t* outSize);

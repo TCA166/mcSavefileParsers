@@ -31,6 +31,7 @@ int main(int argc, char** argv){
     int upLim = 0; //y+ cutoff
     int downLim = 0; //y- cutoff
     char f = 0; //if we don't want to cull faces
+    char b = 0; //if we don't want to cull chunk border faces
     //argument interface
     for(int i = 2; i < argc; i++){ //so far not much args... maybe in future more will be added
         if(argv[i] == "-l"){
@@ -45,6 +46,9 @@ int main(int argc, char** argv){
         }
         else if(argv[i] == "-f"){
             f = 1;
+        }
+        else if(argv[i] == "-b"){
+            b = 1;
         }
         else if(argv[i] == "-h"){
             printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range");
@@ -184,7 +188,7 @@ int main(int argc, char** argv){
         free(states);
     }
     if(!f){
-        cullFaces(&newModel);
+        cullFaces(&newModel, !b);
         printf("Model faces culled\n");
     }
     size_t size = 0;

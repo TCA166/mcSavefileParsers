@@ -84,19 +84,21 @@ struct face deCube(struct cubeFace face, struct cube originalCube){
     return new;
 }
 
-void cullFaces(model* thisModel){
+void cullFaces(model* thisModel, char cullChunkBorder){
     for(int x = 0; x < thisModel->x; x++){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
                 struct cube c = thisModel->cubes[x][y][z];
                 //x
                 if( x + 1 >= thisModel->x){
+                    if(cullChunkBorder)
                     freeCubeFace(c, 0);
                 }
                 else if(!strcmp(thisModel->cubes[x + 1][y][z].type, mcAir)){
                     freeCubeFace(c, 0);
                 }
                 if( x - 1 < 0){
+                    if(cullChunkBorder)
                     freeCubeFace(c, 4);
                 }
                 else if(!strcmp(thisModel->cubes[x - 1][y][z].type, mcAir)){
@@ -104,12 +106,14 @@ void cullFaces(model* thisModel){
                 }
                 //y
                 if( y + 1 >= thisModel->y){
+                    if(cullChunkBorder)
                     freeCubeFace(c, 1);
                 }
                 else if(!strcmp(thisModel->cubes[x][y + 1][z].type, mcAir)){
                     freeCubeFace(c, 1);
                 }
                 if( y - 1 < 0){
+                    if(cullChunkBorder)
                     freeCubeFace(c, 5);
                 }
                 else if(!strcmp(thisModel->cubes[x][y - 1][z].type, mcAir)){
@@ -117,12 +121,14 @@ void cullFaces(model* thisModel){
                 }
                 //z
                 if( z + 1 >= thisModel->z){
+                    if(cullChunkBorder)
                     freeCubeFace(c, 2);
                 }
                 else if(!strcmp(thisModel->cubes[x][y][z + 1].type, mcAir)){
                     freeCubeFace(c, 2);
                 }
                 if( z - 1 < 0){
+                    if(cullChunkBorder)
                     freeCubeFace(c, 3);
                 }
                 else if(!strcmp(thisModel->cubes[x][y][z - 1].type, mcAir)){
