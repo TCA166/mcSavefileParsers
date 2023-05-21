@@ -32,9 +32,10 @@ int main(int argc, char** argv){
     int downLim = 0; //y- cutoff
     char f = 0; //if we don't want to cull faces
     char b = 0; //if we don't want to cull chunk border faces
+    int side = 2;
     //argument interface
     for(int i = 2; i < argc; i++){ //so far not much args... maybe in future more will be added
-        if(argv[i] == "-l"){
+        if(strcmp(argv[i], "-l") == 0){
             if(argc <= i + 2){
                 fprintf(stderr, "Incorrect number of arguments. -l requires two arguments to follow.");
                 break;
@@ -44,14 +45,15 @@ int main(int argc, char** argv){
             downLim = atoi(argv[i + 2]);
             i += 2;
         }
-        else if(argv[i] == "-f"){
+        else if(strcmp(argv[i], "-f") == 0){
             f = 1;
         }
-        else if(argv[i] == "-b"){
+        else if(strcmp(argv[i], "-b") == 0){
             b = 1;
         }
-        else if(argv[i] == "-h"){
-            printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range");
+        else if(strcmp(argv[i], "-h") == 0){
+            printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range\n-b|enables chunk border rendering\n-f|disables face culling\n");
+            return 0;
         }
     }
     //Get the nbt data
@@ -160,9 +162,10 @@ int main(int argc, char** argv){
                 for(int z = 0; z < 16; z++){
                     int blockPos = (y * 16 + z) * 16 + x; //4096 + 256 + 16 = 4368
                     struct block newBlock;
-                    newBlock.x = x;
-                    newBlock.y = y + ((sections[i].y + 4) * 16);
-                    newBlock.z = z;
+                    newBlock.x = x * side;
+                    int arrY = y + ((sections[i].y + 4) * 16);
+                    newBlock.y = arrY * side;
+                    newBlock.z = z * side;
                     if(!(newBlock.y > downLim && newBlock.y < upLim) && yLim){
                         newBlock.type = mcAir;
                     }
@@ -181,7 +184,7 @@ int main(int argc, char** argv){
                         }
                         
                     }
-                    newModel.cubes[x][newBlock.y][z] = cubeFromBlock(newBlock, 2);
+                    newModel.cubes[x][arrY][z] = cubeFromBlock(newBlock, side);
             }
             }
         }

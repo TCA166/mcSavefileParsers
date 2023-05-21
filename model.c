@@ -91,45 +91,52 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                 struct cube c = thisModel->cubes[x][y][z];
                 //x
                 if( x + 1 >= thisModel->x){
-                    if(cullChunkBorder)
-                    freeCubeFace(c, 0);
+                    if(cullChunkBorder){
+                        freeCubeFace(c, 0);
+                    }
+                    
                 }
                 else if(!strcmp(thisModel->cubes[x + 1][y][z].type, mcAir)){
                     freeCubeFace(c, 0);
                 }
                 if( x - 1 < 0){
-                    if(cullChunkBorder)
-                    freeCubeFace(c, 4);
+                    if(cullChunkBorder){
+                        freeCubeFace(c, 4);
+                    }
                 }
                 else if(!strcmp(thisModel->cubes[x - 1][y][z].type, mcAir)){
                     freeCubeFace(c, 4);
                 }
                 //y
                 if( y + 1 >= thisModel->y){
-                    if(cullChunkBorder)
-                    freeCubeFace(c, 1);
+                    if(cullChunkBorder){
+                        freeCubeFace(c, 1);
+                    }
                 }
                 else if(!strcmp(thisModel->cubes[x][y + 1][z].type, mcAir)){
                     freeCubeFace(c, 1);
                 }
                 if( y - 1 < 0){
-                    if(cullChunkBorder)
-                    freeCubeFace(c, 5);
+                    if(cullChunkBorder){
+                        freeCubeFace(c, 5);
+                    }
                 }
                 else if(!strcmp(thisModel->cubes[x][y - 1][z].type, mcAir)){
                     freeCubeFace(c, 5);
                 }
                 //z
                 if( z + 1 >= thisModel->z){
-                    if(cullChunkBorder)
-                    freeCubeFace(c, 2);
+                    if(cullChunkBorder){
+                        freeCubeFace(c, 2);
+                    }
                 }
                 else if(!strcmp(thisModel->cubes[x][y][z + 1].type, mcAir)){
                     freeCubeFace(c, 2);
                 }
                 if( z - 1 < 0){
-                    if(cullChunkBorder)
-                    freeCubeFace(c, 3);
+                    if(cullChunkBorder){
+                        freeCubeFace(c, 3);
+                    }
                 }
                 else if(!strcmp(thisModel->cubes[x][y][z - 1].type, mcAir)){
                     freeCubeFace(c, 3);
@@ -156,11 +163,11 @@ char* generateModel(model* thisModel, size_t* outSize){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
                 struct cube thisCube = thisModel->cubes[x][y][z];
-                if(!strcmp(thisCube.type, mcAir)){
-                    size_t objectLineSize = 10 + digits(x) + digits(y) + digits(z);
+                if(strcmp(thisCube.type, mcAir) != 0){
+                    size_t objectLineSize = 11 + digits(x) + digits(y) + digits(z) + strlen(thisCube.type);
                     char* objectLine = NULL;
                     objectLine = malloc(objectLineSize);
-                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d\n", x, y, z);
+                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s\n", x, y, z, thisCube.type);
                     *outSize += objectLineSize;
                     fileContents = realloc(fileContents, *outSize);
                     strcat(fileContents, objectLine);
