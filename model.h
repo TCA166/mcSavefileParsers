@@ -68,3 +68,6 @@ void cullFaces(model* thisModel, char cullChunkBorder);
 
 //Returns a string that are valid .obj file contents
 char* generateModel(model* thisModel, size_t* outSize);
+
+//Frees everything that can be allocated in a model m
+void freeModel(model* m);

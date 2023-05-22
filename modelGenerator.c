@@ -250,6 +250,7 @@ int main(int argc, char** argv){
     }
     size_t size = 0;
     char* content = generateModel(&newModel, &size);
+    freeModel(&newModel);
     printf("Model string generated\n");
     FILE* outFile = fopen("out.obj", "wb");
     fwrite(content, size, 1, outFile);

@@ -205,6 +205,7 @@ char* generateModel(model* thisModel, size_t* outSize){
                             strcat(fileContents, line);
                             free(line);
                             free(face);
+                            thisCube.faces[i] = NULL;
                         }
                     }
                     n++;
@@ -214,4 +215,21 @@ char* generateModel(model* thisModel, size_t* outSize){
         }
     }
     return fileContents;
+}
+
+void freeModel(model* m){
+    for(int x = 0; x < m->x; x++){
+        for(int y = 0; y < m->y; y++){
+            for(int z = 0; z < m->z; z++){
+                for(int i = 0; i < 6; i++){
+                    if(m->cubes[x][y][z].faces[i] != NULL){
+                        free(m->cubes[x][y][z].faces[i]);
+                    }
+                }
+            }
+            free(m->cubes[x][y]);
+        }
+        free(m->cubes[x]);
+    }
+    free(m->cubes);
 }
