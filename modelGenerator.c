@@ -16,6 +16,25 @@
 
 #define createMask(startBit, X) (((long)1 << X) - 1) << startBit
 
+#define nbtTypeError(type, expected) \
+        fprintf(stderr, "Expected type:%d, current type:%d.", expected, type);\
+        perror("Nbt type error"); \
+        exit(EXIT_FAILURE);
+
+#define nbtTagError(tag) \
+        fprintf(stderr, "Tag %s was not found.", tag);\
+        perror("Nbt type error"); \
+        exit(EXIT_FAILURE);
+
+#define fileError(filename) \
+        fprintf(stderr, "File %s couldn't be located.", filename); \
+        perror("File error.");\
+        exit(EXIT_FAILURE);
+
+#define statesError(state, paletteLen, block) \
+        fprintf(stderr, "%d > %d:states error\n", state, paletteLen); \
+        block.type = mcAir;
+
 //16x16x16 big section of a chunk
 struct section{
     short y;
@@ -57,9 +76,19 @@ int main(int argc, char** argv){
             printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range\n-b|enables chunk border rendering\n-f|disables face culling\n");
             return 0;
         }
+        else if(strcmp(argv[i], "-s") == 0){
+            if(argc <= i + 1){
+                fprintf(stderr, "Incorrect number of arguments. -s requires an argument to follow.");
+                break;
+            }
+            side = atoi(argv[i + 1]);
+        }
     }
     //Get the nbt data
     FILE* nbtFile = fopen(argv[1], "r");
+    if(nbtFile == NULL){
+        fileError(argv[1]);
+    }
     fseek(nbtFile, 0L, SEEK_END);
     long sz = ftell(nbtFile);
     fseek(nbtFile, 0, SEEK_SET);
@@ -71,9 +100,10 @@ int main(int argc, char** argv){
     if(errno != 0){
         fprintf(stderr, "%d\n", errno);
         perror("Error while reading the nbt file");
+        exit(EXIT_FAILURE);
     }
     if(node->type != TAG_COMPOUND){
-        perror("node isn't compound");
+        nbtTypeError(node->type, 10);
     }
     //Array of sections in this chunk
     struct section sections[maxSections] = {};
@@ -82,6 +112,9 @@ int main(int argc, char** argv){
     printf("NBT file has %zu tags\n", list_length(head));
     //get the sections tag
     nbt_node* sectionsNode = nbt_find_by_name(node, "sections");
+    if(sectionsNode == NULL){
+        nbtTagError("sections");
+    }
     struct nbt_list* sectionsList = sectionsNode->payload.tag_list;
     struct list_head* pos = &sectionsList->entry;
     int n = 0;
@@ -93,11 +126,20 @@ int main(int argc, char** argv){
         struct section newSection; //create new object that will store this data
         //get the Y
         nbt_node* yNode = nbt_find_by_name(compound, "Y");
+        if(yNode == NULL){
+            nbtTagError("Y");
+        }
         newSection.y = yNode->payload.tag_byte;
         //get the block data
         nbt_node* blockNode = nbt_find_by_name(compound, "block_states");
+        if(blockNode == NULL){
+            nbtTagError("block_states");
+        }
         //get the individual block data
         nbt_node* blockData = nbt_find_by_name(blockNode, "data");
+        if(blockData == NULL){
+            nbtTagError("data");
+        }
         if(blockData != NULL){
             newSection.blockData = malloc(blockData->payload.tag_long_array.length * sizeof(long));
             memcpy(newSection.blockData, blockData->payload.tag_long_array.data, blockData->payload.tag_long_array.length * sizeof(long));
@@ -109,6 +151,9 @@ int main(int argc, char** argv){
         }
         //get the palette
         nbt_node* palette = nbt_find_by_name(blockNode, "palette");
+        if(palette == NULL){
+            nbtTagError("palette");
+        }
         const struct list_head* palleteHead = &palette->payload.tag_list->entry;
         char** blockPalette = malloc(1 * sizeof(char*));
         int i = 0;
@@ -118,6 +163,9 @@ int main(int argc, char** argv){
             //get the list entry
             struct nbt_list* pal = list_entry(paletteCur, struct nbt_list, entry);
             nbt_node* string = nbt_find_by_name(pal->data, "Name");
+            if(string == NULL){
+                nbtTagError("Name");
+            }
             blockPalette[i] = malloc(strlen(string->payload.tag_string) + 1);
             strcpy(blockPalette[i], string->payload.tag_string);
             i++;
@@ -132,10 +180,9 @@ int main(int argc, char** argv){
     nbt_free(node);
     //It is possible to not have to iterate over each block again, and do everything in a single loop.
     //But that would be less readable and put more of a strain on memory since the entire nbt file would have to be there
-    n=0;
-    model newModel = initModel(16,16 * maxSections, 16);
+    model newModel = initModel(16,16 * n, 16);
     //now we have to decrypt the data in sections
-    for(int i = 0; i < maxSections; i++){
+    for(int i = 0; i < n; i++){
         short l = (short)ceilf(log2f((float)sections[i].paletteLen));//length of indices in the long
         //first we need to decode the franken compression scheme
         unsigned int* states = NULL;
@@ -184,8 +231,7 @@ int main(int argc, char** argv){
                         int state = states[blockPos];
                         //paletteLen and I are fine it must be something with the data extraction process
                         if(states[blockPos] >= sections[i].paletteLen){
-                            fprintf(stderr, "%d > %d:states error\n", states[blockPos], sections[i].paletteLen);
-                            newBlock.type = mcAir;
+                            statesError(states[blockPos], sections[i].paletteLen, newBlock);
                         }
                         else{
                             newBlock.type = sections[i].blockPalette[states[blockPos]];

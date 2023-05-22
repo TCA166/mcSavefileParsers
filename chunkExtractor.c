@@ -19,6 +19,10 @@ int main(int argc, char** argv){
         char* filename = malloc(strlen(argv[i - 2]) + digits(x) + digits(z) + 9);
         sprintf(filename, "%s/r.%d.%d.mca", argv[i - 2], getRegion(x), getRegion(z));
         FILE* regionFile = fopen(filename, "r");
+        if(regionFile == NULL){ \
+            fprintf(stderr, "File %s couldn't be located.", filename); \
+            return -1; \
+        }
         free(filename);
         chunk ourChunk = getChunk(x, z, regionFile);
         fclose(regionFile);
