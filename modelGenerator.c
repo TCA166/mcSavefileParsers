@@ -99,63 +99,19 @@ int main(int argc, char** argv){
     model newModel = initModel(16,16 * n, 16);
     //now we have to decrypt the data in sections
     for(int i = 0; i < n; i++){
-        short l = (short)ceilf(log2f((float)sections[i].paletteLen));//length of indices in the long
-        //first we need to decode the franken compression scheme
-        unsigned int* states = NULL;
-        if(sections[i].paletteLen != 1){
-            int m = 0;
-            short count = 64/l * sections[i].blockDataLen; //amount of indices in each long
-            /*
-            if(count < 4){
-                count = 4;
-            }*/
-            states = malloc(count * sizeof(unsigned int));
-            //foreach long
-            for(int a=0; a < sections[i].blockDataLen; a++){
-                unsigned long comp = sections[i].blockData[a];
-                //uint64_t htobe64(uint64_t host_64bits);
-                //unsigned long bigComp = htobe64(comp);
-                //foreach set of l bits
-                for(short b = 0; b + l < 64; b+=l){
-                    unsigned long mask = createMask(b, l);
-                    states[m] = (unsigned int)((mask & comp) >> b);
-                    if(states[m] > sections[i].paletteLen){
-                        states[m] = sections[i].paletteLen - 1;
-                    }
-                    m++;
-                }
-            }
-        }
+        //create the block state array
+        unsigned int* states = getBlockStates(sections[i]);
         free(sections[i].blockData);
         //if we want to do face culling we first need to actually have all the blocks in one place
         for(int x = 0; x < 16; x++){
             for(int y = 0; y < 16; y++){
                 for(int z = 0; z < 16; z++){
-                    int blockPos = (y * 16 + z) * 16 + x; //4096 + 256 + 16 = 4368
-                    struct block newBlock;
-                    newBlock.x = x * side;
-                    int arrY = y + ((sections[i].y + 4) * 16);
-                    newBlock.y = arrY * side;
-                    newBlock.z = z * side;
+                    struct block newBlock = createBlock(x, y, z, states, side, sections[i]);
                     if(!(newBlock.y > downLim && newBlock.y < upLim) && yLim){
                         newBlock.type = mcAir;
                     }
-                    if(sections[i].paletteLen == 1){
-                        newBlock.type = sections[i].blockPalette[0];
-                    }
-                    else{
-                        int state = states[blockPos];
-                        //paletteLen and I are fine it must be something with the data extraction process
-                        if(states[blockPos] >= sections[i].paletteLen){
-                            statesError(states[blockPos], sections[i].paletteLen, newBlock);
-                        }
-                        else{
-                            newBlock.type = sections[i].blockPalette[states[blockPos]];
-                        }
-                        
-                    }
-                    newModel.cubes[x][arrY][z] = cubeFromBlock(newBlock, side);
-            }
+                    newModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = cubeFromBlock(newBlock, side);
+                }
             }
         }
         free(states);

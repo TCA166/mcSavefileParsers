@@ -22,4 +22,4 @@
 
 #define statesError(state, paletteLen, block) \
         fprintf(stderr, "%d >= %d:states error\n", state, paletteLen); \
-        block.type = mcAir;
+        block.type = NULL;

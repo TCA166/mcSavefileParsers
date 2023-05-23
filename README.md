@@ -41,6 +41,10 @@ The program accepts the following additional arguments:
 - -h :displays help
 - -s $s :changes the block side in the result side to the given s argument
 
+## API
+
+Most of the code has been organized into three "libraries". regionParser which handles nbt extraction from region files, chunkParser which extracts data from chunk nbts and finally model which handles generating models from chunk data.
+
 ## License
 
 [![CCimg](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)  

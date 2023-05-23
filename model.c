@@ -85,6 +85,9 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 1);
                     }
                 }
+                else if(thisModel->cubes[x][y + 1][z].type == NULL){
+                    fprintf(stderr, "why");
+                }
                 else if(strcmp(thisModel->cubes[x][y + 1][z].type, mcAir) == 0){
                     freeCubeFace(c, 1);
                 }

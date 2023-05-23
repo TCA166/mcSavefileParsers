@@ -55,7 +55,7 @@ struct vertex newVertex(int x, int y, int z);
 //Removes all outward or internal faces from a model
 void cullFaces(model* thisModel, char cullChunkBorder);
 
-//Returns a string that are valid .obj file contents
+//Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
 char* generateModel(model* thisModel, size_t* outSize);
 
 //Frees everything that can be allocated in a model m

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <math.h>
 
 #include "./cNBT/nbt.h"
 #include "./cNBT/list.h"
@@ -87,4 +88,53 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
     //ok we got out all the section data time to free it all
     nbt_free(node);
     return n;
+}
+
+unsigned int* getBlockStates(struct section s){
+    //first we need to decode the franken compression scheme
+    unsigned int* states = NULL;
+    if(s.paletteLen > 1){
+        short l = (short)ceilf(log2f((float)s.paletteLen));//length of indices in the long
+        int m = 0;
+        if(l < 4){
+            l = 4;
+        }
+        short count = 64/l * s.blockDataLen; //amount of indices in each long
+        states = malloc(count * sizeof(unsigned int));
+        //foreach long
+        for(int a=0; a < s.blockDataLen; a++){
+            unsigned long comp = s.blockData[a];
+            //foreach set of l bits
+            for(short b = 0; b + l < 64; b+=l){
+                unsigned long mask = createMask(b, l);
+                states[m] = (unsigned int)((mask & comp) >> b);
+                m++;
+            }
+        }
+    }
+    return states;
+}
+
+struct block createBlock(int x, int y, int z, unsigned int* blockStates, int side, struct section parentSection){
+    struct block newBlock;
+    int blockPos = statesFormula(x, y, z);
+    newBlock.x = x * side;
+    newBlock.y = y + ((parentSection.y + 4) * 16) * side;
+    newBlock.z = z * side;
+    //if we can look up the block state in the array
+    if(blockStates == NULL){
+        newBlock.type = parentSection.blockPalette[0];
+    }
+    else{
+        int state = blockStates[blockPos];
+        //paletteLen and I are fine it must be something with the data extraction process
+        if(state >= parentSection.paletteLen){
+            statesError(state, parentSection.paletteLen, newBlock);
+        }
+        else{
+            newBlock.type = parentSection.blockPalette[state];
+        }
+        
+    }
+    return newBlock;
 }
