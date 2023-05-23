@@ -4,3 +4,6 @@
 /output
 *.nbt
 *.obj
+chunkExtractor
+modelGenerator
+regionFileReader
