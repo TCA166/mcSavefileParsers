@@ -7,45 +7,40 @@
 
 #include <math.h>
 
-#include "./cNBT/nbt.h"
-#include "./cNBT/list.h"
-
+#include "errorDefs.h"
 #include "model.h"
+#include "chunkParser.h"
 
-#define maxSections 24
+//moved this here from model.c in order to properly seperate that file into a proper 3d model rendering lib and a chunk nbt handling lib
 
-#define createMask(startBit, X) (((long)1 << X) - 1) << startBit
+//Creates a new cube object based on a block object
+struct cube cubeFromBlock(struct block block, const int side){
+    struct cube newCube;
+    float dist = side/2;
+    newCube.side = side;
+    newCube.x = block.x + dist;
+    newCube.y = block.y + dist;
+    newCube.z = block.z + dist;
+    //binary 8 to 0
+    newCube.vertices[0] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z + dist);
+    newCube.vertices[1] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z - dist);
+    newCube.vertices[2] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z + dist);
+    newCube.vertices[3] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z - dist);
+    newCube.vertices[4] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z + dist);
+    newCube.vertices[5] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z - dist);
+    newCube.vertices[6] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z + dist);
+    newCube.vertices[7] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z - dist);
+    
+    newCube.faces[0] = newCubeFace(1, 0, 2, 3); //right +x
+    newCube.faces[1] = newCubeFace(1, 0, 4, 5); //up +y
+    newCube.faces[2] = newCubeFace(2, 0, 4, 6); //forward +z
+    newCube.faces[3] = newCubeFace(7, 3, 1, 5); //back -z
+    newCube.faces[4] = newCubeFace(7, 5, 4, 6); //left -x
+    newCube.faces[5] = newCubeFace(7, 6, 2, 3); //down -y
 
-#define nbtTypeError(type, expected) \
-        fprintf(stderr, "Expected type:%d, current type:%d.", expected, type);\
-        perror("Nbt type error"); \
-        exit(EXIT_FAILURE);
-
-#define nbtTagError(tag) \
-        fprintf(stderr, "Tag %s was not found.", tag);\
-        perror("Nbt type error"); \
-        exit(EXIT_FAILURE);
-
-#define fileError(filename) \
-        fprintf(stderr, "File %s couldn't be located.", filename); \
-        perror("File error.");\
-        exit(EXIT_FAILURE);
-
-#define statesError(state, paletteLen, block) \
-        fprintf(stderr, "%d > %d:states error\n", state, paletteLen); \
-        block.type = mcAir;
-
-//16x16x16 big section of a chunk
-struct section{
-    short y;
-
-    //we ignore the biomes because we don't need that data
-
-    unsigned long* blockData;
-    int blockDataLen;
-    char** blockPalette;
-    int paletteLen;
-};
+    newCube.type = block.type;
+    return newCube;
+}
 
 int main(int argc, char** argv){
     char yLim = 0; //if we wan't to remove some verticality
@@ -96,85 +91,9 @@ int main(int argc, char** argv){
     fread(data, sz, 1, nbtFile);
     fclose(nbtFile);
     //parse it
-    nbt_node* node = nbt_parse(data, sz);
-    if(errno != 0){
-        fprintf(stderr, "%d\n", errno);
-        perror("Error while reading the nbt file");
-        exit(EXIT_FAILURE);
-    }
-    if(node->type != TAG_COMPOUND){
-        nbtTypeError(node->type, 10);
-    }
     //Array of sections in this chunk
     struct section sections[maxSections] = {};
-    //Debug message   
-    const struct list_head* head = &node->payload.tag_compound->entry;
-    printf("NBT file has %zu tags\n", list_length(head));
-    //get the sections tag
-    nbt_node* sectionsNode = nbt_find_by_name(node, "sections");
-    if(sectionsNode == NULL){
-        nbtTagError("sections");
-    }
-    struct nbt_list* sectionsList = sectionsNode->payload.tag_list;
-    struct list_head* pos = &sectionsList->entry;
-    int n = 0;
-    //foreach section
-    list_for_each(pos, &sectionsList->entry){ 
-        //get the element
-        struct nbt_list* el = list_entry(pos, struct nbt_list, entry);
-        nbt_node* compound = el->data;
-        struct section newSection; //create new object that will store this data
-        //get the Y
-        nbt_node* yNode = nbt_find_by_name(compound, "Y");
-        if(yNode == NULL){
-            nbtTagError("Y");
-        }
-        newSection.y = yNode->payload.tag_byte;
-        //get the block data
-        nbt_node* blockNode = nbt_find_by_name(compound, "block_states");
-        if(blockNode == NULL){
-            nbtTagError("block_states");
-        }
-        //get the individual block data
-        nbt_node* blockData = nbt_find_by_name(blockNode, "data");
-        if(blockData != NULL){
-            newSection.blockData = malloc(blockData->payload.tag_long_array.length * sizeof(long));
-            memcpy(newSection.blockData, blockData->payload.tag_long_array.data, blockData->payload.tag_long_array.length * sizeof(long));
-            newSection.blockDataLen = blockData->payload.tag_long_array.length;
-        }
-        else{ //it can be null in which case the entire sector is full of palette[0]
-            newSection.blockData = NULL;
-            newSection.blockData = 0;
-        }
-        //get the palette
-        nbt_node* palette = nbt_find_by_name(blockNode, "palette");
-        if(palette == NULL){
-            nbtTagError("palette");
-        }
-        const struct list_head* palleteHead = &palette->payload.tag_list->entry;
-        char** blockPalette = malloc(1 * sizeof(char*));
-        int i = 0;
-        struct list_head* paletteCur = &palette->payload.tag_list->entry;
-        //foreach element in palette
-        list_for_each(paletteCur, &palette->payload.tag_list->entry){
-            //get the list entry
-            struct nbt_list* pal = list_entry(paletteCur, struct nbt_list, entry);
-            nbt_node* string = nbt_find_by_name(pal->data, "Name");
-            if(string == NULL){
-                nbtTagError("Name");
-            }
-            blockPalette[i] = malloc(strlen(string->payload.tag_string) + 1);
-            strcpy(blockPalette[i], string->payload.tag_string);
-            i++;
-            blockPalette = realloc(blockPalette, (i + 1) * sizeof(char*));
-        }
-        newSection.blockPalette = blockPalette;
-        newSection.paletteLen = i;
-        sections[n] = newSection;
-        n++;
-    }
-    //ok we got out all the section data time to free it all
-    nbt_free(node);
+    int n = getSections(data, sz, sections);
     //It is possible to not have to iterate over each block again, and do everything in a single loop.
     //But that would be less readable and put more of a strain on memory since the entire nbt file would have to be there
     model newModel = initModel(16,16 * n, 16);

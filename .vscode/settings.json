@@ -1,11 +1,13 @@
 {
     "files.associations": {
+        "*.embeddedhtml": "html",
         "cmath": "c",
         "stdio.h": "c",
         "array": "c",
         "string_view": "c",
         "initializer_list": "c",
         "utility": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "regionparser.h": "c"
     }
 }

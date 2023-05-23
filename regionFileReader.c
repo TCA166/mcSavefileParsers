@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "errorDefs.h"
 #include "regionParser.h"
 
 //https://minecraft.fandom.com/wiki/Region_file_format
@@ -12,9 +14,8 @@ int main(int argc, char** argv){
         printf("Starting extraction of %s to %s\n", argv[i - 1], argv[i]);
         char* filename = argv[i - 1];
         FILE* regionFile = fopen(filename, "r");
-        if(regionFile == NULL){ \
-            fprintf(stderr, "File %s couldn't be located.", argv[i - 1]); \
-            return -1; \
+        if(regionFile == NULL){ 
+            nbtFileError(argv[i - 1]);
         }
         chunk* chunks = getChunks(regionFile);
         fclose(regionFile);

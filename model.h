@@ -1,13 +1,5 @@
 #include <stdlib.h>
 
-//A block structure with it's own coordinates and a string containing it's type
-struct block{
-    int x;
-    int y;
-    int z;
-    char* type;
-};
-
 //obj file vertex
 struct vertex{
     float x;
@@ -60,9 +52,6 @@ model initModel(int x, int y, int z);
 //Creates a new vertex
 struct vertex newVertex(int x, int y, int z);
 
-//Creates a new cube object based on a block object
-struct cube cubeFromBlock(struct block block, const int side);
-
 //Removes all outward or internal faces from a model
 void cullFaces(model* thisModel, char cullChunkBorder);
 
@@ -71,3 +60,5 @@ char* generateModel(model* thisModel, size_t* outSize);
 
 //Frees everything that can be allocated in a model m
 void freeModel(model* m);
+
+struct cubeFace* newCubeFace(int a, int b, int c, int d);

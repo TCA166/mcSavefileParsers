@@ -46,34 +46,6 @@ struct cubeFace* newCubeFace(int a, int b, int c, int d){
     return face;
 }
 
-struct cube cubeFromBlock(struct block block, const int side){
-    struct cube newCube;
-    float dist = side/2;
-    newCube.side = side;
-    newCube.x = block.x + dist;
-    newCube.y = block.y + dist;
-    newCube.z = block.z + dist;
-    //binary 8 to 0
-    newCube.vertices[0] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z + dist);
-    newCube.vertices[1] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z - dist);
-    newCube.vertices[2] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z + dist);
-    newCube.vertices[3] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z - dist);
-    newCube.vertices[4] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z + dist);
-    newCube.vertices[5] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z - dist);
-    newCube.vertices[6] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z + dist);
-    newCube.vertices[7] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z - dist);
-    
-    newCube.faces[0] = newCubeFace(1, 0, 2, 3); //right +x
-    newCube.faces[1] = newCubeFace(1, 0, 4, 5); //up +y
-    newCube.faces[2] = newCubeFace(2, 0, 4, 6); //forward +z
-    newCube.faces[3] = newCubeFace(7, 3, 1, 5); //back -z
-    newCube.faces[4] = newCubeFace(7, 5, 4, 6); //left -x
-    newCube.faces[5] = newCubeFace(7, 6, 2, 3); //down -y
-
-    newCube.type = block.type;
-    return newCube;
-}
-
 struct face deCube(struct cubeFace face, struct cube originalCube){
     struct face new;
     new.vertices = malloc(sizeof(struct vertex) * 4);
@@ -96,7 +68,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                     }
                     
                 }
-                else if(!strcmp(thisModel->cubes[x + 1][y][z].type, mcAir)){
+                else if(strcmp(thisModel->cubes[x + 1][y][z].type, mcAir) == 0){
                     freeCubeFace(c, 0);
                 }
                 if( x - 1 < 0){
@@ -104,7 +76,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 4);
                     }
                 }
-                else if(!strcmp(thisModel->cubes[x - 1][y][z].type, mcAir)){
+                else if(strcmp(thisModel->cubes[x - 1][y][z].type, mcAir) == 0){
                     freeCubeFace(c, 4);
                 }
                 //y
@@ -113,7 +85,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 1);
                     }
                 }
-                else if(!strcmp(thisModel->cubes[x][y + 1][z].type, mcAir)){
+                else if(strcmp(thisModel->cubes[x][y + 1][z].type, mcAir) == 0){
                     freeCubeFace(c, 1);
                 }
                 if( y - 1 < 0){
@@ -121,7 +93,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 5);
                     }
                 }
-                else if(!strcmp(thisModel->cubes[x][y - 1][z].type, mcAir)){
+                else if(strcmp(thisModel->cubes[x][y - 1][z].type, mcAir) == 0){
                     freeCubeFace(c, 5);
                 }
                 //z
@@ -130,7 +102,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 2);
                     }
                 }
-                else if(!strcmp(thisModel->cubes[x][y][z + 1].type, mcAir)){
+                else if(strcmp(thisModel->cubes[x][y][z + 1].type, mcAir) == 0){
                     freeCubeFace(c, 2);
                 }
                 if( z - 1 < 0){
@@ -138,7 +110,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 3);
                     }
                 }
-                else if(!strcmp(thisModel->cubes[x][y][z - 1].type, mcAir)){
+                else if(strcmp(thisModel->cubes[x][y][z - 1].type, mcAir) == 0){
                     freeCubeFace(c, 3);
                 }
                 thisModel->cubes[x][y][z] = c;
