@@ -204,8 +204,6 @@ char* generateModel(model* thisModel, size_t* outSize){
                             fileContents = realloc(fileContents, *outSize);
                             strcat(fileContents, line);
                             free(line);
-                            free(face);
-                            thisCube.faces[i] = NULL;
                         }
                     }
                     n++;

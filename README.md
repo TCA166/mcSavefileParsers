@@ -26,6 +26,21 @@ This program extracts only a single chunk with the given chunk coordinates into 
 chunkExtractor <path to region directory> <x> <z>
 ```
 
+## modelGenerator
+
+This program generates a waveform(.obj) 3d model file from an nbt file containing data about a specific chunk. Ideally this nbt file will be extracted using one of the tools above.
+
+```Bash
+modelGenerator <path to nbt file> <args>
+```
+
+The program accepts the following additional arguments:
+
+- -l $y+ $y- :limits the result model to the given vertical range
+- -f :disables face culling
+- -h :displays help
+- -s $s :changes the block side in the result side to the given s argument
+
 ## License
 
 [![CCimg](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)  

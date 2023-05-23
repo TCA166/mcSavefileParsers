@@ -73,7 +73,7 @@ int main(int argc, char** argv){
             b = 1;
         }
         else if(strcmp(argv[i], "-h") == 0){
-            printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range\n-b|enables chunk border rendering\n-f|disables face culling\n");
+            printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range\n-b|enables chunk border rendering\n-f|disables face culling\n-s <s> |changes the block side in the result side to the given s argument\n");
             return 0;
         }
         else if(strcmp(argv[i], "-s") == 0){
@@ -137,9 +137,6 @@ int main(int argc, char** argv){
         }
         //get the individual block data
         nbt_node* blockData = nbt_find_by_name(blockNode, "data");
-        if(blockData == NULL){
-            nbtTagError("data");
-        }
         if(blockData != NULL){
             newSection.blockData = malloc(blockData->payload.tag_long_array.length * sizeof(long));
             memcpy(newSection.blockData, blockData->payload.tag_long_array.data, blockData->payload.tag_long_array.length * sizeof(long));
