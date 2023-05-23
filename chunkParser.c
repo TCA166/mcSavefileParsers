@@ -119,7 +119,7 @@ struct block createBlock(int x, int y, int z, unsigned int* blockStates, int sid
     struct block newBlock;
     int blockPos = statesFormula(x, y, z);
     newBlock.x = x * side;
-    newBlock.y = y + ((parentSection.y + 4) * 16) * side;
+    newBlock.y = (y * side) + ((parentSection.y + 4) * 16);
     newBlock.z = z * side;
     //if we can look up the block state in the array
     if(blockStates == NULL){

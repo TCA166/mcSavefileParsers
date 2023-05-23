@@ -61,14 +61,14 @@ void cullFaces(model* thisModel, char cullChunkBorder){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
                 struct cube c = thisModel->cubes[x][y][z];
+                //something is up with the culling algorythm. Not sure what though
                 //x
                 if( x + 1 >= thisModel->x){
                     if(cullChunkBorder){
                         freeCubeFace(c, 0);
                     }
-                    
                 }
-                else if(strcmp(thisModel->cubes[x + 1][y][z].type, mcAir) == 0){
+                else if(strcmp(thisModel->cubes[x + 1][y][z].type, mcAir) != 0){
                     freeCubeFace(c, 0);
                 }
                 if( x - 1 < 0){
@@ -76,7 +76,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 4);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x - 1][y][z].type, mcAir) == 0){
+                else if(strcmp(thisModel->cubes[x - 1][y][z].type, mcAir) != 0){
                     freeCubeFace(c, 4);
                 }
                 //y
@@ -85,10 +85,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 1);
                     }
                 }
-                else if(thisModel->cubes[x][y + 1][z].type == NULL){
-                    fprintf(stderr, "why");
-                }
-                else if(strcmp(thisModel->cubes[x][y + 1][z].type, mcAir) == 0){
+                else if(strcmp(thisModel->cubes[x][y + 1][z].type, mcAir) != 0){
                     freeCubeFace(c, 1);
                 }
                 if( y - 1 < 0){
@@ -96,7 +93,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 5);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y - 1][z].type, mcAir) == 0){
+                else if(strcmp(thisModel->cubes[x][y - 1][z].type, mcAir) != 0){
                     freeCubeFace(c, 5);
                 }
                 //z
@@ -105,7 +102,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 2);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y][z + 1].type, mcAir) == 0){
+                else if(strcmp(thisModel->cubes[x][y][z + 1].type, mcAir) != 0){
                     freeCubeFace(c, 2);
                 }
                 if( z - 1 < 0){
@@ -113,7 +110,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 3);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y][z - 1].type, mcAir) == 0){
+                else if(strcmp(thisModel->cubes[x][y][z - 1].type, mcAir) != 0){
                     freeCubeFace(c, 3);
                 }
                 thisModel->cubes[x][y][z] = c;

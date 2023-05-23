@@ -107,7 +107,7 @@ int main(int argc, char** argv){
             for(int y = 0; y < 16; y++){
                 for(int z = 0; z < 16; z++){
                     struct block newBlock = createBlock(x, y, z, states, side, sections[i]);
-                    if(!(newBlock.y > downLim && newBlock.y < upLim) && yLim){
+                    if((newBlock.y > downLim || newBlock.y < upLim) && yLim){
                         newBlock.type = mcAir;
                     }
                     newModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = cubeFromBlock(newBlock, side);
