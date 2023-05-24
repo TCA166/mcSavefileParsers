@@ -138,3 +138,32 @@ struct block createBlock(int x, int y, int z, unsigned int* blockStates, int sid
     }
     return newBlock;
 }
+
+char contains(char** arr, char* str, int arrLen){
+    for(int i = 0; i < arrLen; i++){
+        if(strcmp(arr[i], str) == 0){
+            return true;
+        }
+    }
+    return false;
+}
+
+//this code feels wrong to write in C ngl...
+char** createGlobalPalette(struct section* sections, int* len, int* outLen, char freeSectionPalletes){
+    char** globalPalette = malloc(0);
+    int j = 0;
+    for(int i = 0; i < *len; i++){
+        for(int n = 0; n < sections[i].paletteLen; n++){
+            if(!contains(globalPalette, sections[i].blockPalette[n], j)){
+                globalPalette = realloc(globalPalette, (j + 1) * sizeof(char*));
+                globalPalette[j] = sections[i].blockPalette[n];
+                j++;
+            }
+        }
+        if(freeSectionPalletes){
+            free(sections[i].blockPalette);
+        }
+    }
+    *outLen = j;
+    return globalPalette;
+}

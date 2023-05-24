@@ -107,7 +107,7 @@ int main(int argc, char** argv){
             for(int y = 0; y < 16; y++){
                 for(int z = 0; z < 16; z++){
                     struct block newBlock = createBlock(x, y, z, states, side, sections[i]);
-                    if((newBlock.y > downLim || newBlock.y < upLim) && yLim){
+                    if((newBlock.y > upLim || newBlock.y < downLim) && yLim){
                         newBlock.type = mcAir;
                     }
                     newModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = cubeFromBlock(newBlock, side);
@@ -117,12 +117,18 @@ int main(int argc, char** argv){
         free(states);
     }
     if(!f){
-        cullFaces(&newModel, !b);
+        cullFaces(&newModel, !b, mcAir);
         printf("Model faces culled\n");
     }
+    int globalLen = 0;
+    char** globalPalette = createGlobalPalette(sections, &n, &globalLen, 1);
     size_t size = 0;
-    char* content = generateModel(&newModel, &size);
+    char* content = generateModel(&newModel, &size, mcAir, globalPalette, globalLen);
     freeModel(&newModel);
+    for(int i = 0; i < globalLen; i++){
+        free(globalPalette[i]);
+    }
+    free(globalPalette);
     printf("Model string generated\n");
     FILE* outFile = fopen("out.obj", "wb");
     fwrite(content, size, 1, outFile);

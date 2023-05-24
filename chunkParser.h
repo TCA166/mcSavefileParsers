@@ -26,7 +26,11 @@ struct block{
 
 #define statesFormula(x, y, z) (y * 16 + z) * 16 + x
 
+#define mcAir "minecraft:air"
+#define minY -64
+
 //Extracts sections from nbtFileData of size sz into sections and returns the number of extracted sections
+//blockData, blockPalette and elements of blockPalette are malloc'd
 int getSections(unsigned char* nbtFileData, long sz, struct section* sections);
 
 /*Creates the block states array based on a section.
@@ -36,3 +40,7 @@ unsigned int* getBlockStates(struct section s);
 
 //Creates a block struct based on the coordinates, side, the blockstates array and the parent section
 struct block createBlock(int x, int y, int z, unsigned int* blockStates, int side, struct section parentSection);
+
+//Returns an array of strings containing a complete total block palette
+//The only memory it allocates is the returned array
+char** createGlobalPalette(struct section* sections, int* len, int* outLen, char freeSectionPalletes);

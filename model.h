@@ -41,9 +41,6 @@ struct model{
 //3d array of blocks
 typedef struct model model;
 
-#define mcAir "minecraft:air"
-#define minY -64
-
 #define freeCubeFace(c, n) free(c.faces[n]); c.faces[n] = NULL;
 
 //Initialises a model variable
@@ -53,10 +50,10 @@ model initModel(int x, int y, int z);
 struct vertex newVertex(int x, int y, int z);
 
 //Removes all outward or internal faces from a model
-void cullFaces(model* thisModel, char cullChunkBorder);
+void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType);
 
 //Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
-char* generateModel(model* thisModel, size_t* outSize);
+char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** typeArr, int materialLen);
 
 //Frees everything that can be allocated in a model m
 void freeModel(model* m);

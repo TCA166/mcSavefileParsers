@@ -56,7 +56,7 @@ struct face deCube(struct cubeFace face, struct cube originalCube){
     return new;
 }
 
-void cullFaces(model* thisModel, char cullChunkBorder){
+void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType){
     for(int x = 0; x < thisModel->x; x++){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
@@ -68,7 +68,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 0);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x + 1][y][z].type, mcAir) != 0){
+                else if(strcmp(thisModel->cubes[x + 1][y][z].type, ignoreType) != 0){
                     freeCubeFace(c, 0);
                 }
                 if( x - 1 < 0){
@@ -76,7 +76,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 4);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x - 1][y][z].type, mcAir) != 0){
+                else if(strcmp(thisModel->cubes[x - 1][y][z].type, ignoreType) != 0){
                     freeCubeFace(c, 4);
                 }
                 //y
@@ -85,7 +85,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 1);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y + 1][z].type, mcAir) != 0){
+                else if(strcmp(thisModel->cubes[x][y + 1][z].type, ignoreType) != 0){
                     freeCubeFace(c, 1);
                 }
                 if( y - 1 < 0){
@@ -93,7 +93,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 5);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y - 1][z].type, mcAir) != 0){
+                else if(strcmp(thisModel->cubes[x][y - 1][z].type, ignoreType) != 0){
                     freeCubeFace(c, 5);
                 }
                 //z
@@ -102,7 +102,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 2);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y][z + 1].type, mcAir) != 0){
+                else if(strcmp(thisModel->cubes[x][y][z + 1].type, ignoreType) != 0){
                     freeCubeFace(c, 2);
                 }
                 if( z - 1 < 0){
@@ -110,7 +110,7 @@ void cullFaces(model* thisModel, char cullChunkBorder){
                         freeCubeFace(c, 3);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y][z - 1].type, mcAir) != 0){
+                else if(strcmp(thisModel->cubes[x][y][z - 1].type, ignoreType) != 0){
                     freeCubeFace(c, 3);
                 }
                 thisModel->cubes[x][y][z] = c;
@@ -119,7 +119,16 @@ void cullFaces(model* thisModel, char cullChunkBorder){
     }
 }
 
-char* generateModel(model* thisModel, size_t* outSize){
+int getIndex(char** strArr, int arrLen, char* val){
+    for(int i = 0; i < arrLen; i++){
+        if(strcmp(strArr[i], val) == 0){
+            return i;
+        }
+    }
+    return -1;
+}
+
+char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** typeArr, int materialLen){
     char* fileContents = NULL;
     (*outSize)++;
     fileContents = malloc(*outSize);
@@ -135,7 +144,7 @@ char* generateModel(model* thisModel, size_t* outSize){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
                 struct cube thisCube = thisModel->cubes[x][y][z];
-                if(strcmp(thisCube.type, mcAir) != 0){
+                if(strcmp(thisCube.type, ignoreType) != 0){
                     size_t objectLineSize = 11 + digits(x) + digits(y) + digits(z) + strlen(thisCube.type);
                     char* objectLine = NULL;
                     objectLine = malloc(objectLineSize);
@@ -157,6 +166,7 @@ char* generateModel(model* thisModel, size_t* outSize){
                         strcat(fileContents, vertexLine);
                         free(vertexLine);
                     }
+                    int material = getIndex(typeArr, materialLen, thisCube.type);
                     //foreach face
                     for(int i = 0; i < 6; i++){
                         struct cubeFace* face = NULL;
@@ -167,10 +177,10 @@ char* generateModel(model* thisModel, size_t* outSize){
                             face->v2 += (offset + 1);
                             face->v3 += (offset + 1);
                             face->v4 += (offset + 1);
-                            size_t size = 7 + digits(face->v1) + digits(face->v2) + digits(face->v3) + digits(face->v4); 
+                            size_t size = 11 + digits(face->v1) + digits(face->v2) + digits(face->v3) + digits(face->v4) + (digits(material) * 4); 
                             char* line = NULL;
                             line = malloc(size);
-                            snprintf(line, size, "f %d %d %d %d\n", face->v1, face->v2, face->v3, face->v4); 
+                            snprintf(line, size, "f %d/%d %d/%d %d/%d %d/%d\n", face->v1, material, face->v2, material, face->v3, material, face->v4, material); 
                             //fprintf(stderr, "%d:f %d %d %d %d-%s", i, offset + face->v1, offset + face->v2, offset + face->v3, offset + face->v4, line);
                             *outSize += size;
                             fileContents = realloc(fileContents, *outSize);
