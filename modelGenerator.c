@@ -3,8 +3,6 @@
 #include <errno.h>
 #include <string.h>
 
-#include "portable_endian.h"
-
 #include <math.h>
 
 #include "errorDefs.h"
@@ -53,8 +51,7 @@ int main(int argc, char** argv){
     for(int i = 2; i < argc; i++){ //so far not much args... maybe in future more will be added
         if(strcmp(argv[i], "-l") == 0){
             if(argc <= i + 2){
-                fprintf(stderr, "Incorrect number of arguments. -l requires two arguments to follow.");
-                break;
+                argError("-l", "2");
             }
             yLim = 1;
             upLim = atoi(argv[i + 1]);
@@ -73,8 +70,7 @@ int main(int argc, char** argv){
         }
         else if(strcmp(argv[i], "-s") == 0){
             if(argc <= i + 1){
-                fprintf(stderr, "Incorrect number of arguments. -s requires an argument to follow.");
-                break;
+                argError("-s", "1");
             }
             side = atoi(argv[i + 1]);
         }
@@ -100,7 +96,7 @@ int main(int argc, char** argv){
     //now we have to decrypt the data in sections
     for(int i = 0; i < n; i++){
         //create the block state array
-        unsigned int* states = getBlockStates(sections[i]);
+        unsigned int* states = getBlockStates(sections[i], NULL);
         free(sections[i].blockData);
         //if we want to do face culling we first need to actually have all the blocks in one place
         for(int x = 0; x < 16; x++){
@@ -123,7 +119,7 @@ int main(int argc, char** argv){
     int globalLen = 0;
     char** globalPalette = createGlobalPalette(sections, &n, &globalLen, 1);
     size_t size = 0;
-    char* content = generateModel(&newModel, &size, mcAir, globalPalette, globalLen);
+    char* content = generateModel(&newModel, &size, mcAir, NULL, globalLen);
     freeModel(&newModel);
     for(int i = 0; i < globalLen; i++){
         free(globalPalette[i]);

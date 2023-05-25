@@ -90,7 +90,7 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
     return n;
 }
 
-unsigned int* getBlockStates(struct section s){
+unsigned int* getBlockStates(struct section s, int* outLen){
     //first we need to decode the franken compression scheme
     unsigned int* states = NULL;
     if(s.paletteLen > 1){
@@ -105,11 +105,14 @@ unsigned int* getBlockStates(struct section s){
         for(int a=0; a < s.blockDataLen; a++){
             unsigned long comp = s.blockData[a];
             //foreach set of l bits
-            for(short b = 0; b + l < 64; b+=l){
+            for(short b = 0; b < 64; b+=l){
                 unsigned long mask = createMask(b, l);
                 states[m] = (unsigned int)((mask & comp) >> b);
                 m++;
             }
+        }
+        if(outLen != NULL){
+            *outLen = m;
         }
     }
     return states;
@@ -119,7 +122,7 @@ struct block createBlock(int x, int y, int z, unsigned int* blockStates, int sid
     struct block newBlock;
     int blockPos = statesFormula(x, y, z);
     newBlock.x = x * side;
-    newBlock.y = (y * side) + ((parentSection.y + 4) * 16);
+    newBlock.y = (y + ((parentSection.y + 4) * 16)) * side;
     newBlock.z = z * side;
     //if we can look up the block state in the array
     if(blockStates == NULL){

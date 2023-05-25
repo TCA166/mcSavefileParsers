@@ -120,6 +120,9 @@ void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType){
 }
 
 int getIndex(char** strArr, int arrLen, char* val){
+    if(strArr == NULL){
+        return -1;
+    }
     for(int i = 0; i < arrLen; i++){
         if(strcmp(strArr[i], val) == 0){
             return i;
@@ -172,15 +175,23 @@ char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** 
                         struct cubeFace* face = NULL;
                         face = thisCube.faces[i];
                         if(face != NULL){
-                            int offset = n*8;
-                            face->v1 += (offset + 1);
-                            face->v2 += (offset + 1);
-                            face->v3 += (offset + 1);
-                            face->v4 += (offset + 1);
-                            size_t size = 11 + digits(face->v1) + digits(face->v2) + digits(face->v3) + digits(face->v4) + (digits(material) * 4); 
+                            int offset = n*8 + 1;
+                            face->v1 += offset;
+                            face->v2 += offset;
+                            face->v3 += offset;
+                            face->v4 += offset;
+                            size_t size = 0;
                             char* line = NULL;
-                            line = malloc(size);
-                            snprintf(line, size, "f %d/%d %d/%d %d/%d %d/%d\n", face->v1, material, face->v2, material, face->v3, material, face->v4, material); 
+                            if(material > -1){
+                                size = 11 + digits(face->v1) + digits(face->v2) + digits(face->v3) + digits(face->v4) + (digits(material) * 4); 
+                                line = malloc(size);
+                                snprintf(line, size, "f %d/%d %d/%d %d/%d %d/%d\n", face->v1, material, face->v2, material, face->v3, material, face->v4, material); 
+                            }
+                            else{
+                                size = 7 + digits(face->v1) + digits(face->v2) + digits(face->v3) + digits(face->v4); 
+                                line = malloc(size);
+                                snprintf(line, size, "f %d %d %d %d\n", face->v1, face->v2, face->v3, face->v4); 
+                            }
                             //fprintf(stderr, "%d:f %d %d %d %d-%s", i, offset + face->v1, offset + face->v2, offset + face->v3, offset + face->v4, line);
                             *outSize += size;
                             fileContents = realloc(fileContents, *outSize);

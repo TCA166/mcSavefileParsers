@@ -24,7 +24,7 @@ struct block{
 
 #define createMask(startBit, X) (((long)1 << X) - 1) << startBit
 
-#define statesFormula(x, y, z) (y * 16 + z) * 16 + x
+#define statesFormula(x, y, z) (y*16*16) + (z*16) + x
 
 #define mcAir "minecraft:air"
 #define minY -64
@@ -36,7 +36,7 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections);
 /*Creates the block states array based on a section.
 Returns NULL if it cannot be created. Be sure to free the result once you are done with it.
 */
-unsigned int* getBlockStates(struct section s);
+unsigned int* getBlockStates(struct section s, int* outLen);
 
 //Creates a block struct based on the coordinates, side, the blockstates array and the parent section
 struct block createBlock(int x, int y, int z, unsigned int* blockStates, int side, struct section parentSection);
