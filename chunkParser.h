@@ -29,17 +29,21 @@ struct block{
 #define mcAir "minecraft:air"
 #define minY -64
 
-//Extracts sections from nbtFileData of size sz into sections and returns the number of extracted sections
-//blockData, blockPalette and elements of blockPalette are malloc'd
+/*
+Extracts sections from nbtFileData of size sz into sections array and returns the number of extracted sections
+blockData, blockPalette and elements of blockPalette are allocated on the heap and will need to be freed
+*/
 int getSections(unsigned char* nbtFileData, long sz, struct section* sections);
 
-/*Creates the block states array based on a section.
+/*
+Creates the block states array based on a section.
 Returns NULL if it cannot be created. Be sure to free the result once you are done with it.
+outLen can be NULL.
 */
 unsigned int* getBlockStates(struct section s, int* outLen);
 
-//Creates a block struct based on the coordinates, side, the blockstates array and the parent section
-struct block createBlock(int x, int y, int z, unsigned int* blockStates, int side, struct section parentSection);
+//Creates a block struct based on the struct coordinates, the blockstates array and the parent section
+struct block createBlock(int x, int y, int z, unsigned int* blockStates, struct section parentSection);
 
 //Returns an array of strings containing a complete total block palette
 //The only memory it allocates is the returned array

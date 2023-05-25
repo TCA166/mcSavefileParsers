@@ -118,12 +118,12 @@ unsigned int* getBlockStates(struct section s, int* outLen){
     return states;
 }
 
-struct block createBlock(int x, int y, int z, unsigned int* blockStates, int side, struct section parentSection){
+struct block createBlock(int x, int y, int z, unsigned int* blockStates, struct section parentSection){
     struct block newBlock;
     int blockPos = statesFormula(x, y, z);
-    newBlock.x = x * side;
-    newBlock.y = (y + ((parentSection.y + 4) * 16)) * side;
-    newBlock.z = z * side;
+    newBlock.x = x;
+    newBlock.y = y + ((parentSection.y + 4) * 16);
+    newBlock.z = z;
     //if we can look up the block state in the array
     if(blockStates == NULL){
         newBlock.type = parentSection.blockPalette[0];

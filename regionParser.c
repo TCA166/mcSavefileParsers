@@ -39,6 +39,13 @@ chunk* getChunks(FILE* regionFile){
     //foreach chunk we have extracted so far
     for(int i = 0; i < chunkN; i++){
         if(chunks[i].offset != 0){ //if the chunk isn't NULL
+            /*
+            At one point i did in fact attempt to move this function to linear file parsing instead of the jumping thing we have now
+            Two major issues.
+            One: less stability. A single error that may be caused by corrupted data throws the entire algorythm off which is exactly what happened during testing
+            Two: Sometimes the header data about a chunk would be straight up wrong? chunkLen would be greater than the suggested cap, or fill less than 1000 bytes but have allocated three segments
+            All of this chicanery made me simply give up and opt for this clearly more stable and safer option
+            */
             int res = getChunkData(&chunks[i], regionFile);
             if(res < 0){
                 fprintf(stderr, "Inflate returned %d ", res);

@@ -1,6 +1,6 @@
 # mcSavefileParsers
 
-Multiple programs for extracting data from MC save files written in C for speed.
+Multiple programs for extracting data from MC save files written in C for speed. It can quickly extract chunk nbts from region files and then generate 3d models from the said nbts,
 
 ## Compilation
 

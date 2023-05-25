@@ -16,9 +16,9 @@ struct cube cubeFromBlock(struct block block, const int side){
     struct cube newCube;
     float dist = side/2;
     newCube.side = side;
-    newCube.x = block.x + dist;
-    newCube.y = block.y + dist;
-    newCube.z = block.z + dist;
+    newCube.x = (block.x * side) + dist;
+    newCube.y = (block.y * side) + dist;
+    newCube.z = (block.z * side) + dist;
     //binary 8 to 0
     newCube.vertices[0] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z + dist);
     newCube.vertices[1] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z - dist);
@@ -48,7 +48,7 @@ int main(int argc, char** argv){
     char b = 0; //if we don't want to cull chunk border faces
     int side = 2;
     //argument interface
-    for(int i = 2; i < argc; i++){ //so far not much args... maybe in future more will be added
+    for(int i = 2; i < argc; i++){
         if(strcmp(argv[i], "-l") == 0){
             if(argc <= i + 2){
                 argError("-l", "2");
@@ -83,10 +83,9 @@ int main(int argc, char** argv){
     fseek(nbtFile, 0L, SEEK_END);
     long sz = ftell(nbtFile);
     fseek(nbtFile, 0, SEEK_SET);
-    unsigned char* data = malloc(sz);
+    unsigned char* data = malloc(sz); //raw NBT file bytes
     fread(data, sz, 1, nbtFile);
     fclose(nbtFile);
-    //parse it
     //Array of sections in this chunk
     struct section sections[maxSections] = {};
     int n = getSections(data, sz, sections);
@@ -102,7 +101,7 @@ int main(int argc, char** argv){
         for(int x = 0; x < 16; x++){
             for(int y = 0; y < 16; y++){
                 for(int z = 0; z < 16; z++){
-                    struct block newBlock = createBlock(x, y, z, states, side, sections[i]);
+                    struct block newBlock = createBlock(x, y, z, states, sections[i]);
                     if((newBlock.y > upLim || newBlock.y < downLim) && yLim){
                         newBlock.type = mcAir;
                     }
