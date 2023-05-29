@@ -9,7 +9,7 @@
 #include "model.h"
 #include "chunkParser.h"
 
-//moved this here from model.c in order to properly seperate that file into a proper 3d model rendering lib and a chunk nbt handling lib
+//moved this here from model.c in order to properly separate that file into a proper 3d model rendering lib and a chunk nbt handling lib
 
 //Creates a new cube object based on a block object
 struct cube cubeFromBlock(struct block block, const int side){
@@ -46,6 +46,7 @@ int main(int argc, char** argv){
     int downLim = 0; //y- cutoff
     char f = 0; //if we don't want to cull faces
     char b = 0; //if we don't want to cull chunk border faces
+    char* materialFilename = NULL;
     int side = 2;
     //argument interface
     for(int i = 2; i < argc; i++){
@@ -73,6 +74,12 @@ int main(int argc, char** argv){
                 argError("-s", "1");
             }
             side = atoi(argv[i + 1]);
+        }
+        else if(strcmp(argv[i], "-m")){
+            if(argc <= i + 1){
+                argError("-m", "1");
+            }
+            materialFilename = argv[i + 1];
         }
     }
     //Get the nbt data
@@ -116,9 +123,12 @@ int main(int argc, char** argv){
         printf("Model faces culled\n");
     }
     int globalLen = 0;
-    char** globalPalette = createGlobalPalette(sections, &n, &globalLen, 1);
+    char** globalPalette = NULL;
+    if(materialFilename != NULL){
+        globalPalette = createGlobalPalette(sections, &n, &globalLen, 1);
+    } 
     size_t size = 0;
-    char* content = generateModel(&newModel, &size, mcAir, NULL, globalLen);
+    char* content = generateModel(&newModel, &size, mcAir, globalPalette, globalLen, materialFilename);
     freeModel(&newModel);
     for(int i = 0; i < globalLen; i++){
         free(globalPalette[i]);

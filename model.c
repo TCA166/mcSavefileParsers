@@ -131,12 +131,21 @@ int getIndex(char** strArr, int arrLen, char* val){
     return -1;
 }
 
-char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** typeArr, int materialLen){
+char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** typeArr, int materialLen, char* materialFileName){
     char* fileContents = NULL;
     (*outSize)++;
     fileContents = malloc(*outSize);
-    for(int i = 0; i < *outSize; i++){
-        fileContents[i] = '\0';
+    if(materialFileName != NULL){
+        fileContents = realloc(fileContents, *outSize + 7 + strlen(materialFileName));
+        strcat(fileContents, "mtllib ");
+        strcat(fileContents, materialFileName);
+    }
+    if(typeArr != NULL){
+        for(int i = 0; i < materialLen; i++){
+            fileContents = realloc(fileContents, *outSize + 7 + strlen(typeArr[i]));
+            strcat(fileContents, "usemtl ");
+            strcat(fileContents, typeArr[i]);
+        }
     }
     int n = 0;
     //foreach cube

@@ -54,7 +54,7 @@ void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType);
 
 //Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
 //typeArr can be NULL if you wish to not generate a textured model
-char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** typeArr, int materialLen);
+char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** typeArr, int materialLen, char* materialFileName);
 
 //Frees everything that can be allocated in a model m
 void freeModel(model* m);
