@@ -15,6 +15,9 @@ int digits(int i){
 
 //Program for extracting specific chunks from all region files
 int main(int argc, char** argv){
+    if(argc < 3){
+        argCountError();
+    }
     for(int i = 3; i < argc; i+=3){
         int x = atoi(argv[i - 1]);
         int z = atoi(argv[i]);

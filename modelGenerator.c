@@ -12,35 +12,12 @@
 //moved this here from model.c in order to properly separate that file into a proper 3d model rendering lib and a chunk nbt handling lib
 
 //Creates a new cube object based on a block object
-struct cube cubeFromBlock(struct block block, const int side){
-    struct cube newCube;
-    float dist = side/2;
-    newCube.side = side;
-    newCube.x = (block.x * side) + dist;
-    newCube.y = (block.y * side) + dist;
-    newCube.z = (block.z * side) + dist;
-    //binary 8 to 0
-    newCube.vertices[0] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z + dist);
-    newCube.vertices[1] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z - dist);
-    newCube.vertices[2] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z + dist);
-    newCube.vertices[3] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z - dist);
-    newCube.vertices[4] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z + dist);
-    newCube.vertices[5] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z - dist);
-    newCube.vertices[6] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z + dist);
-    newCube.vertices[7] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z - dist);
-    
-    newCube.faces[0] = newCubeFace(1, 0, 2, 3); //right +x
-    newCube.faces[1] = newCubeFace(1, 0, 4, 5); //up +y
-    newCube.faces[2] = newCubeFace(2, 0, 4, 6); //forward +z
-    newCube.faces[3] = newCubeFace(7, 3, 1, 5); //back -z
-    newCube.faces[4] = newCubeFace(7, 5, 4, 6); //left -x
-    newCube.faces[5] = newCubeFace(7, 6, 2, 3); //down -y
-
-    newCube.type = block.type;
-    return newCube;
-}
+struct cube cubeFromBlock(struct block block, const int side);
 
 int main(int argc, char** argv){
+    if(argc < 2){
+        argCountError();
+    }
     char yLim = 0; //if we wan't to remove some verticality
     int upLim = 0; //y+ cutoff
     int downLim = 0; //y- cutoff
@@ -66,7 +43,7 @@ int main(int argc, char** argv){
             b = 1;
         }
         else if(strcmp(argv[i], "-h") == 0){
-            printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range\n-b|enables chunk border rendering\n-f|disables face culling\n-s <s> |changes the block side in the result side to the given s argument\n");
+            printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range\n-b|enables chunk border rendering\n-f|disables face culling\n-s <s> |changes the block side in the result side to the given s argument\n-m <filename> | sets the given filename as the .mtl source\n");
             return 0;
         }
         else if(strcmp(argv[i], "-s") == 0){
@@ -74,12 +51,14 @@ int main(int argc, char** argv){
                 argError("-s", "1");
             }
             side = atoi(argv[i + 1]);
+            i+=1;
         }
-        else if(strcmp(argv[i], "-m")){
+        else if(strcmp(argv[i], "-m") == 0){
             if(argc <= i + 1){
                 argError("-m", "1");
             }
             materialFilename = argv[i + 1];
+            i += 1;
         }
     }
     //Get the nbt data
@@ -139,4 +118,32 @@ int main(int argc, char** argv){
     fwrite(content, size, 1, outFile);
     fclose(outFile);
     return 0;
+}
+
+struct cube cubeFromBlock(struct block block, const int side){
+    struct cube newCube;
+    float dist = side/2;
+    newCube.side = side;
+    newCube.x = (block.x * side) + dist;
+    newCube.y = (block.y * side) + dist;
+    newCube.z = (block.z * side) + dist;
+    //binary 8 to 0
+    newCube.vertices[0] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z + dist);
+    newCube.vertices[1] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z - dist);
+    newCube.vertices[2] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z + dist);
+    newCube.vertices[3] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z - dist);
+    newCube.vertices[4] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z + dist);
+    newCube.vertices[5] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z - dist);
+    newCube.vertices[6] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z + dist);
+    newCube.vertices[7] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z - dist);
+    
+    newCube.faces[0] = newCubeFace(1, 0, 2, 3); //right +x
+    newCube.faces[1] = newCubeFace(1, 0, 4, 5); //up +y
+    newCube.faces[2] = newCubeFace(2, 0, 4, 6); //forward +z
+    newCube.faces[3] = newCubeFace(7, 3, 1, 5); //back -z
+    newCube.faces[4] = newCubeFace(7, 5, 4, 6); //left -x
+    newCube.faces[5] = newCubeFace(7, 6, 2, 3); //down -y
+
+    newCube.type = block.type;
+    return newCube;
 }

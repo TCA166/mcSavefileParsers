@@ -5,7 +5,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": ["./0.0.nbt"],
+            "args": ["./0.0.nbt", "-m", "out.mtl"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

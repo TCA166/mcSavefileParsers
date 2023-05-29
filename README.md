@@ -40,6 +40,17 @@ The program accepts the following additional arguments:
 - -f :disables face culling
 - -h :displays help
 - -s $s :changes the block side in the result side to the given s argument
+- -m $filename :sets the given filename as the source mtl file
+
+## mtlGen
+
+Generation of specific mtl files for the modelGenerator to use is rather tricky. Thus I also made a python script that generates valid mtl files from texture packs.
+
+```Bash
+python3 mtlGen.py <path to /assets/minecraft/textures/block folder of a texture pack> <args>
+```
+
+Currently the script only accepts a single argument: -s that simplifies the generation to only extract colors
 
 ## API
 

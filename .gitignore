@@ -9,3 +9,6 @@ modelGenerator
 regionFileReader
 !0.0.nbt
 *.log
+mtlGen
+/block
+out.mtl

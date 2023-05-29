@@ -9,6 +9,9 @@
 
 //Program for extracting all nbts from a savefile
 int main(int argc, char** argv){
+    if(argc < 2){
+        argCountError();
+    }
     //foreach argument
     for(int i = 2; i < argc; i+=2){
         printf("Starting extraction of %s to %s\n", argv[i - 1], argv[i]);

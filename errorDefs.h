@@ -27,3 +27,13 @@
 #define argError(argName, argCount) \
         fprintf(stderr, "Incorrect number of arguments." argName " requires " argCount " arguments to follow."); \
         break;
+
+#define argCountError() \
+        fprintf(stderr, "No arguments were provided"); \
+        perror("Arg count error."); \
+        exit(EXIT_FAILURE);
+
+#define dirError(dirname) \
+        fprintf(stderr, "Directory %s couldn't be opened", dirname); \
+        perror("Dir error."); \
+        exit(EXIT_FAILURE);

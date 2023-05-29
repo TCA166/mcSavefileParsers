@@ -119,33 +119,26 @@ void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType){
     }
 }
 
-int getIndex(char** strArr, int arrLen, char* val){
-    if(strArr == NULL){
-        return -1;
-    }
-    for(int i = 0; i < arrLen; i++){
-        if(strcmp(strArr[i], val) == 0){
-            return i;
+unsigned char isNotEmpty(struct cube c){
+    for(int i = 0; i < 6; i++){
+        if(c.faces[i] != NULL){
+            return 1;
         }
     }
-    return -1;
+    return 0;
 }
 
 char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** typeArr, int materialLen, char* materialFileName){
     char* fileContents = NULL;
     (*outSize)++;
     fileContents = malloc(*outSize);
+    fileContents[0] = '\0';
     if(materialFileName != NULL){
-        fileContents = realloc(fileContents, *outSize + 7 + strlen(materialFileName));
+        *outSize += 9 + strlen(materialFileName);
+        fileContents = realloc(fileContents, *outSize);
         strcat(fileContents, "mtllib ");
         strcat(fileContents, materialFileName);
-    }
-    if(typeArr != NULL){
-        for(int i = 0; i < materialLen; i++){
-            fileContents = realloc(fileContents, *outSize + 7 + strlen(typeArr[i]));
-            strcat(fileContents, "usemtl ");
-            strcat(fileContents, typeArr[i]);
-        }
+        strcat(fileContents, "\n");
     }
     int n = 0;
     //foreach cube
@@ -156,7 +149,25 @@ char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** 
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
                 struct cube thisCube = thisModel->cubes[x][y][z];
-                if(strcmp(thisCube.type, ignoreType) != 0){
+                if(strcmp(thisCube.type, ignoreType) != 0 && isNotEmpty(thisCube)){
+                    if(materialFileName != NULL){
+                        //add the usemtl line
+                        char* nameEnd = strchr(thisCube.type, ':');
+                        if(nameEnd != NULL){
+                            nameEnd++;
+                        }
+                        else{
+                            nameEnd = thisCube.type;
+                        }
+                        size_t mtlLineSize = 9 + strlen(nameEnd);
+                        char* mtlLine = malloc(mtlLineSize);
+                        snprintf(mtlLine, mtlLineSize, "usemtl %s\n", nameEnd);
+                        *outSize += mtlLineSize;
+                        fileContents = realloc(fileContents, *outSize);
+                        strcat(fileContents, mtlLine);
+                        free(mtlLine);
+                    }
+                    //object definition
                     size_t objectLineSize = 11 + digits(x) + digits(y) + digits(z) + strlen(thisCube.type);
                     char* objectLine = NULL;
                     objectLine = malloc(objectLineSize);
@@ -178,7 +189,6 @@ char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** 
                         strcat(fileContents, vertexLine);
                         free(vertexLine);
                     }
-                    int material = getIndex(typeArr, materialLen, thisCube.type);
                     //foreach face
                     for(int i = 0; i < 6; i++){
                         struct cubeFace* face = NULL;
@@ -191,16 +201,9 @@ char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** 
                             face->v4 += offset;
                             size_t size = 0;
                             char* line = NULL;
-                            if(material > -1){
-                                size = 11 + digits(face->v1) + digits(face->v2) + digits(face->v3) + digits(face->v4) + (digits(material) * 4); 
-                                line = malloc(size);
-                                snprintf(line, size, "f %d/%d %d/%d %d/%d %d/%d\n", face->v1, material, face->v2, material, face->v3, material, face->v4, material); 
-                            }
-                            else{
-                                size = 7 + digits(face->v1) + digits(face->v2) + digits(face->v3) + digits(face->v4); 
-                                line = malloc(size);
-                                snprintf(line, size, "f %d %d %d %d\n", face->v1, face->v2, face->v3, face->v4); 
-                            }
+                            size = 7 + digits(face->v1) + digits(face->v2) + digits(face->v3) + digits(face->v4); 
+                            line = malloc(size);
+                            snprintf(line, size, "f %d %d %d %d\n", face->v1, face->v2, face->v3, face->v4); 
                             //fprintf(stderr, "%d:f %d %d %d %d-%s", i, offset + face->v1, offset + face->v2, offset + face->v3, offset + face->v4, line);
                             *outSize += size;
                             fileContents = realloc(fileContents, *outSize);
