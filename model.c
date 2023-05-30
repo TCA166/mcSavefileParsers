@@ -272,6 +272,7 @@ struct material* getMaterials(FILE* mtlFile, int* outLen){
         }
         token = strtok(NULL, "\n");
     }
+    free(bytes);
     *outLen = i;
     return result;
 }

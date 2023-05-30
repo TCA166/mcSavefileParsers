@@ -34,6 +34,7 @@ int main(int argc, char** argv){
             yLim = 1;
             upLim = atoi(argv[i + 1]);
             downLim = atoi(argv[i + 2]);
+            printf("Enabled vertical limit from y=%d to y=%d\n", downLim, upLim);
             i += 2;
         }
         else if(strcmp(argv[i], "-f") == 0){
@@ -62,7 +63,7 @@ int main(int argc, char** argv){
         }
     }
     //Get the nbt data
-    FILE* nbtFile = fopen(argv[1], "r");
+    FILE* nbtFile = fopen(argv[1], "rb");
     if(nbtFile == NULL){
         fileError(argv[1]);
     }
@@ -75,6 +76,7 @@ int main(int argc, char** argv){
     //Array of sections in this chunk
     struct section sections[maxSections] = {};
     int n = getSections(data, sz, sections);
+    free(data);
     //It is possible to not have to iterate over each block again, and do everything in a single loop.
     //But that would be less readable and put more of a strain on memory since the entire nbt file would have to be there
     model newModel = initModel(16,16 * n, 16);
@@ -143,6 +145,7 @@ int main(int argc, char** argv){
     FILE* outFile = fopen("out.obj", "wb");
     fwrite(content, size, 1, outFile);
     fclose(outFile);
+    free(content);
     return 0;
 }
 
