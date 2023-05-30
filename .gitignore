@@ -12,3 +12,6 @@ regionFileReader
 mtlGen
 /block
 !out.mtl
+*.exe
+*.ow
+*.txt
