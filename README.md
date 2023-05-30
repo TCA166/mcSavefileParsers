@@ -2,9 +2,9 @@
 
 Multiple programs for Minecraft savefile data extraction and 3D model generation based on savefiles.  
 
-## Compilation
+## Getting started
 
-On linux compilation is straightforward: run compile.sh. Cross-compilation or compilation under Windows is possible, but first you need to install zlib. After that everything should compile smoothly
+In order to get started either download the parts of the precompiled release that apply to your system or compile the source code yourself. For that compile.sh script was created and for crosscompilation for Windows winCompile.sh was created.
 
 ## regionFileReader
 
