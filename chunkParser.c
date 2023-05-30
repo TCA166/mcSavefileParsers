@@ -152,10 +152,10 @@ char contains(char** arr, char* str, int arrLen){
 }
 
 //this code feels wrong to write in C ngl...
-char** createGlobalPalette(struct section* sections, int* len, int* outLen, char freeSectionPalletes){
+char** createGlobalPalette(struct section* sections, int len, int* outLen, char freeSectionPalletes){
     char** globalPalette = malloc(0);
     int j = 0;
-    for(int i = 0; i < *len; i++){
+    for(int i = 0; i < len; i++){
         for(int n = 0; n < sections[i].paletteLen; n++){
             if(!contains(globalPalette, sections[i].blockPalette[n], j)){
                 globalPalette = realloc(globalPalette, (j + 1) * sizeof(char*));
@@ -169,4 +169,13 @@ char** createGlobalPalette(struct section* sections, int* len, int* outLen, char
     }
     *outLen = j;
     return globalPalette;
+}
+
+void freeSections(struct section* sections, int sectionLen){
+    for(int i = 0; i < sectionLen; i++){
+        for(int n = 0; n < sections[i].paletteLen; n++){
+            free(sections[i].blockPalette[n]);
+        }
+        free(sections[i].blockPalette);
+    }
 }

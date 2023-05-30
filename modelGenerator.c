@@ -12,7 +12,7 @@
 //moved this here from model.c in order to properly separate that file into a proper 3d model rendering lib and a chunk nbt handling lib
 
 //Creates a new cube object based on a block object
-struct cube cubeFromBlock(struct block block, const int side);
+struct cube cubeFromBlock(struct block block, const int side, struct material* material);
 
 int main(int argc, char** argv){
     if(argc < 2){
@@ -78,6 +78,16 @@ int main(int argc, char** argv){
     //It is possible to not have to iterate over each block again, and do everything in a single loop.
     //But that would be less readable and put more of a strain on memory since the entire nbt file would have to be there
     model newModel = initModel(16,16 * n, 16);
+
+    int materialLen = 0; //length of materials
+    struct material* materials = NULL; //array of materials
+    if(materialFilename != NULL){
+        //parse the material file, afterall we have to account for transparent textures
+        FILE* mtl = fopen(materialFilename, "r");
+        materials = getMaterials(mtl, &materialLen);
+        fclose(mtl);
+    } 
+
     //now we have to decrypt the data in sections
     for(int i = 0; i < n; i++){
         //create the block state array
@@ -91,28 +101,44 @@ int main(int argc, char** argv){
                     if((newBlock.y > upLim || newBlock.y < downLim) && yLim){
                         newBlock.type = mcAir;
                     }
-                    newModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = cubeFromBlock(newBlock, side);
+                    struct material* m = NULL;
+                    if(materialFilename != NULL){
+                        char* nameEnd = strchr(newBlock.type, ':');
+                        if(nameEnd != NULL){
+                            nameEnd++;
+                        }
+                        else{
+                            nameEnd = newBlock.type;
+                        }
+                        for(int n = 0; n < materialLen; n++){
+                            if(strcmp(materials[n].name, nameEnd) == 0){
+                                m = &materials[n];
+                            }
+                        }
+                        if(m == NULL && strcmp(newBlock.type, mcAir) != 0){ //material wasn't found oops
+                            materialWarning(newBlock.type);
+                        }
+                    }
+                    newModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = cubeFromBlock(newBlock, side, m);
                 }
             }
         }
         free(states);
     }
     if(!f){
-        cullFaces(&newModel, !b, mcAir);
+        cullFaces(&newModel, !b, mcAir, materials, materialLen);
         printf("Model faces culled\n");
     }
-    int globalLen = 0;
-    char** globalPalette = NULL;
-    if(materialFilename != NULL){
-        globalPalette = createGlobalPalette(sections, &n, &globalLen, 1);
-    } 
     size_t size = 0;
-    char* content = generateModel(&newModel, &size, mcAir, globalPalette, globalLen, materialFilename);
+    char* content = generateModel(&newModel, &size, mcAir, materialFilename);
     freeModel(&newModel);
-    for(int i = 0; i < globalLen; i++){
-        free(globalPalette[i]);
+    freeSections(sections, n);
+    for(int i = 0; i < materialLen; i++){
+        free(materials[i].name);
     }
-    free(globalPalette);
+    if(materialFilename != NULL){
+        free(materials);
+    }
     printf("Model string generated\n");
     FILE* outFile = fopen("out.obj", "wb");
     fwrite(content, size, 1, outFile);
@@ -120,7 +146,7 @@ int main(int argc, char** argv){
     return 0;
 }
 
-struct cube cubeFromBlock(struct block block, const int side){
+struct cube cubeFromBlock(struct block block, const int side, struct material* material){
     struct cube newCube;
     float dist = side/2;
     newCube.side = side;
@@ -143,6 +169,8 @@ struct cube cubeFromBlock(struct block block, const int side){
     newCube.faces[3] = newCubeFace(7, 3, 1, 5); //back -z
     newCube.faces[4] = newCubeFace(7, 5, 4, 6); //left -x
     newCube.faces[5] = newCubeFace(7, 6, 2, 3); //down -y
+
+    newCube.m = material;
 
     newCube.type = block.type;
     return newCube;

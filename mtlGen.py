@@ -5,11 +5,17 @@ import os
 #a python script for generating mtl files
 
 if __name__ == "__main__":
-    s = False
+    s = False #simplified mode
+    t = False #top correction
+    c = False #color correction
     path = sys.argv[1]
     for el in sys.argv:
         if el == "-s":
             s = True
+        if el == "-t":
+            t = True
+        if el == "-c":
+            c = True
     with open("out.mtl", "w") as o:
         for filename in os.listdir(path):
             f = os.path.join(path, filename)
@@ -29,6 +35,8 @@ if __name__ == "__main__":
                 rgb[1] /= (amt * 255)
                 rgb[2] /= (amt * 255)
                 rgb[3] /= amt
+                if "top" in filename and t:
+                    filename = filename.replace("_top", "", 1)
                 o.write("newmtl %s\n" % filename[:-4])
                 o.write("Ka %.3f %.3f %.3f\n" % (rgb[0], rgb[1], rgb[2]))
                 o.write("Kd %.3f %.3f %.3f\n" % (rgb[0], rgb[1], rgb[2]))

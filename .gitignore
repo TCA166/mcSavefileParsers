@@ -11,4 +11,4 @@ regionFileReader
 *.log
 mtlGen
 /block
-out.mtl
+!out.mtl

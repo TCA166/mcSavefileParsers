@@ -5,6 +5,10 @@
 
 #include "model.h"
 
+#define freeCubeFace(c, n) free(c.faces[n]); c.faces[n] = NULL;
+
+#define faceCheck(t) strcmp(t.type, ignoreType) != 0 && (t.m == NULL || t.m->d == 1)
+
 int digits(int i){
     if(i == 0){
         return 1;
@@ -56,19 +60,18 @@ struct face deCube(struct cubeFace face, struct cube originalCube){
     return new;
 }
 
-void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType){
+void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType, struct material* materials, int materialLen){
     for(int x = 0; x < thisModel->x; x++){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
                 struct cube c = thisModel->cubes[x][y][z];
-                //something is up with the culling algorythm. Not sure what though
                 //x
                 if( x + 1 >= thisModel->x){
                     if(cullChunkBorder){
                         freeCubeFace(c, 0);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x + 1][y][z].type, ignoreType) != 0){
+                else if(faceCheck(thisModel->cubes[x + 1][y][z])){
                     freeCubeFace(c, 0);
                 }
                 if( x - 1 < 0){
@@ -76,7 +79,7 @@ void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType){
                         freeCubeFace(c, 4);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x - 1][y][z].type, ignoreType) != 0){
+                else if(faceCheck(thisModel->cubes[x - 1][y][z])){
                     freeCubeFace(c, 4);
                 }
                 //y
@@ -85,7 +88,7 @@ void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType){
                         freeCubeFace(c, 1);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y + 1][z].type, ignoreType) != 0){
+                else if(faceCheck(thisModel->cubes[x][y + 1][z])){
                     freeCubeFace(c, 1);
                 }
                 if( y - 1 < 0){
@@ -93,7 +96,7 @@ void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType){
                         freeCubeFace(c, 5);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y - 1][z].type, ignoreType) != 0){
+                else if(faceCheck(thisModel->cubes[x][y - 1][z])){
                     freeCubeFace(c, 5);
                 }
                 //z
@@ -102,7 +105,7 @@ void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType){
                         freeCubeFace(c, 2);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y][z + 1].type, ignoreType) != 0){
+                else if(faceCheck(thisModel->cubes[x][y][z + 1])){
                     freeCubeFace(c, 2);
                 }
                 if( z - 1 < 0){
@@ -110,7 +113,7 @@ void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType){
                         freeCubeFace(c, 3);
                     }
                 }
-                else if(strcmp(thisModel->cubes[x][y][z - 1].type, ignoreType) != 0){
+                else if(faceCheck(thisModel->cubes[x][y][z - 1])){
                     freeCubeFace(c, 3);
                 }
                 thisModel->cubes[x][y][z] = c;
@@ -128,7 +131,7 @@ unsigned char isNotEmpty(struct cube c){
     return 0;
 }
 
-char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** typeArr, int materialLen, char* materialFileName){
+char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char* materialFileName){
     char* fileContents = NULL;
     (*outSize)++;
     fileContents = malloc(*outSize);
@@ -150,18 +153,11 @@ char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char** 
             for(int z = 0; z < thisModel->z; z++){
                 struct cube thisCube = thisModel->cubes[x][y][z];
                 if(strcmp(thisCube.type, ignoreType) != 0 && isNotEmpty(thisCube)){
-                    if(materialFileName != NULL){
+                    if(materialFileName != NULL && thisCube.m != NULL){
                         //add the usemtl line
-                        char* nameEnd = strchr(thisCube.type, ':');
-                        if(nameEnd != NULL){
-                            nameEnd++;
-                        }
-                        else{
-                            nameEnd = thisCube.type;
-                        }
-                        size_t mtlLineSize = 9 + strlen(nameEnd);
+                        size_t mtlLineSize = 9 + strlen(thisCube.m->name);
                         char* mtlLine = malloc(mtlLineSize);
-                        snprintf(mtlLine, mtlLineSize, "usemtl %s\n", nameEnd);
+                        snprintf(mtlLine, mtlLineSize, "usemtl %s\n", thisCube.m->name);
                         *outSize += mtlLineSize;
                         fileContents = realloc(fileContents, *outSize);
                         strcat(fileContents, mtlLine);
@@ -235,4 +231,47 @@ void freeModel(model* m){
         free(m->cubes[x]);
     }
     free(m->cubes);
+}
+
+struct material* getMaterials(FILE* mtlFile, int* outLen){
+    struct material* result = malloc(0);
+    int i = 0;
+    fseek(mtlFile, 0, SEEK_END);
+    long sz = ftell(mtlFile);
+    fseek(mtlFile, 0, SEEK_SET); 
+    char* bytes = malloc(sz + 1);
+    fread(bytes, sz, 1, mtlFile);
+    bytes[sz] = '\0';
+    char* token = strtok(bytes, "\n");
+    while(token != NULL){ //foreach line
+        struct material newMaterial;
+        int len = strlen(token);
+        if(len > 7){
+            if(token[0] == 'n' && token[4] == 't' && token[6] == ' '){
+                //we are in the newmtl line
+                char* name = strchr(token, ' ');
+                if(name != NULL){
+                    name++;
+                    newMaterial.name = malloc(strlen(name) + 1);
+                    strcpy(newMaterial.name, name);
+                }
+            }
+        }
+        else if(len > 2){
+            if(token[0] == 'd' && token[1] == ' '){
+                //we are in the d line
+                char* f = strchr(token, ' ');
+                if(f != NULL){
+                    f++;
+                    newMaterial.d = atof(f);
+                    result = realloc(result, (i + 1) * sizeof(struct material));
+                    result[i] = newMaterial;
+                    i++;
+                }
+            }
+        }
+        token = strtok(NULL, "\n");
+    }
+    *outLen = i;
+    return result;
 }

@@ -37,3 +37,6 @@
         fprintf(stderr, "Directory %s couldn't be opened", dirname); \
         perror("Dir error."); \
         exit(EXIT_FAILURE);
+
+#define materialWarning(type) \
+        fprintf(stderr, "Material for %s couldn't be found in the mtl file.\n", type);
