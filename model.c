@@ -5,15 +5,16 @@
 
 #include "model.h"
 
-#define freeCubeFace(c, n) free(c.faces[n]); c.faces[n] = NULL;
+#define freeCubeFace(c, n) free((*c).faces[n]); (*c).faces[n] = NULL;
 
-#define faceCheck(t) strcmp(t.type, ignoreType) != 0 && (t.m == NULL || t.m->d == 1)
+#define faceCheck(t) t!=NULL && ((*t).m == NULL || (*t).m->d == 1)
 
 int digits(int i){
     if(i == 0){
         return 1;
     }
-    return floor(log10(abs(i))) + 1;
+    double x = (double)abs(i);
+    return (int)floor(log10(x)) + 1;
 }
 
 model initModel(int x, int y, int z){
@@ -21,11 +22,26 @@ model initModel(int x, int y, int z){
     newModel.x = x;
     newModel.y = y;
     newModel.z = z;
-    newModel.cubes = malloc(x * sizeof(struct cube**));
+    newModel.objects = malloc(x * sizeof(struct object***));
     for(int i = 0; i < x; i++){
-        newModel.cubes[i] = malloc(y * sizeof(struct cube*));
+        newModel.objects[i] = malloc(y * sizeof(struct object**));
         for(int n = 0; n < y; n++){
-            newModel.cubes[i][n] = malloc(z * sizeof(struct cube));
+            newModel.objects[i][n] = malloc(z * sizeof(struct object*));
+        }
+    }
+    return newModel;
+}
+
+struct cubeModel initCubeModel(int x, int y, int z){
+    struct cubeModel newModel;
+    newModel.x = x;
+    newModel.y = y;
+    newModel.z = z;
+    newModel.cubes = malloc(x * sizeof(struct cube***));
+    for(int i = 0; i < x; i++){
+        newModel.cubes[i] = malloc(y * sizeof(struct cube**));
+        for(int n = 0; n < y; n++){
+            newModel.cubes[i][n] = malloc(z * sizeof(struct cube*));
         }
     }
     return newModel;
@@ -50,88 +66,129 @@ struct cubeFace* newCubeFace(int a, int b, int c, int d){
     return face;
 }
 
-struct face deCube(struct cubeFace face, struct cube originalCube){
-    struct face new;
-    new.vertices = malloc(sizeof(struct vertex) * 4);
-    new.vertices[0] = originalCube.vertices[face.v1];
-    new.vertices[1] = originalCube.vertices[face.v2];
-    new.vertices[2] = originalCube.vertices[face.v3];
-    new.vertices[3] = originalCube.vertices[face.v4];
+struct objFace deCube(struct cubeFace face){
+    struct objFace new;
+    new.vertices = malloc(sizeof(int) * 4);
+    new.vertices[0] = face.v1;
+    new.vertices[1] = face.v2;
+    new.vertices[2] = face.v3;
+    new.vertices[3] = face.v4;
+    new.vertexCount = 4;
     return new;
 }
 
-void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType, struct material* materials, int materialLen){
+void cullFaces(struct cubeModel* thisModel, char cullChunkBorder){
     for(int x = 0; x < thisModel->x; x++){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
-                struct cube c = thisModel->cubes[x][y][z];
-                //x
-                if( x + 1 >= thisModel->x){
-                    if(cullChunkBorder){
+                struct cube* c = thisModel->cubes[x][y][z];
+                if(c != NULL){
+                    //x
+                    if( x + 1 >= thisModel->x){
+                        if(cullChunkBorder){
+                            freeCubeFace(c, 0);
+                        }
+                    }
+                    else if(faceCheck(thisModel->cubes[x + 1][y][z])){
                         freeCubeFace(c, 0);
                     }
-                }
-                else if(faceCheck(thisModel->cubes[x + 1][y][z])){
-                    freeCubeFace(c, 0);
-                }
-                if( x - 1 < 0){
-                    if(cullChunkBorder){
+                    if( x - 1 < 0){
+                        if(cullChunkBorder){
+                            freeCubeFace(c, 4);
+                        }
+                    }
+                    else if(faceCheck(thisModel->cubes[x - 1][y][z])){
                         freeCubeFace(c, 4);
                     }
-                }
-                else if(faceCheck(thisModel->cubes[x - 1][y][z])){
-                    freeCubeFace(c, 4);
-                }
-                //y
-                if( y + 1 >= thisModel->y){
-                    if(cullChunkBorder){
+                    //y
+                    if( y + 1 >= thisModel->y){
+                        if(cullChunkBorder){
+                            freeCubeFace(c, 1);
+                        }
+                    }
+                    else if(faceCheck(thisModel->cubes[x][y + 1][z])){
                         freeCubeFace(c, 1);
                     }
-                }
-                else if(faceCheck(thisModel->cubes[x][y + 1][z])){
-                    freeCubeFace(c, 1);
-                }
-                if( y - 1 < 0){
-                    if(cullChunkBorder){
+                    if( y - 1 < 0){
+                        if(cullChunkBorder){
+                            freeCubeFace(c, 5);
+                        }
+                    }
+                    else if(faceCheck(thisModel->cubes[x][y - 1][z])){
                         freeCubeFace(c, 5);
                     }
-                }
-                else if(faceCheck(thisModel->cubes[x][y - 1][z])){
-                    freeCubeFace(c, 5);
-                }
-                //z
-                if( z + 1 >= thisModel->z){
-                    if(cullChunkBorder){
+                    //z
+                    if( z + 1 >= thisModel->z){
+                        if(cullChunkBorder){
+                            freeCubeFace(c, 2);
+                        }
+                    }
+                    else if(faceCheck(thisModel->cubes[x][y][z + 1])){
                         freeCubeFace(c, 2);
                     }
-                }
-                else if(faceCheck(thisModel->cubes[x][y][z + 1])){
-                    freeCubeFace(c, 2);
-                }
-                if( z - 1 < 0){
-                    if(cullChunkBorder){
+                    if( z - 1 < 0){
+                        if(cullChunkBorder){
+                            freeCubeFace(c, 3);
+                        }
+                    }
+                    else if(faceCheck(thisModel->cubes[x][y][z - 1])){
                         freeCubeFace(c, 3);
                     }
+                    
+                    thisModel->cubes[x][y][z] = c;
                 }
-                else if(faceCheck(thisModel->cubes[x][y][z - 1])){
-                    freeCubeFace(c, 3);
-                }
-                thisModel->cubes[x][y][z] = c;
             }
         }
     }
 }
 
-unsigned char isNotEmpty(struct cube c){
+struct object deCubeObject(struct cube* c){
+    struct object result;
+    result.faceCount = 0;
+    result.faces = malloc(0);
     for(int i = 0; i < 6; i++){
-        if(c.faces[i] != NULL){
-            return 1;
+        if(c->faces[i] != NULL){
+            result.faces = realloc(result.faces, (result.faceCount + 1) * sizeof(struct objFace));
+            result.faces[result.faceCount] = deCube(*(c->faces[i]));
+            result.faceCount++;
         }
+    }
+    result.vertexCount = 8;
+    result.vertices = malloc(8 * sizeof(struct vertex));
+    memcpy(result.vertices, c->vertices, 8 * sizeof(struct vertex));
+    result.m = c->m;
+    return result;
+}
+
+model cubeModelToModel(struct cubeModel* m){
+    model result = initModel(m->x, m->y, m->z);
+    for(int x = 0; x < m->x; x++){
+        for(int y = 0; y < m->y; y++){
+            for(int z = 0; z < m->z; z++){
+                if(m->cubes[x][y][z] != NULL){
+                    result.objects[x][y][z] = malloc(sizeof(struct object));
+                    *(result.objects[x][y][z]) = deCubeObject(m->cubes[x][y][z]);
+                }
+                else{
+                    result.objects[x][y][z] = NULL;
+                }
+            }
+        }
+    }
+    return result;
+}
+
+unsigned char isNotEmpty(struct object* c){
+    if(c == NULL){
+        return 0;
+    }
+    if(c->faceCount > 0){
+        return 1;
     }
     return 0;
 }
 
-char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char* materialFileName){
+char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
     char* fileContents = NULL;
     (*outSize)++;
     fileContents = malloc(*outSize);
@@ -144,37 +201,37 @@ char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char* m
         strcat(fileContents, "\n");
     }
     int n = 0;
-    //foreach cube
+    //foreach object
     for(int x = 0; x < thisModel->x; x++){
         //detailed enough progress feedback for me
         fprintf(stdout, "%.2f%% done\r", ((float)x)/16 * 100); 
         fflush(stdout);
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
-                struct cube thisCube = thisModel->cubes[x][y][z];
-                if(strcmp(thisCube.type, ignoreType) != 0 && isNotEmpty(thisCube)){
-                    if(materialFileName != NULL && thisCube.m != NULL){
+                struct object* thisObject = thisModel->objects[x][y][z];
+                if(thisObject != NULL && isNotEmpty(thisObject)){
+                    if(materialFileName != NULL && thisObject->m != NULL){
                         //add the usemtl line
-                        size_t mtlLineSize = 9 + strlen(thisCube.m->name);
+                        size_t mtlLineSize = 9 + strlen(thisObject->m->name);
                         char* mtlLine = malloc(mtlLineSize);
-                        snprintf(mtlLine, mtlLineSize, "usemtl %s\n", thisCube.m->name);
+                        snprintf(mtlLine, mtlLineSize, "usemtl %s\n", thisObject->m->name);
                         *outSize += mtlLineSize;
                         fileContents = realloc(fileContents, *outSize);
                         strcat(fileContents, mtlLine);
                         free(mtlLine);
                     }
                     //object definition
-                    size_t objectLineSize = 11 + digits(x) + digits(y) + digits(z) + strlen(thisCube.type);
+                    size_t objectLineSize = 10 + digits(x) + digits(y) + digits(z);
                     char* objectLine = NULL;
                     objectLine = malloc(objectLineSize);
-                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s\n", x, y, z, thisCube.type);
+                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d\n", x, y, z);
                     *outSize += objectLineSize;
                     fileContents = realloc(fileContents, *outSize);
                     strcat(fileContents, objectLine);
                     free(objectLine);
                     //foreach vertex
-                    for(int i = 0; i < 8; i++){
-                        struct vertex v = thisCube.vertices[i];
+                    for(int i = 0; i < thisObject->vertexCount; i++){
+                        struct vertex v = thisObject->vertices[i];
                         size_t size = 27 + digits((int)v.x) + digits((int)v.y) + digits((int)v.z);
                         //printf("%d %d %2f\n", size, digits(v.x), v.x);
                         char* vertexLine = NULL;
@@ -186,26 +243,28 @@ char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char* m
                         free(vertexLine);
                     }
                     //foreach face
-                    for(int i = 0; i < 6; i++){
-                        struct cubeFace* face = NULL;
-                        face = thisCube.faces[i];
-                        if(face != NULL){
-                            int offset = n*8 + 1;
-                            face->v1 += offset;
-                            face->v2 += offset;
-                            face->v3 += offset;
-                            face->v4 += offset;
-                            size_t size = 0;
-                            char* line = NULL;
-                            size = 7 + digits(face->v1) + digits(face->v2) + digits(face->v3) + digits(face->v4); 
-                            line = malloc(size);
-                            snprintf(line, size, "f %d %d %d %d\n", face->v1, face->v2, face->v3, face->v4); 
-                            //fprintf(stderr, "%d:f %d %d %d %d-%s", i, offset + face->v1, offset + face->v2, offset + face->v3, offset + face->v4, line);
-                            *outSize += size;
-                            fileContents = realloc(fileContents, *outSize);
-                            strcat(fileContents, line);
-                            free(line);
+                    for(int i = 0; i < thisObject->faceCount; i++){
+                        struct objFace face = thisObject->faces[i];
+                        int offset = n*8 + 1;
+                        size_t size = 4;
+                        for(int n = 0; n < face.vertexCount; n++){
+                            face.vertices[n] += offset;
+                            size += digits(face.vertices[n]);
                         }
+                        char* line = malloc(size);
+                        line[0] = '\0';
+                        strcat(line, "f ");
+                        int lineOff = 2;
+                        for(int n = 0; n < face.vertexCount; n++){
+                            size_t len = digits(face.vertices[n]) + 1;
+                            snprintf(line + lineOff, len + 1, "%d ", face.vertices[n]); //invalid writes and reads of 1 here. no clue why
+                            lineOff += len;
+                        }
+                        strcat(line, "\n");
+                        *outSize += size;
+                        fileContents = realloc(fileContents, *outSize);
+                        strcat(fileContents, line);
+                        free(line);
                     }
                     n++;
                 }
@@ -220,11 +279,34 @@ void freeModel(model* m){
     for(int x = 0; x < m->x; x++){
         for(int y = 0; y < m->y; y++){
             for(int z = 0; z < m->z; z++){
-                for(int i = 0; i < 6; i++){
-                    if(m->cubes[x][y][z].faces[i] != NULL){
-                        free(m->cubes[x][y][z].faces[i]);
+                if(m->objects[x][y][z] != NULL){
+                    for(int i = 0; i < m->objects[x][y][z]->faceCount; i++){
+                        free(m->objects[x][y][z]->faces[i].vertices);
                     }
+                    free(m->objects[x][y][z]->faces);
+                    free(m->objects[x][y][z]->vertices);
                 }
+                free(m->objects[x][y][z]);
+            }
+            free(m->objects[x][y]);
+        }
+        free(m->objects[x]);
+    }
+    free(m->objects);
+}
+
+void freeCubeModel(struct cubeModel* m){
+    for(int x = 0; x < m->x; x++){
+        for(int y = 0; y < m->y; y++){
+            for(int z = 0; z < m->z; z++){
+                for(int i = 0; i < 6; i++){
+                    /* uncomment this to fix memory leak, but also causes segfault for whatever reason
+                    if(m->cubes[x][y][z]->faces[i] != NULL){
+                        free(m->cubes[x][y][z]->faces[i]);
+                    }
+                    */
+                }
+                free(m->cubes[x][y][z]);
             }
             free(m->cubes[x][y]);
         }

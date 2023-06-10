@@ -27,16 +27,38 @@ struct cubeFace{
     int v4;
 };
 
-//obj file face
-struct face{
-    struct vertex* vertices;
+//A dynamic array of vertices - an object face
+struct objFace{
+    int vertexCount;
+    int* vertices;
 };
 
+//A dynamic obj file object
+struct object{
+    float x;
+    float y;
+    float z;
+    int vertexCount;
+    struct vertex* vertices;
+    int faceCount;
+    struct objFace* faces; //doesn't need to be nullable
+    struct material* m;
+};
+
+//model without constraints, however one that can't be culled
 struct model{
     int x;
     int y;
     int z;
-    struct cube*** cubes;
+    struct object**** objects;
+};
+
+//model with constraints, however can be culled
+struct cubeModel{
+    int x;
+    int y;
+    int z;
+    struct cube**** cubes; //nullable 3d array of cubes
 };
 
 //mtl material
@@ -52,15 +74,23 @@ typedef struct model model;
 //Initialises a model variable
 model initModel(int x, int y, int z);
 
+//Initialises a new cubeModel variable
+struct cubeModel initCubeModel(int x, int y, int z);
+
 //Creates a new vertex
 struct vertex newVertex(int x, int y, int z);
 
 //Removes all outward or internal faces from a model
-void cullFaces(model* thisModel, char cullChunkBorder, char* ignoreType, struct material* materials, int materialLen);
+void cullFaces(struct cubeModel* thisModel, char cullChunkBorder);
+
+//Converts a cubeModel to a normal model
+model cubeModelToModel(struct cubeModel* m);
 
 //Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
 //typeArr can be NULL if you wish to not generate a textured model
-char* generateModel(model* thisModel, size_t* outSize, char* ignoreType, char* materialFileName);
+char* generateModel(model* thisModel, size_t* outSize, char* materialFileName);
+
+void freeCubeModel(struct cubeModel* m);
 
 //Frees everything that can be allocated in a model m
 void freeModel(model* m);
@@ -70,3 +100,12 @@ struct cubeFace* newCubeFace(int a, int b, int c, int d);
 
 //Extracts materials from a mtl file
 struct material* getMaterials(FILE* mtlFile, int* outLen);
+
+//Converts a cubeface to the dynamic obj face
+struct objFace deCube(struct cubeFace face);
+
+//Converts a cube into an object
+struct object deCubeObject(struct cube* c);
+
+//Converts a cubeModel to a object model
+model cubeModelToModel(struct cubeModel* m);

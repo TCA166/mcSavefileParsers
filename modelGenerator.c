@@ -79,7 +79,7 @@ int main(int argc, char** argv){
     free(data);
     //It is possible to not have to iterate over each block again, and do everything in a single loop.
     //But that would be less readable and put more of a strain on memory since the entire nbt file would have to be there
-    model newModel = initModel(16,16 * n, 16);
+    struct cubeModel cubeModel = initCubeModel(16,16 * n, 16);
 
     int materialLen = 0; //length of materials
     struct material* materials = NULL; //array of materials
@@ -121,18 +121,27 @@ int main(int argc, char** argv){
                             materialWarning(newBlock.type);
                         }
                     }
-                    newModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = cubeFromBlock(newBlock, side, m);
+                    if(strcmp(newBlock.type, mcAir) != 0){
+                        cubeModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = malloc(sizeof(struct cube));
+                        *(cubeModel.cubes[x][y + ((sections[i].y + 4) * 16)][z]) = cubeFromBlock(newBlock, side, m);
+                    }
+                    else{
+                        cubeModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = NULL;
+                    }
+                    
                 }
             }
         }
         free(states);
     }
     if(!f){
-        cullFaces(&newModel, !b, mcAir, materials, materialLen);
+        cullFaces(&cubeModel, !b);
         printf("Model faces culled\n");
     }
+    model newModel = cubeModelToModel(&cubeModel);
+    freeCubeModel(&cubeModel);
     size_t size = 0;
-    char* content = generateModel(&newModel, &size, mcAir, materialFilename);
+    char* content = generateModel(&newModel, &size, materialFilename);
     freeModel(&newModel);
     freeSections(sections, n);
     for(int i = 0; i < materialLen; i++){
