@@ -299,12 +299,10 @@ void freeCubeModel(struct cubeModel* m){
     for(int x = 0; x < m->x; x++){
         for(int y = 0; y < m->y; y++){
             for(int z = 0; z < m->z; z++){
-                for(int i = 0; i < 6; i++){
-                    /* uncomment this to fix memory leak, but also causes segfault for whatever reason
-                    if(m->cubes[x][y][z]->faces[i] != NULL){
+                if(m->cubes[x][y][z] != NULL){
+                    for(int i = 0; i < 6; i++){
                         free(m->cubes[x][y][z]->faces[i]);
                     }
-                    */
                 }
                 free(m->cubes[x][y][z]);
             }
