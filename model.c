@@ -356,3 +356,95 @@ struct material* getMaterials(FILE* mtlFile, int* outLen){
     *outLen = i;
     return result;
 }
+
+struct object* readWavefront(char* filename, int* outLen, char** objectNames, struct material* materials, int materialLen){
+    FILE* fp = fopen(filename, "r");
+    if(fp == NULL){
+        return NULL;
+    }
+    fseek(fp, 0, SEEK_END);
+    long sz = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    unsigned char* bytes = malloc(sz);
+    fread(bytes, sz, 1, fp);
+    fclose(fp);
+    char* token = strtok(bytes, "\n");
+    *outLen = 0;
+    if(objectNames != NULL){
+        objectNames = malloc(0);
+    }
+    struct object* objects = malloc(0);
+    struct object newObject;
+    newObject.vertices = malloc(0);
+    newObject.faces = malloc(0);
+    while(token != NULL){
+        switch(token[0]){
+            case 'u':
+                if(materials != NULL){
+                    char* mtlName = strchr(token, ' ');
+                    mtlName++;
+                    for(int n = 0; n < materialLen; n++){
+                        if(strcmp(materials[n].name, mtlName) == 0){
+                            newObject.m = &materials[n];
+                        }
+                    }
+                }
+                break;
+            case 'o':
+                if(objectNames != NULL){
+                    char* name = strchr(token, ' ');
+                    name++;
+                    objectNames = realloc(objectNames, (*outLen + 1) * sizeof(char*));
+                    objectNames[*outLen] = malloc(strlen(name));
+                    strcpy(objectNames[*outLen], name);
+                }
+                objects = realloc(objects, (*outLen + 1) * sizeof(struct object));
+                objects[*outLen] = newObject;
+                //this should 'reset' the newObject
+                newObject.faceCount = 0;
+                newObject.vertexCount = 0;
+                newObject.m = NULL;
+                *outLen++;
+                break;
+            case 'v':
+                float x,y,z;
+                sscanf(token, "v %.6f %.6f %.6f", x, y, z);
+                newObject.vertices = realloc(newObject.vertices, (newObject.vertexCount + 1) * sizeof(struct vertex));
+                newObject.vertices[newObject.vertexCount] = newVertex(x, y, z);
+                newObject.vertexCount++;
+                break;
+            case 'f':
+                int* vertices = malloc(0);
+                char* num = malloc(0);
+                int n = 0;
+                int f = 0;
+                for(int i = 1; i < strlen(token); i++){
+                    if(token[i] == ' '){
+                        if(n > 0){
+                            vertices = realloc(vertices, (f + 1) * sizeof(int));
+                            num = realloc(num, n + 1);
+                            num[n] = '\0';
+                            vertices[f] = atoi(num);
+                            f++;
+                        }
+                        n = 0;
+                    }
+                    else{
+                        num = realloc(num, n + 1);
+                        num[n] = token[i];
+                        n++;
+                    }
+                }
+                free(num);
+                struct objFace newFace;
+                newFace.vertexCount = n;
+                newFace.vertices = vertices;
+                newObject.faces = realloc(newObject.faces, (newObject.faceCount + 1) * sizeof(struct objFace));
+                newObject.faces[newObject.faceCount] = newFace;
+                newObject.faceCount++;
+                break;
+        }
+        token = strtok(NULL, "\n");
+    }
+    return objects;
+}

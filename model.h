@@ -109,3 +109,7 @@ struct object deCubeObject(struct cube* c);
 
 //Converts a cubeModel to a object model
 model cubeModelToModel(struct cubeModel* m);
+
+//Returns an array of objects from a .obj file with the given filename. Outputs into outlen the amount of returned objects, into objectNames an array of names of the extracted objects.
+//Allocates memory for objectNames (if it isn't NULL), for the objects themselves and ofcourse for readWavefront. Returns NULL if it can't open filename
+struct object* readWavefront(char* filename, int* outLen, char** objectNames, struct material* materials, int materialLen);
