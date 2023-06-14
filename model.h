@@ -13,9 +13,9 @@ struct cube{
     float y;
     float z;
     float side;
-    struct vertex vertices[8];
+    struct vertex vertices[8]; //array of relative to x,y,z vertices
     struct cubeFace* faces[6]; //array of pointers so that it may be nullable
-    char* type;
+    char* type; //text representing a cube name or a broad type. Feel free to make it NULL
     struct material* m;
 };
 
@@ -39,10 +39,11 @@ struct object{
     float y;
     float z;
     int vertexCount;
-    struct vertex* vertices;
+    struct vertex* vertices; //array of relative to x, y, z vertices
     int faceCount;
     struct objFace* faces; //doesn't need to be nullable
     struct material* m;
+    char* type;
 };
 
 //model without constraints, however one that can't be culled
@@ -81,10 +82,10 @@ struct cubeModel initCubeModel(int x, int y, int z);
 struct vertex newVertex(int x, int y, int z);
 
 //Removes all outward or internal faces from a model
-void cullFaces(struct cubeModel* thisModel, char cullChunkBorder);
+void cullFaces(struct cubeModel* thisModel, char cullChunkBorder, char** ignoreTypes, int ignoreLen);
 
-//Converts a cubeModel to a normal model
-model cubeModelToModel(struct cubeModel* m);
+//Converts a cubeModel to a normal model, and inserts special objects if specialObjects!=NULL when types match
+model cubeModelToModel(struct cubeModel* m, struct object* specialObjects, int specialLen);
 
 //Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
 //typeArr can be NULL if you wish to not generate a textured model
@@ -107,9 +108,6 @@ struct objFace deCube(struct cubeFace face);
 //Converts a cube into an object
 struct object deCubeObject(struct cube* c);
 
-//Converts a cubeModel to a object model
-model cubeModelToModel(struct cubeModel* m);
-
-//Returns an array of objects from a .obj file with the given filename. Outputs into outlen the amount of returned objects, into objectNames an array of names of the extracted objects.
+//Returns an array of objects from a .obj file with the given filename. Outputs into outlen the amount of returned objects.
 //Allocates memory for objectNames (if it isn't NULL), for the objects themselves and ofcourse for readWavefront. Returns NULL if it can't open filename
-struct object* readWavefront(char* filename, int* outLen, char** objectNames, struct material* materials, int materialLen);
+struct object* readWavefront(char* filename, int* outLen, struct material* materials, int materialLen);

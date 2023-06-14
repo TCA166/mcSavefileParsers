@@ -7,7 +7,7 @@
 
 #define freeCubeFace(c, n) free((*c).faces[n]); (*c).faces[n] = NULL;
 
-#define faceCheck(t) t!=NULL && ((*t).m == NULL || (*t).m->d == 1)
+#define faceCheck(t) t!=NULL && ((*t).m == NULL || (*t).m->d == 1) && !isPresent((*t).type, ignoreTypes, ignoreLen)
 
 int digits(int i){
     if(i == 0){
@@ -77,7 +77,19 @@ struct objFace deCube(struct cubeFace face){
     return new;
 }
 
-void cullFaces(struct cubeModel* thisModel, char cullChunkBorder){
+char isPresent(char* string, char** arr, int arrLen){
+    if(arr == NULL){
+        return 0;
+    }
+    for(int i = 0; i < arrLen; i++){
+        if(strcmp(string, arr[i]) == 0){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void cullFaces(struct cubeModel* thisModel, char cullChunkBorder, char** ignoreTypes, int ignoreLen){
     for(int x = 0; x < thisModel->x; x++){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
@@ -144,6 +156,10 @@ void cullFaces(struct cubeModel* thisModel, char cullChunkBorder){
 
 struct object deCubeObject(struct cube* c){
     struct object result;
+    float dist = c->side/2;
+    result.x = (c->x * c->side) + dist;
+    result.y = (c->y * c->side) + dist;
+    result.z = (c->z * c->side) + dist;
     result.faceCount = 0;
     result.faces = malloc(0);
     for(int i = 0; i < 6; i++){
@@ -157,17 +173,43 @@ struct object deCubeObject(struct cube* c){
     result.vertices = malloc(8 * sizeof(struct vertex));
     memcpy(result.vertices, c->vertices, 8 * sizeof(struct vertex));
     result.m = c->m;
+    result.type = malloc(strlen(c->type) + 1);
+    memcpy(result.type, c->type, strlen(c->type) + 1);
     return result;
 }
 
-model cubeModelToModel(struct cubeModel* m){
+int typeInObjects(char* type, struct object* objects, int objLen){
+    if(objects == NULL || type == NULL){
+        return 0;
+    }
+    for(int i = 0; i < objLen; i++){
+        if(strcmp(type, objects[i].type) == 0){
+            return i;
+        }
+    }
+    return 0;
+}
+
+model cubeModelToModel(struct cubeModel* m, struct object* specialObjects, int specialLen){
     model result = initModel(m->x, m->y, m->z);
     for(int x = 0; x < m->x; x++){
         for(int y = 0; y < m->y; y++){
             for(int z = 0; z < m->z; z++){
                 if(m->cubes[x][y][z] != NULL){
+                    int pos = typeInObjects(m->cubes[x][y][z]->type, specialObjects, specialLen);
                     result.objects[x][y][z] = malloc(sizeof(struct object));
-                    *(result.objects[x][y][z]) = deCubeObject(m->cubes[x][y][z]);
+                    if(pos){
+                        float xx = result.objects[x][y][z]->x;
+                        float yx = result.objects[x][y][z]->y;
+                        float zx = result.objects[x][y][z]->z;
+                        *(result.objects[x][y][z]) = specialObjects[pos];
+                        result.objects[x][y][z]->x = xx;
+                        result.objects[x][y][z]->y = yx; 
+                        result.objects[x][y][z]->z = zx;
+                    }
+                    else{
+                        *(result.objects[x][y][z]) = deCubeObject(m->cubes[x][y][z]);
+                    }
                 }
                 else{
                     result.objects[x][y][z] = NULL;
@@ -232,11 +274,15 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                     //foreach vertex
                     for(int i = 0; i < thisObject->vertexCount; i++){
                         struct vertex v = thisObject->vertices[i];
+                        //fprintf(stderr, "%f %f %f", thisObject->x, thisObject->y, thisObject->z);
+                        v.x += thisObject->x;
+                        v.y += thisObject->y;
+                        v.z += thisObject->z;
                         size_t size = 27 + digits((int)v.x) + digits((int)v.y) + digits((int)v.z);
                         //printf("%d %d %2f\n", size, digits(v.x), v.x);
                         char* vertexLine = NULL;
                         vertexLine = malloc(size);
-                        snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.x, v.y, v.z);
+                        snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.x, v.y , v.z);
                         *outSize += size;
                         fileContents = realloc(fileContents, *outSize);
                         strcat(fileContents, vertexLine);
@@ -357,7 +403,7 @@ struct material* getMaterials(FILE* mtlFile, int* outLen){
     return result;
 }
 
-struct object* readWavefront(char* filename, int* outLen, char** objectNames, struct material* materials, int materialLen){
+struct object* readWavefront(char* filename, int* outLen, struct material* materials, int materialLen){
     FILE* fp = fopen(filename, "r");
     if(fp == NULL){
         return NULL;
@@ -370,16 +416,13 @@ struct object* readWavefront(char* filename, int* outLen, char** objectNames, st
     fclose(fp);
     char* token = strtok(bytes, "\n");
     *outLen = 0;
-    if(objectNames != NULL){
-        objectNames = malloc(0);
-    }
     struct object* objects = malloc(0);
     struct object newObject;
     newObject.vertices = malloc(0);
     newObject.faces = malloc(0);
     while(token != NULL){
         switch(token[0]){
-            case 'u':
+            case 'u':;
                 if(materials != NULL){
                     char* mtlName = strchr(token, ' ');
                     mtlName++;
@@ -390,14 +433,11 @@ struct object* readWavefront(char* filename, int* outLen, char** objectNames, st
                     }
                 }
                 break;
-            case 'o':
-                if(objectNames != NULL){
-                    char* name = strchr(token, ' ');
-                    name++;
-                    objectNames = realloc(objectNames, (*outLen + 1) * sizeof(char*));
-                    objectNames[*outLen] = malloc(strlen(name));
-                    strcpy(objectNames[*outLen], name);
-                }
+            case 'o':;
+                char* name = strchr(token, ' ');
+                name++;
+                newObject.type = malloc(strlen(name));
+                strcpy(newObject.type, name);
                 objects = realloc(objects, (*outLen + 1) * sizeof(struct object));
                 objects[*outLen] = newObject;
                 //this should 'reset' the newObject
@@ -406,14 +446,16 @@ struct object* readWavefront(char* filename, int* outLen, char** objectNames, st
                 newObject.m = NULL;
                 *outLen++;
                 break;
-            case 'v':
-                float x,y,z;
-                sscanf(token, "v %.6f %.6f %.6f", x, y, z);
+            case 'v':;
+                float x;
+                float y;
+                float z;
+                sscanf(token, "v %f %f %f", &x, &y, &z);
                 newObject.vertices = realloc(newObject.vertices, (newObject.vertexCount + 1) * sizeof(struct vertex));
                 newObject.vertices[newObject.vertexCount] = newVertex(x, y, z);
                 newObject.vertexCount++;
                 break;
-            case 'f':
+            case 'f':;
                 int* vertices = malloc(0);
                 char* num = malloc(0);
                 int n = 0;

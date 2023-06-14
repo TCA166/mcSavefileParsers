@@ -23,6 +23,10 @@ int main(int argc, char** argv){
     int downLim = 0; //y- cutoff
     char f = 0; //if we don't want to cull faces
     char b = 0; //if we don't want to cull chunk border faces
+    struct object* objects = NULL;
+    int objLen = 0;
+    char* objFilename = NULL;
+    char** specialObjects = NULL;
     char* materialFilename = NULL;
     int side = 2;
     //argument interface
@@ -61,6 +65,12 @@ int main(int argc, char** argv){
             materialFilename = argv[i + 1];
             i += 1;
         }
+        else if(strcmp(argv[i], "-o") == 0){
+            if(argc <= i + 1){
+                argError("-o", "1");
+            }
+            materialFilename = argv[i + 1];
+        }
     }
     //Get the nbt data
     FILE* nbtFile = fopen(argv[1], "rb");
@@ -89,7 +99,13 @@ int main(int argc, char** argv){
         materials = getMaterials(mtl, &materialLen);
         fclose(mtl);
     } 
-
+    if(objFilename != NULL){
+        objects = readWavefront(objFilename, &objLen, materials, materialLen);
+        specialObjects = malloc(objLen * sizeof(char*));
+        for(int i = 0; i < objLen; i++){
+            specialObjects[i] = objects[i].type;
+        }
+    }
     //now we have to decrypt the data in sections
     for(int i = 0; i < n; i++){
         //create the block state array
@@ -135,10 +151,11 @@ int main(int argc, char** argv){
         free(states);
     }
     if(!f){
-        cullFaces(&cubeModel, !b);
+        cullFaces(&cubeModel, !b, specialObjects, objLen);
         printf("Model faces culled\n");
     }
-    model newModel = cubeModelToModel(&cubeModel);
+    free(specialObjects);
+    model newModel = cubeModelToModel(&cubeModel, objects, objLen);
     freeCubeModel(&cubeModel);
     size_t size = 0;
     char* content = generateModel(&newModel, &size, materialFilename);
@@ -162,18 +179,19 @@ struct cube cubeFromBlock(struct block block, const int side, struct material* m
     struct cube newCube;
     float dist = side/2;
     newCube.side = side;
-    newCube.x = (block.x * side) + dist;
-    newCube.y = (block.y * side) + dist;
-    newCube.z = (block.z * side) + dist;
+    newCube.x = block.x;
+    newCube.y = block.y;
+    newCube.z = block.z;
+    //fprintf(stderr, "%f %f %f", newCube.x, newCube.y, newCube.z);
     //binary 8 to 0
-    newCube.vertices[0] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z + dist);
-    newCube.vertices[1] = newVertex(newCube.x + dist, newCube.y + dist, newCube.z - dist);
-    newCube.vertices[2] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z + dist);
-    newCube.vertices[3] = newVertex(newCube.x + dist, newCube.y - dist, newCube.z - dist);
-    newCube.vertices[4] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z + dist);
-    newCube.vertices[5] = newVertex(newCube.x - dist, newCube.y + dist, newCube.z - dist);
-    newCube.vertices[6] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z + dist);
-    newCube.vertices[7] = newVertex(newCube.x - dist, newCube.y - dist, newCube.z - dist);
+    newCube.vertices[0] = newVertex(dist, dist,  dist);
+    newCube.vertices[1] = newVertex(dist, dist, 0 - dist);
+    newCube.vertices[2] = newVertex(dist, 0 - dist, dist);
+    newCube.vertices[3] = newVertex(dist, 0 - dist, 0 - dist);
+    newCube.vertices[4] = newVertex(0 - dist, dist, dist);
+    newCube.vertices[5] = newVertex(0 - dist, dist, 0 - dist);
+    newCube.vertices[6] = newVertex(0 - dist, 0 - dist, dist);
+    newCube.vertices[7] = newVertex(0 - dist, 0 - dist, 0 - dist);
     
     newCube.faces[0] = newCubeFace(1, 0, 2, 3); //right +x
     newCube.faces[1] = newCubeFace(1, 0, 4, 5); //up +y
