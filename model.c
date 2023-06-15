@@ -1,8 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
+
 #include <math.h>
 
+#include "errorDefs.h"
 #include "model.h"
 
 #define freeCubeFace(c, n) free((*c).faces[n]); (*c).faces[n] = NULL;
@@ -295,7 +298,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                         size_t size = 4;
                         for(int n = 0; n < face.vertexCount; n++){
                             face.vertices[n] += offset;
-                            size += digits(face.vertices[n]);
+                            size += digits(face.vertices[n]) + 1;
                         }
                         char* line = malloc(size);
                         line[0] = '\0';
@@ -303,7 +306,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                         int lineOff = 2;
                         for(int n = 0; n < face.vertexCount; n++){
                             size_t len = digits(face.vertices[n]) + 1;
-                            snprintf(line + lineOff, len + 1, "%d ", face.vertices[n]); //invalid writes and reads of 1 here. no clue why
+                            snprintf(line + lineOff, len + 1, "%d ", face.vertices[n]);
                             lineOff += len;
                         }
                         strcat(line, "\n");
@@ -367,11 +370,13 @@ struct material* getMaterials(FILE* mtlFile, int* outLen){
     long sz = ftell(mtlFile);
     fseek(mtlFile, 0, SEEK_SET); 
     char* bytes = malloc(sz + 1);
-    fread(bytes, sz, 1, mtlFile);
+    if(fread(bytes, sz, 1, mtlFile) != 1){
+        fileError("material file", "read");
+    }
     bytes[sz] = '\0';
     char* token = strtok(bytes, "\n");
+    struct material newMaterial;
     while(token != NULL){ //foreach line
-        struct material newMaterial;
         int len = strlen(token);
         if(len > 7){
             if(token[0] == 'n' && token[4] == 't' && token[6] == ' '){
@@ -412,8 +417,10 @@ struct object* readWavefront(char* filename, int* outLen, struct material* mater
     fseek(fp, 0, SEEK_END);
     long sz = ftell(fp);
     fseek(fp, 0, SEEK_SET);
-    unsigned char* bytes = malloc(sz);
-    fread(bytes, sz, 1, fp);
+    char* bytes = malloc(sz);
+    if(fread(bytes, sz, 1, fp) != 1){
+        fileError("obj file", "read");
+    }
     fclose(fp);
     char* token = strtok(bytes, "\n");
     *outLen = 0;
@@ -445,7 +452,7 @@ struct object* readWavefront(char* filename, int* outLen, struct material* mater
                 newObject.faceCount = 0;
                 newObject.vertexCount = 0;
                 newObject.m = NULL;
-                *outLen++;
+                (*outLen)++;
                 break;
             case 'v':;
                 float x;

@@ -63,7 +63,7 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
         if(palette == NULL){
             nbtTagError("palette");
         }
-        const struct list_head* palleteHead = &palette->payload.tag_list->entry;
+        //const struct list_head* palleteHead = &palette->payload.tag_list->entry;
         char** blockPalette = malloc(1 * sizeof(char*));
         int i = 0;
         struct list_head* paletteCur = &palette->payload.tag_list->entry;

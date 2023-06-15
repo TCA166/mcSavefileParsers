@@ -2,21 +2,25 @@
 
 #define nbtFileError(filename) \
         fprintf(stderr, "File %s couldn't be located.", filename); \
+        errno = ENOENT; \
         perror("File error"); \
-        exit(-1); \
+        exit(EXIT_FAILURE); \
 
 #define nbtTypeError(type, expected) \
         fprintf(stderr, "Expected type:%d, current type:%d.", expected, type);\
+        errno = EIO; \
         perror("Nbt type error"); \
         exit(EXIT_FAILURE);
 
 #define nbtTagError(tag) \
         fprintf(stderr, "Tag %s was not found.", tag);\
+        errno = EIO; \
         perror("Nbt type error"); \
         exit(EXIT_FAILURE);
 
-#define fileError(filename) \
-        fprintf(stderr, "File %s couldn't be located.", filename); \
+#define fileError(filename, action) \
+        fprintf(stderr, "File %s couldn't be " action ".", filename); \
+        errno = EIO; \
         perror("File error.");\
         exit(EXIT_FAILURE);
 
@@ -30,11 +34,13 @@
 
 #define argCountError() \
         fprintf(stderr, "No arguments were provided"); \
+        errno = EINVAL; \
         perror("Arg count error."); \
         exit(EXIT_FAILURE);
 
 #define dirError(dirname) \
         fprintf(stderr, "Directory %s couldn't be opened", dirname); \
+        errno = ENOENT; \
         perror("Dir error."); \
         exit(EXIT_FAILURE);
 

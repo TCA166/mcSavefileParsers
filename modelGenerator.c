@@ -78,13 +78,15 @@ int main(int argc, char** argv){
     //Get the nbt data
     FILE* nbtFile = fopen(argv[1], "rb");
     if(nbtFile == NULL){
-        fileError(argv[1]);
+        fileError(argv[1], "located");
     }
     fseek(nbtFile, 0L, SEEK_END);
     long sz = ftell(nbtFile);
     fseek(nbtFile, 0, SEEK_SET);
     unsigned char* data = malloc(sz); //raw NBT file bytes
-    fread(data, sz, 1, nbtFile);
+    if(fread(data, sz, 1, nbtFile) != 1){
+        fileError(argv[1], "read");
+    }
     fclose(nbtFile);
     //Array of sections in this chunk
     struct section sections[maxSections] = {};
@@ -101,6 +103,9 @@ int main(int argc, char** argv){
     if(materialFilename != NULL){
         //parse the material file, afterall we have to account for transparent textures
         FILE* mtl = fopen(materialFilename, "r");
+        if(mtl == NULL){
+            fileError(materialFilename, "opened");
+        }
         materials = getMaterials(mtl, &materialLen);
         fclose(mtl);
     } 
@@ -170,6 +175,7 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, struc
                             nameEnd = newBlock.type;
                         }
                         for(int n = 0; n < materialLen; n++){
+                            //materials[n].name == NULL when compiled with -O. No clue why
                             if(strcmp(materials[n].name, nameEnd) == 0){
                                 m = &materials[n];
                             }

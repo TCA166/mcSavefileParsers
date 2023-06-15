@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
+
 #include <math.h>
 
 #include "errorDefs.h"
@@ -25,7 +27,7 @@ int main(int argc, char** argv){
         sprintf(filename, "%s/r.%d.%d.mca", argv[i - 2], getRegion(x), getRegion(z));
         FILE* regionFile = fopen(filename, "r");
         if(regionFile == NULL){
-            fileError(filename);
+            fileError(filename, "located");
         }
         free(filename);
         chunk ourChunk = getChunk(x, z, regionFile);

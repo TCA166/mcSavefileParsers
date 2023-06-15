@@ -1,7 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
+
 #include <zlib.h>
+
 #include "regionParser.h"
+#include "errorDefs.h"
 
 int handleFirstSegment(chunk* output, FILE* regionFile){
     //so the numbers are stored as big endian AND as int24
@@ -60,14 +64,20 @@ int getChunkData(chunk* thisChunk, FILE* regionFile){
     fseek(regionFile, segmentLength * thisChunk->offset, SEEK_SET); //find the corresponding section
     //get the byteLength
     byte bytes[4];
-    fread(&bytes, 1, 4, regionFile);
+    if(fread(&bytes, 1, 4, regionFile) != 4){
+        fileError("region file", "parsed");
+    }
     thisChunk->byteLength = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
     //get the compression type
-    fread(&thisChunk->compression, 1, 1, regionFile);
+    if(fread(&thisChunk->compression, 1, 1, regionFile) != 1){
+        fileError("region file", "parsed");
+    }
     //Then get the data
     thisChunk->byteLength += 5;
     byte* data = malloc(thisChunk->byteLength);
-    fread(data, 1, thisChunk->byteLength, regionFile);
+    if(fread(data, 1, thisChunk->byteLength, regionFile) != thisChunk->byteLength){
+        fileError("region file", "parsed");
+    }
     //fseek(regionFile, (chunks[i].sectorCount * segmentLength) - chunks[i].byteLength, SEEK_CUR);
     //handle different compression types
     if(thisChunk->compression == Uncompressed){
@@ -103,8 +113,8 @@ int getChunkData(chunk* thisChunk, FILE* regionFile){
         }
         thisChunk->data = buff;
         free(data);
-        return 0;
     }
+    return 0;
 }
 
 chunk getChunk(int x, int z, FILE* regionFile){
