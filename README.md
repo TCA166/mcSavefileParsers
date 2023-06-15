@@ -24,7 +24,7 @@ chunkExtractor <path to region directory> <x> <z>
 
 ## modelGenerator
 
-This program generates a waveform(.obj) 3d model file from an nbt file containing data about a specific chunk. Ideally this nbt file will be extracted using one of the tools above.
+This program generates a waveform(.obj) 3d model file from an nbt file containing data about a specific chunk. Ideally this nbt file will be extracted using one of the tools above. It's very customizable to the point where you can render the model using different texture packs and models.
 
 ```Bash
 modelGenerator <path to nbt file> <args>
@@ -37,10 +37,17 @@ The program accepts the following additional arguments:
 - -h :displays help
 - -s $s :changes the block side in the result side to the given s argument
 - -m $filename :sets the given filename as the source mtl file
+- -o $filename :sets the given filename as the source special object file
 
 ### Mtl format
 
 The generator if provided with the -m flag followed by the mtl file filepath will use the provided file as a material source and generate the obj file to support mtl materials. Blocks of minecraft:dirt will use a mtl material called dirt and so on. Feel free to create your own mtl file or use the mtl Gen to create one quickly.
+
+### Obj format
+
+So in order to handle non cube blocks the generator needs an obj file defining models for those "special" blocks.
+If that file isn't provided the generator will simply assume everything is a cube.
+In order for the special obj file to get interpreted properly the vertex coordinates in each object must be relative to the center of the object.
 
 ### Limitations
 

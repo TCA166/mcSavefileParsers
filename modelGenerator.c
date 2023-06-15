@@ -14,6 +14,9 @@
 //Creates a new cube object based on a block object
 struct cube cubeFromBlock(struct block block, const int side, struct material* material);
 
+//Isolated from the main code to maybe in the future enable for a multiprocessed version that can do multiple chunks
+struct cubeModel createCubeModel(struct section* sections, int sectionLen, struct material* materials, int materialLen, int upLim, int downLim, char yLim, int side);
+
 int main(int argc, char** argv){
     if(argc < 2){
         argCountError();
@@ -87,9 +90,11 @@ int main(int argc, char** argv){
     struct section sections[maxSections] = {};
     int n = getSections(data, sz, sections);
     free(data);
-    //It is possible to not have to iterate over each block again, and do everything in a single loop.
-    //But that would be less readable and put more of a strain on memory since the entire nbt file would have to be there
-    struct cubeModel cubeModel = initCubeModel(16,16 * n, 16);
+    /*It is possible to not have to iterate over each block again, and do everything in a single loop.
+    But that would be less readable and put more of a strain on memory since the entire nbt file would have to be there
+    Also it's C already. Just by the virtue of doing it in C I'm pretty fast.
+    Also also the resulting API and code would be less open and more goal centric, which is something I don't really want. Hey if I create code for handling obj file in C whhy not make it reusable?
+    */
 
     int materialLen = 0; //length of materials
     struct material* materials = NULL; //array of materials
@@ -99,15 +104,51 @@ int main(int argc, char** argv){
         materials = getMaterials(mtl, &materialLen);
         fclose(mtl);
     } 
+    /*Note on the objects
+    So generally the workflow looks thusly: file->sections->blocks->cubes->objects->model
+    Naturally I could just not use cubes at all and go straight to objects.
+    This would indeed be faster and lower the complexity from ~O(6n) to O(5n).
+    However that would mean the faceculling algorithm would be severely slower.
+    Instead of the simple algorithm that assumes everything is a cube and has 6 faces it would need to iterate over each face of each neighboring object to determine if a single face can be culled.
+    That's bad. So for now I much rather do one more iteration rather than make culling slow.
+    */
     if(objFilename != NULL){
-        objects = readWavefront(objFilename, &objLen, materials, materialLen);
+        objects = readWavefront(objFilename, &objLen, materials, materialLen, side);
         specialObjects = malloc(objLen * sizeof(char*));
         for(int i = 0; i < objLen; i++){
             specialObjects[i] = objects[i].type;
         }
     }
     //now we have to decrypt the data in sections
-    for(int i = 0; i < n; i++){
+    struct cubeModel cubeModel = createCubeModel(sections, n, materials, materialLen, upLim, downLim, yLim, side);
+    if(!f){
+        cullFaces(&cubeModel, !b, specialObjects, objLen);
+        printf("Model faces culled\n");
+    }
+    free(specialObjects);
+    model newModel = cubeModelToModel(&cubeModel, objects, objLen);
+    freeCubeModel(&cubeModel);
+    size_t size = 0;
+    char* content = generateModel(&newModel, &size, materialFilename);
+    freeModel(&newModel);
+    freeSections(sections, n);
+    for(int i = 0; i < materialLen; i++){
+        free(materials[i].name);
+    }
+    if(materialFilename != NULL){
+        free(materials);
+    }
+    printf("Model string generated\n");
+    FILE* outFile = fopen("out.obj", "wb");
+    fwrite(content, size, 1, outFile);
+    fclose(outFile);
+    free(content);
+    return 0;
+}
+
+struct cubeModel createCubeModel(struct section* sections, int sectionLen, struct material* materials, int materialLen, int upLim, int downLim, char yLim, int side){
+    struct cubeModel cubeModel = initCubeModel(16,16 * sectionLen, 16);
+    for(int i = 0; i < sectionLen; i++){
         //create the block state array
         unsigned int* states = getBlockStates(sections[i], NULL);
         free(sections[i].blockData);
@@ -120,7 +161,7 @@ int main(int argc, char** argv){
                         newBlock.type = mcAir;
                     }
                     struct material* m = NULL;
-                    if(materialFilename != NULL){
+                    if(materials != NULL){
                         char* nameEnd = strchr(newBlock.type, ':');
                         if(nameEnd != NULL){
                             nameEnd++;
@@ -150,29 +191,7 @@ int main(int argc, char** argv){
         }
         free(states);
     }
-    if(!f){
-        cullFaces(&cubeModel, !b, specialObjects, objLen);
-        printf("Model faces culled\n");
-    }
-    free(specialObjects);
-    model newModel = cubeModelToModel(&cubeModel, objects, objLen);
-    freeCubeModel(&cubeModel);
-    size_t size = 0;
-    char* content = generateModel(&newModel, &size, materialFilename);
-    freeModel(&newModel);
-    freeSections(sections, n);
-    for(int i = 0; i < materialLen; i++){
-        free(materials[i].name);
-    }
-    if(materialFilename != NULL){
-        free(materials);
-    }
-    printf("Model string generated\n");
-    FILE* outFile = fopen("out.obj", "wb");
-    fwrite(content, size, 1, outFile);
-    fclose(outFile);
-    free(content);
-    return 0;
+    return cubeModel;
 }
 
 struct cube cubeFromBlock(struct block block, const int side, struct material* material){

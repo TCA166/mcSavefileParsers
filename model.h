@@ -110,4 +110,4 @@ struct object deCubeObject(struct cube* c);
 
 //Returns an array of objects from a .obj file with the given filename. Outputs into outlen the amount of returned objects.
 //Allocates memory for objectNames (if it isn't NULL), for the objects themselves and ofcourse for readWavefront. Returns NULL if it can't open filename
-struct object* readWavefront(char* filename, int* outLen, struct material* materials, int materialLen);
+struct object* readWavefront(char* filename, int* outLen, struct material* materials, int materialLen, int side);

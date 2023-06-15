@@ -331,6 +331,7 @@ void freeModel(model* m){
                     }
                     free(m->objects[x][y][z]->faces);
                     free(m->objects[x][y][z]->vertices);
+                    free(m->objects[x][y][z]->type);
                 }
                 free(m->objects[x][y][z]);
             }
@@ -403,7 +404,7 @@ struct material* getMaterials(FILE* mtlFile, int* outLen){
     return result;
 }
 
-struct object* readWavefront(char* filename, int* outLen, struct material* materials, int materialLen){
+struct object* readWavefront(char* filename, int* outLen, struct material* materials, int materialLen, int side){
     FILE* fp = fopen(filename, "r");
     if(fp == NULL){
         return NULL;
@@ -452,7 +453,7 @@ struct object* readWavefront(char* filename, int* outLen, struct material* mater
                 float z;
                 sscanf(token, "v %f %f %f", &x, &y, &z);
                 newObject.vertices = realloc(newObject.vertices, (newObject.vertexCount + 1) * sizeof(struct vertex));
-                newObject.vertices[newObject.vertexCount] = newVertex(x, y, z);
+                newObject.vertices[newObject.vertexCount] = newVertex(x * side, y * side, z * side);
                 newObject.vertexCount++;
                 break;
             case 'f':;
