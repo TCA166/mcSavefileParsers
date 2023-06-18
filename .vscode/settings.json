@@ -9,6 +9,7 @@
         "utility": "c",
         "math.h": "c",
         "regionparser.h": "c",
-        "type_traits": "c"
+        "type_traits": "c",
+        "random": "c"
     }
 }

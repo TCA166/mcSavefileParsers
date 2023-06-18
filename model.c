@@ -363,15 +363,23 @@ void freeCubeModel(struct cubeModel* m){
     free(m->cubes);
 }
 
-struct material* getMaterials(FILE* mtlFile, int* outLen){
+struct material* getMaterials(char* filename, int* outLen){
+    FILE* mtlFile = fopen(filename, "r");
+    if(mtlFile == NULL){
+        fileError(filename, "opened");
+    }
     struct material* result = malloc(0);
     int i = 0;
-    fseek(mtlFile, 0, SEEK_END);
+    if(fseek(mtlFile, 0, SEEK_END) != 0){
+        fileError(filename, "seek");
+    }
     long sz = ftell(mtlFile);
-    fseek(mtlFile, 0, SEEK_SET); 
+    if(fseek(mtlFile, 0, SEEK_SET) != 0){
+        fileError(filename, "seek");
+    } 
     char* bytes = malloc(sz + 1);
     if(fread(bytes, sz, 1, mtlFile) != 1){
-        fileError("material file", "read");
+        fileError(filename, "read");
     }
     bytes[sz] = '\0';
     char* token = strtok(bytes, "\n");
@@ -414,14 +422,20 @@ struct object* readWavefront(char* filename, int* outLen, struct material* mater
     if(fp == NULL){
         return NULL;
     }
-    fseek(fp, 0, SEEK_END);
+    if(fseek(fp, 0, SEEK_END) != 0){
+        fileError(filename, "seek");
+    }
     long sz = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
+    if(fseek(fp, 0, SEEK_SET) != 0){
+        fileError(filename, "seek");
+    }
     char* bytes = malloc(sz);
     if(fread(bytes, sz, 1, fp) != 1){
-        fileError("obj file", "read");
+        fileError(filename, "read");
     }
-    fclose(fp);
+    if(fclose(fp) == EOF){
+        fileError(filename, "closed");
+    }
     char* token = strtok(bytes, "\n");
     *outLen = 0;
     struct object* objects = malloc(0);

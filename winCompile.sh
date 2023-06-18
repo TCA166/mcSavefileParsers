@@ -6,9 +6,9 @@ if ! test -f "buffer.ow"; then
     ./cNBTcompileWin.sh
     cd ../
 fi
-x86_64-w64-mingw32-gcc-win32  regionParser.c -o regionParser.ow -c
-x86_64-w64-mingw32-gcc-win32  chunkParser.c -o chunkParser.ow -c -lm
-x86_64-w64-mingw32-gcc-win32  model.c -o model.ow -c
-x86_64-w64-mingw32-gcc-win32  regionFileReader.c regionParser.ow -o regionFileReader.exe -lz -static
-x86_64-w64-mingw32-gcc-win32  chunkExtractor.c regionParser.ow -o chunkExtractor.exe -lz -lm -static
-x86_64-w64-mingw32-gcc-win32  modelGenerator.c model.ow chunkParser.ow nbt_parsing.ow nbt_treeops.ow buffer.ow nbt_util.ow -o modelGenerator.exe -lm
+x86_64-w64-mingw32-gcc-win32  regionParser.c -o regionParser.ow -c -O3
+x86_64-w64-mingw32-gcc-win32  chunkParser.c -o chunkParser.ow -c -lm -O3
+x86_64-w64-mingw32-gcc-win32  model.c -o model.ow -c -O3
+x86_64-w64-mingw32-gcc-win32  regionFileReader.c regionParser.ow -o regionFileReader.exe -lz -static -O3
+x86_64-w64-mingw32-gcc-win32  chunkExtractor.c regionParser.ow -o chunkExtractor.exe -lz -lm -static -O3
+x86_64-w64-mingw32-gcc-win32  modelGenerator.c model.ow chunkParser.ow nbt_parsing.ow nbt_treeops.ow buffer.ow nbt_util.ow -o modelGenerator.exe -lm -O3

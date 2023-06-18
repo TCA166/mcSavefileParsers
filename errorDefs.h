@@ -24,6 +24,12 @@
         perror("File error.");\
         exit(EXIT_FAILURE);
 
+#define parsingError(filename, action) \
+        fprintf(stderr, "Error encountered during " action " of %s.", filename); \
+        errno = EIO; \
+        perror("Parsing error.");\
+        exit(EXIT_FAILURE);
+
 #define statesError(state, paletteLen, block) \
         fprintf(stderr, "%d >= %d:states error\n", state, paletteLen); \
         block.type = NULL;

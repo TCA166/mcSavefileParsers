@@ -45,8 +45,10 @@ unsigned int* getBlockStates(struct section s, int* outLen);
 //Creates a block struct based on the struct coordinates, the blockstates array and the parent section
 struct block createBlock(int x, int y, int z, unsigned int* blockStates, struct section parentSection);
 
-//Returns an array of strings containing a complete total block palette
-//The only memory it allocates is the returned array
+/*
+Returns an array of strings containing a complete total block palette
+The only memory it allocates is the returned array
+*/
 char** createGlobalPalette(struct section* sections, int len, int* outLen, char freeSectionPalletes);
 
 //Frees all the allocated memory by getSections

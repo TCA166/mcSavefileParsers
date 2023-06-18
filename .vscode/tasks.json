@@ -27,7 +27,7 @@
             "type": "cppbuild",
             "label": "C/C++: compile.sh",
             "command": "./compile.sh",
-            "args": ["-g"],
+            "args": ["-g", "-Wall", "-Wpedantic", "-Werror"],
             "options": {
                 "cwd": "${fileDirname}"
             },

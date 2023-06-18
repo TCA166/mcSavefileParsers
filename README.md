@@ -38,6 +38,7 @@ The program accepts the following additional arguments:
 - -s $s :changes the block side in the result side to the given s argument
 - -m $filename :sets the given filename as the source mtl file
 - -o $filename :sets the given filename as the source special objects file
+- -out $filename :sets the given filename as the output filename
 
 ### Mtl format
 

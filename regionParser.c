@@ -61,7 +61,10 @@ chunk* getChunks(FILE* regionFile){
 }
 
 int getChunkData(chunk* thisChunk, FILE* regionFile){
-    fseek(regionFile, segmentLength * thisChunk->offset, SEEK_SET); //find the corresponding section
+    //find the corresponding section
+    if(fseek(regionFile, segmentLength * thisChunk->offset, SEEK_SET) != 0){
+        fileError("region file", "seek");
+    } 
     //get the byteLength
     byte bytes[4];
     if(fread(&bytes, 1, 4, regionFile) != 4){
@@ -121,10 +124,18 @@ chunk getChunk(int x, int z, FILE* regionFile){
     chunk result;
     result.x = x;
     result.z = z;
-    fseek(regionFile, 4 * coordsToOffset(x, z), SEEK_SET);
-    handleFirstSegment(&result, regionFile);
-    fseek(regionFile, (4 * coordsToOffset(x, z)) + segmentLength, SEEK_SET);
-    handleSecondSegment(&result, regionFile);
+    if(fseek(regionFile, 4 * coordsToOffset(x, z), SEEK_SET) != 0){
+        fileError("region file", "seek");
+    }
+    if(handleFirstSegment(&result, regionFile) != 0){
+        parsingError("region file", "first segment");
+    }
+    if(fseek(regionFile, (4 * coordsToOffset(x, z)) + segmentLength, SEEK_SET) != 0){
+        fileError("region file", "seek");
+    }
+    if(handleSecondSegment(&result, regionFile) != 0){
+        parsingError("region file", "second segment");
+    }
     if(result.offset == 0){
         return result;
     }

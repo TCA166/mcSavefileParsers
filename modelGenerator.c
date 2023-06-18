@@ -26,12 +26,13 @@ int main(int argc, char** argv){
     int downLim = 0; //y- cutoff
     char f = 0; //if we don't want to cull faces
     char b = 0; //if we don't want to cull chunk border faces
-    struct object* objects = NULL;
-    int objLen = 0;
+    struct object* objects = NULL; //special objects
+    int objLen = 0; //amount of objects in the objects array
     char* objFilename = NULL;
-    char** specialObjects = NULL;
+    char** specialObjects = NULL; //array of strings containing special object names
     char* materialFilename = NULL;
     int side = 2;
+    char* outFilename = "out.obj";
     //argument interface
     for(int i = 2; i < argc; i++){
         if(strcmp(argv[i], "-l") == 0){
@@ -51,8 +52,8 @@ int main(int argc, char** argv){
             b = 1;
         }
         else if(strcmp(argv[i], "-h") == 0){
-            printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range\n-b|enables chunk border rendering\n-f|disables face culling\n-s <s> |changes the block side in the result side to the given s argument\n-m <filename> | sets the given filename as the .mtl source\n");
-            return 0;
+            printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range\n-b|enables chunk border rendering\n-f|disables face culling\n-s <s> |changes the block side in the result side to the given s argument\n-m <filename> | sets the given filename as the .mtl source\n-o <filename> | sets the given filename as special object source\n-out <filename> | sets the given filename as the output filename");
+            return EXIT_SUCCESS;
         }
         else if(strcmp(argv[i], "-s") == 0){
             if(argc <= i + 1){
@@ -73,6 +74,14 @@ int main(int argc, char** argv){
                 argError("-o", "1");
             }
             materialFilename = argv[i + 1];
+            i += 1;
+        }
+        else if(strcmp(argv[i], "-out") == 0){
+            if(argc <= i + 1){
+                argError("-out", "1");
+            }
+            outFilename = argv[i + 1];
+            i += 1;
         }
     }
     //Get the nbt data
@@ -80,16 +89,22 @@ int main(int argc, char** argv){
     if(nbtFile == NULL){
         fileError(argv[1], "located");
     }
-    fseek(nbtFile, 0L, SEEK_END);
+    if(fseek(nbtFile, 0L, SEEK_END) != 0){
+        fileError(argv[1], "seek");
+    }
     long sz = ftell(nbtFile);
-    fseek(nbtFile, 0, SEEK_SET);
+    if(fseek(nbtFile, 0, SEEK_SET) != 0){
+        fileError(argv[1], "seek");
+    }
     unsigned char* data = malloc(sz); //raw NBT file bytes
     if(fread(data, sz, 1, nbtFile) != 1){
         fileError(argv[1], "read");
     }
-    fclose(nbtFile);
+    if(fclose(nbtFile) == EOF){
+        fileError(argv[1], "closed");
+    }
     //Array of sections in this chunk
-    struct section sections[maxSections] = {};
+    struct section sections[maxSections] = {0};
     int n = getSections(data, sz, sections);
     free(data);
     /*It is possible to not have to iterate over each block again, and do everything in a single loop.
@@ -97,17 +112,11 @@ int main(int argc, char** argv){
     Also it's C already. Just by the virtue of doing it in C I'm pretty fast.
     Also also the resulting API and code would be less open and more goal centric, which is something I don't really want. Hey if I create code for handling obj file in C whhy not make it reusable?
     */
-
     int materialLen = 0; //length of materials
     struct material* materials = NULL; //array of materials
     if(materialFilename != NULL){
         //parse the material file, afterall we have to account for transparent textures
-        FILE* mtl = fopen(materialFilename, "r");
-        if(mtl == NULL){
-            fileError(materialFilename, "opened");
-        }
-        materials = getMaterials(mtl, &materialLen);
-        fclose(mtl);
+        materials = getMaterials(materialFilename, &materialLen);
     } 
     /*Note on the objects
     So generally the workflow looks thusly: file->sections->blocks->cubes->objects->model
@@ -144,11 +153,18 @@ int main(int argc, char** argv){
         free(materials);
     }
     printf("Model string generated\n");
-    FILE* outFile = fopen("out.obj", "wb");
-    fwrite(content, size, 1, outFile);
-    fclose(outFile);
+    FILE* outFile = fopen(outFilename, "wb");
+    if(outFile == NULL){
+        fileError(outFilename, "opened");
+    }
+    if(fwrite(content, size, 1, outFile) != 1){
+        fileError(outFilename, "written");
+    }
+    if(fclose(outFile) == EOF){
+        fileError(outFilename, "closed");
+    }
     free(content);
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 struct cubeModel createCubeModel(struct section* sections, int sectionLen, struct material* materials, int materialLen, int upLim, int downLim, char yLim, int side){
