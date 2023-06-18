@@ -99,8 +99,9 @@ unsigned int* getBlockStates(struct section s, int* outLen){
         if(l < 4){
             l = 4;
         }
-        short count = 64/l * s.blockDataLen; //amount of indices in each long
+        short count = ceilf(64/(float)l) * s.blockDataLen; //amount of indices in each long
         states = malloc(count * sizeof(unsigned int));
+        //fprintf(stderr, "%d %d %d\n", count, l, s.blockDataLen);
         //foreach long
         for(int a=0; a < s.blockDataLen; a++){
             unsigned long comp = s.blockData[a];
