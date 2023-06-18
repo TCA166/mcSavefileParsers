@@ -17,7 +17,7 @@ int main(int argc, char** argv){
     for(int i = 2; i < argc; i+=2){
         printf("Starting extraction of %s to %s\n", argv[i - 1], argv[i]);
         char* filename = argv[i - 1];
-        FILE* regionFile = fopen(filename, "r");
+        FILE* regionFile = fopen(filename, "rb");
         if(regionFile == NULL){ 
             nbtFileError(argv[i - 1]);
         }
@@ -27,7 +27,7 @@ int main(int argc, char** argv){
             if(chunks[n].offset != 0){
                 char* filename = malloc(10 + strlen(argv[i]));
                 sprintf(filename, "%s/%d.nbt", argv[i], chunks[n].offset);
-                FILE* chunkFile = fopen(filename, "w");
+                FILE* chunkFile = fopen(filename, "wb");
                 free(filename);
                 fwrite(chunks[n].data, chunks[n].byteLength, 1, chunkFile);
                 free(chunks[n].data);

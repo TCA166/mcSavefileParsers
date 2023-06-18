@@ -25,7 +25,7 @@ int main(int argc, char** argv){
         int z = atoi(argv[i]);
         char* filename = malloc(strlen(argv[i - 2]) + digits(x) + digits(z) + 9);
         sprintf(filename, "%s/r.%d.%d.mca", argv[i - 2], getRegion(x), getRegion(z));
-        FILE* regionFile = fopen(filename, "r");
+        FILE* regionFile = fopen(filename, "rb");
         if(regionFile == NULL){
             fileError(filename, "located");
         }
@@ -34,7 +34,7 @@ int main(int argc, char** argv){
         fclose(regionFile);
         filename = malloc(8 + digits(x) + digits(z));
         sprintf(filename, "./%d.%d.nbt", x, z);
-        FILE* outFile = fopen(filename, "w");
+        FILE* outFile = fopen(filename, "wb");
         free(filename);
         fwrite(ourChunk.data, ourChunk.byteLength, 1, outFile);
         fclose(outFile);

@@ -153,7 +153,7 @@ int main(int argc, char** argv){
         free(materials);
     }
     printf("Model string generated\n");
-    FILE* outFile = fopen(outFilename, "wb");
+    FILE* outFile = fopen(outFilename, "w");
     if(outFile == NULL){
         fileError(outFilename, "opened");
     }
