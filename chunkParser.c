@@ -75,8 +75,50 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
             if(string == NULL){
                 nbtTagError("Name");
             }
+            char* direction = NULL;
+            char top = -1;
+            char* shape = NULL;
+            nbt_node* properties = nbt_find_by_name(pal->data, "Properties");
+            if(properties != NULL){
+                nbt_node* facing = nbt_find_by_name(properties, "facing");
+                if(facing != NULL){
+                    direction = malloc(strlen(facing->payload.tag_string + 1));
+                    strcpy(direction, facing->payload.tag_string);
+                }
+                nbt_node* half = nbt_find_by_name(properties, "half");
+                if(half != NULL){
+                    top = strcmp(half->payload.tag_string, "top") == 0;
+                }
+                nbt_node* shapeNode = nbt_find_by_name(properties, "shape");
+                if(shapeNode != NULL){
+                    shape = malloc(strlen(shapeNode->payload.tag_string) + 1);
+                    strcpy(shape, shapeNode->payload.tag_string);
+                }
+            }
             blockPalette[i] = malloc(strlen(string->payload.tag_string) + 1);
             strcpy(blockPalette[i], string->payload.tag_string);
+            if(direction != NULL){
+                blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + strlen(direction));
+                strcat(blockPalette[i], "_");
+                strcat(blockPalette[i], direction);
+                free(direction);
+            }
+            if(top + 1){
+                if(top){
+                    blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + 3);
+                    strcat(blockPalette[i], "_top");
+                }
+                else{
+                    blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + 6);
+                    strcat(blockPalette[i], "_bottom");
+                }
+            }
+            if(shape != NULL){
+                blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + strlen(shape));
+                strcat(blockPalette[i], "_");
+                strcat(blockPalette[i], shape);
+                free(shape);
+            }
             i++;
             blockPalette = realloc(blockPalette, (i + 1) * sizeof(char*));
         }
