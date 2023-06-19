@@ -78,6 +78,9 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
             char* direction = NULL;
             char top = -1;
             char* shape = NULL;
+            char* color = NULL;
+            //north, west, east, south for fences
+            //snowy for grass
             nbt_node* properties = nbt_find_by_name(pal->data, "Properties");
             if(properties != NULL){
                 nbt_node* facing = nbt_find_by_name(properties, "facing");
@@ -93,6 +96,11 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
                 if(shapeNode != NULL){
                     shape = malloc(strlen(shapeNode->payload.tag_string) + 1);
                     strcpy(shape, shapeNode->payload.tag_string);
+                }
+                nbt_node* colorNode = nbt_find_by_name(properties, "color");
+                if(colorNode != NULL){
+                    color = malloc(strlen(colorNode->payload.tag_string) + 1);
+                    strcpy(color, colorNode->payload.tag_string);
                 }
             }
             blockPalette[i] = malloc(strlen(string->payload.tag_string) + 1);
@@ -118,6 +126,12 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
                 strcat(blockPalette[i], "_");
                 strcat(blockPalette[i], shape);
                 free(shape);
+            }
+            if(color != NULL){
+                blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + strlen(color));
+                strcat(blockPalette[i], "_");
+                strcat(blockPalette[i], color);
+                free(color);
             }
             i++;
             blockPalette = realloc(blockPalette, (i + 1) * sizeof(char*));
