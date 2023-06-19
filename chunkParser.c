@@ -9,6 +9,24 @@
 #include "errorDefs.h"
 #include "chunkParser.h"
 
+char* getProperty(const char* property, nbt_node* tree){
+    char* result = NULL;
+    nbt_node* colorNode = nbt_find_by_name(tree, property);
+    if(colorNode != NULL){
+        result = malloc(strlen(colorNode->payload.tag_string) + 1);
+        strcpy(result, colorNode->payload.tag_string);
+    }
+    return result;
+}
+
+char* appendProperty(char* string, char* property){
+    string = realloc(string, strlen(string) + 2 + strlen(property));
+    strcat(string, "_");
+    strcat(string, property);
+    free(property);
+    return string;
+}
+
 int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
     nbt_node* node = nbt_parse(nbtFileData, sz);
     if(errno != 0){
@@ -75,63 +93,68 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
             if(string == NULL){
                 nbtTagError("Name");
             }
+            //Instead of appending all properties in block using a for loop we extract a few specific ones
             char* direction = NULL;
-            char top = -1;
+            char* half = NULL;
             char* shape = NULL;
             char* color = NULL;
-            //north, west, east, south for fences
-            //snowy for grass
+            char* part = NULL;
+            char* open = NULL;
+            char* snowy = NULL;
+            char* north = NULL;
+            char* west = NULL;
+            char* east = NULL;
+            char* south = NULL;
             nbt_node* properties = nbt_find_by_name(pal->data, "Properties");
             if(properties != NULL){
-                nbt_node* facing = nbt_find_by_name(properties, "facing");
-                if(facing != NULL){
-                    direction = malloc(strlen(facing->payload.tag_string + 1));
-                    strcpy(direction, facing->payload.tag_string);
-                }
-                nbt_node* half = nbt_find_by_name(properties, "half");
-                if(half != NULL){
-                    top = strcmp(half->payload.tag_string, "top") == 0;
-                }
-                nbt_node* shapeNode = nbt_find_by_name(properties, "shape");
-                if(shapeNode != NULL){
-                    shape = malloc(strlen(shapeNode->payload.tag_string) + 1);
-                    strcpy(shape, shapeNode->payload.tag_string);
-                }
-                nbt_node* colorNode = nbt_find_by_name(properties, "color");
-                if(colorNode != NULL){
-                    color = malloc(strlen(colorNode->payload.tag_string) + 1);
-                    strcpy(color, colorNode->payload.tag_string);
-                }
+                direction = getProperty("facing", properties);
+                half = getProperty("half", properties);
+                shape = getProperty("shape", properties);
+                color = getProperty("color", properties);
+                part = getProperty("part", properties);
+                open = getProperty("open", properties);
+                snowy = getProperty("snowy", properties);
+                north = getProperty("north", properties);
+                west = getProperty("west", properties);
+                east = getProperty("east", properties);
+                south = getProperty("south", properties);
             }
             blockPalette[i] = malloc(strlen(string->payload.tag_string) + 1);
             strcpy(blockPalette[i], string->payload.tag_string);
             if(direction != NULL){
-                blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + strlen(direction));
-                strcat(blockPalette[i], "_");
-                strcat(blockPalette[i], direction);
-                free(direction);
+                blockPalette[i] = appendProperty(blockPalette[i], direction);
             }
-            if(top + 1){
-                if(top){
-                    blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + 3);
-                    strcat(blockPalette[i], "_top");
-                }
-                else{
-                    blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + 6);
-                    strcat(blockPalette[i], "_bottom");
-                }
+            if(half != NULL){
+                blockPalette[i] = appendProperty(blockPalette[i], half);
             }
             if(shape != NULL){
-                blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + strlen(shape));
-                strcat(blockPalette[i], "_");
-                strcat(blockPalette[i], shape);
-                free(shape);
+                blockPalette[i] = appendProperty(blockPalette[i], shape);
             }
             if(color != NULL){
-                blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 2 + strlen(color));
-                strcat(blockPalette[i], "_");
-                strcat(blockPalette[i], color);
-                free(color);
+                blockPalette[i] = appendProperty(blockPalette[i], color);
+            }
+            if(part != NULL){
+                blockPalette[i] = appendProperty(blockPalette[i], part);
+            }
+            if(open != NULL){
+                blockPalette[i] = appendProperty(blockPalette[i], part);
+            }
+            if(snowy != NULL){
+                if(strcmp(snowy, "false") != 0){
+                    blockPalette[i] = appendProperty(blockPalette[i], snowy);
+                }
+            }
+            if(north != NULL){
+                blockPalette[i] = appendProperty(blockPalette[i], north);
+            }
+            if(west != NULL){
+                blockPalette[i] = appendProperty(blockPalette[i], west);
+            }
+            if(east != NULL){
+                blockPalette[i] = appendProperty(blockPalette[i], east);
+            }
+            if(south != NULL){
+                blockPalette[i] = appendProperty(blockPalette[i], south);
             }
             i++;
             blockPalette = realloc(blockPalette, (i + 1) * sizeof(char*));

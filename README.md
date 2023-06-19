@@ -24,7 +24,9 @@ chunkExtractor <path to region directory> <x> <z>
 
 ## modelGenerator
 
-This program generates a waveform(.obj) 3d model file from an nbt file containing data about a specific chunk. Ideally this nbt file will be extracted using one of the tools above. It's very customizable to the point where you can render the model using different texture packs and models.
+An open customizable chunk to 3d model converter.
+Takes in a chunk nbt file, a material file defining the look of blocks, an object file for non cube blocks and creates a 3d model based on that.
+Ideally the nbt file will be extracted using one of the tools above.
 
 ```Bash
 modelGenerator <path to nbt file> <args>
