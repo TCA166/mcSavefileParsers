@@ -11,5 +11,8 @@
         "regionparser.h": "c",
         "type_traits": "c",
         "random": "c"
-    }
+    },
+    "cSpell.words": [
+        "resourcepack"
+    ]
 }
