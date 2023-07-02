@@ -8,6 +8,7 @@ if __name__ == "__main__":
     s = False #simplified mode
     t = False #top correction
     c = False #color correction
+    a = False #ignore alpha channel in simplified mode
     path = sys.argv[1]
     for el in sys.argv:
         if el == "-s":
@@ -16,6 +17,10 @@ if __name__ == "__main__":
             t = True
         if el == "-c":
             c = True
+        if el == "-a":
+            a = True
+    if a and not s:
+        print("-a ignored")
     with open("out.mtl", "w") as o:
         for filename in os.listdir(path):
             f = os.path.join(path, filename)
@@ -23,18 +28,21 @@ if __name__ == "__main__":
             if os.path.isfile(f) and filename[-4:] == ".png" and s:
                 rgb = [0, 0, 0, 0]
                 img = Image.open(f).convert('RGBA')
+                pixels = 0
                 for x in range(img.size[0]):
                     for y in range(img.size[1]):
                         pixel = img.getpixel((x, y))
-                        rgb[0] += pixel[0]
-                        rgb[1] += pixel[1]
-                        rgb[2] += pixel[2]
-                        rgb[3] += pixel[3]
-                amt = img.size[0] * img.size[1]
-                rgb[0] /= (amt * 255)
-                rgb[1] /= (amt * 255)
-                rgb[2] /= (amt * 255)
-                rgb[3] /= (amt * 255)
+                        if not (pixel[3] == 0 and a):
+                            rgb[0] += pixel[0]
+                            rgb[1] += pixel[1]
+                            rgb[2] += pixel[2]
+                            rgb[3] += pixel[3]
+                            pixels += 1
+                if pixels > 0:
+                    rgb[0] /= (pixels * 255)
+                    rgb[1] /= (pixels * 255)
+                    rgb[2] /= (pixels * 255)
+                    rgb[3] /= (pixels * 255)
                 if "grass" in filename or "leaves" in filename:
                     # #8eb971
                     rgb[0] = 142 / 255

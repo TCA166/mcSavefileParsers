@@ -67,7 +67,7 @@ As such I have developed scripts in python for generating files in correct forma
 A script for generating complete and valid mtl files for modelGenerator
 
 ```Bash
-python3 mtlGen.py <path to /assets/minecraft/textures/block directory of a texture pack> <args>
+python3 mtlGen.py <path to /assets/minecraft/textures/block directory of a resource pack> <args>
 ```
 
 The script accepts the following additional arguments:
@@ -83,10 +83,18 @@ Distribute the result at your own risk.
 A script for generating a complete obj file containing special object definition for modelGenerator
 
 ```Bash
-python3 objGen.py <path to /assets/minecraft directory of a texture pack> <args>
+python3 objGen.py <path to /assets/minecraft directory of a resource pack>
 ```
 
 Distribute the result at your own risk.
+
+### quickGen
+
+Batch script combining objGen.py and mtlGen.py in case you don't want to figure out how to use the two scripts
+
+```Bash
+./quickGen <path to /assets/minecraft directory of a resource pack>
+```
 
 ### Minecraft default assets
 

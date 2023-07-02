@@ -4,7 +4,7 @@ Kd 0.600 0.200 0.200
 Ks 0.000 0.000 0.000
 d 0.5
 illum 1
-newmtl stripped_cherry_log
+newmtl stripped_cherry_log_top
 Ka 0.867 0.645 0.618
 Kd 0.867 0.645 0.618
 Ks 0.000 0.000 0.000
@@ -41,10 +41,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl black_candle
-Ka 0.930 0.930 0.936
-Kd 0.930 0.930 0.936
+Ka 0.150 0.144 0.226
+Kd 0.150 0.144 0.226
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl warped_wart_block
 Ka 0.089 0.470 0.475
@@ -71,16 +71,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl brewing_stand
-Ka 0.243 0.201 0.161
-Kd 0.243 0.201 0.161
+Ka 0.479 0.396 0.317
+Kd 0.479 0.396 0.317
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl sweet_berry_bush_stage1
-Ka 0.101 0.200 0.123
-Kd 0.101 0.200 0.123
+Ka 0.186 0.369 0.226
+Kd 0.186 0.369 0.226
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl powder_snow
 Ka 0.973 0.994 0.994
@@ -95,16 +95,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl bell_bottom
-Ka 0.185 0.146 0.041
-Kd 0.185 0.146 0.041
+Ka 0.739 0.582 0.165
+Kd 0.739 0.582 0.165
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl white_candle_lit
-Ka 0.070 0.070 0.066
-Kd 0.070 0.070 0.066
+Ka 0.854 0.852 0.808
+Kd 0.854 0.852 0.808
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl barrel_bottom
 Ka 0.453 0.335 0.192
@@ -113,16 +113,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl azalea_plant
-Ka 0.267 0.319 0.124
-Kd 0.267 0.319 0.124
+Ka 0.359 0.430 0.167
+Kd 0.359 0.430 0.167
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl jungle_trapdoor
-Ka 0.501 0.362 0.254
-Kd 0.501 0.362 0.254
+Ka 0.599 0.433 0.304
+Kd 0.599 0.433 0.304
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl sand
 Ka 0.859 0.813 0.640
@@ -130,7 +130,7 @@ Kd 0.859 0.813 0.640
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl respawn_anchor
+newmtl respawn_anchor_top
 Ka 0.299 0.093 0.589
 Kd 0.299 0.093 0.589
 Ks 0.000 0.000 0.000
@@ -143,10 +143,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl potatoes_stage1
-Ka 0.027 0.053 0.017
-Kd 0.027 0.053 0.017
+Ka 0.269 0.517 0.167
+Kd 0.269 0.517 0.167
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl furnace_front
 Ka 0.360 0.358 0.358
@@ -155,10 +155,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl blue_candle
-Ka 0.936 0.943 0.970
-Kd 0.936 0.943 0.970
+Ka 0.224 0.300 0.632
+Kd 0.224 0.300 0.632
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl chiseled_nether_bricks
 Ka 0.186 0.093 0.111
@@ -167,12 +167,12 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cake_bottom
-Ka 0.402 0.187 0.098
-Kd 0.402 0.187 0.098
+Ka 0.525 0.245 0.128
+Kd 0.525 0.245 0.128
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
-newmtl stripped_oak_log
+newmtl stripped_oak_log_top
 Ka 0.628 0.509 0.303
 Kd 0.628 0.509 0.303
 Ks 0.000 0.000 0.000
@@ -215,10 +215,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl sweet_berry_bush_stage2
-Ka 0.133 0.196 0.125
-Kd 0.133 0.196 0.125
+Ka 0.235 0.347 0.220
+Kd 0.235 0.347 0.220
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl stripped_oak_log
 Ka 0.696 0.565 0.337
@@ -232,7 +232,7 @@ Kd 0.710 0.533 0.425
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl dirt_path
+newmtl dirt_path_top
 Ka 0.582 0.477 0.256
 Kd 0.582 0.477 0.256
 Ks 0.000 0.000 0.000
@@ -251,10 +251,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl light_blue_candle_lit
-Ka 0.022 0.052 0.065
-Kd 0.022 0.052 0.065
+Ka 0.274 0.634 0.791
+Kd 0.274 0.634 0.791
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl packed_mud
 Ka 0.559 0.419 0.313
@@ -263,12 +263,12 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl magenta_candle
-Ka 0.970 0.933 0.967
-Kd 0.970 0.933 0.967
+Ka 0.630 0.180 0.601
+Kd 0.630 0.180 0.601
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl smoker
+newmtl smoker_top
 Ka 0.335 0.327 0.319
 Kd 0.335 0.327 0.319
 Ks 0.000 0.000 0.000
@@ -281,12 +281,12 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl sculk_sensor_side
-Ka 0.020 0.077 0.093
-Kd 0.020 0.077 0.093
+Ka 0.041 0.153 0.186
+Kd 0.041 0.153 0.186
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
-newmtl observer
+newmtl observer_top
 Ka 0.386 0.386 0.386
 Kd 0.386 0.386 0.386
 Ks 0.000 0.000 0.000
@@ -299,28 +299,28 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl poppy
-Ka 0.075 0.046 0.021
-Kd 0.075 0.046 0.021
+Ka 0.505 0.254 0.148
+Kd 0.505 0.254 0.148
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl seagrass
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
-newmtl rose_bush
-Ka 0.187 0.094 0.053
-Kd 0.187 0.094 0.053
+newmtl rose_bush_top
+Ka 0.514 0.259 0.147
+Kd 0.514 0.259 0.147
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl tripwire_hook
-Ka 0.101 0.094 0.083
-Kd 0.101 0.094 0.083
+Ka 0.559 0.523 0.463
+Kd 0.559 0.523 0.463
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl redstone_ore
 Ka 0.551 0.430 0.430
@@ -341,28 +341,28 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl dead_brain_coral_fan
-Ka 0.712 0.695 0.686
-Kd 0.712 0.695 0.686
+Ka 0.521 0.491 0.476
+Kd 0.521 0.491 0.476
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
-newmtl sculk_shrieker_can_summon_inner
+newmtl sculk_shrieker_can_summon_inner_top
 Ka 0.120 0.254 0.259
 Kd 0.120 0.254 0.259
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl cherry_door
-Ka 0.752 0.575 0.556
-Kd 0.752 0.575 0.556
+newmtl cherry_door_top
+Ka 0.875 0.669 0.647
+Kd 0.875 0.669 0.647
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl twisting_vines
-Ka 0.022 0.156 0.135
-Kd 0.022 0.156 0.135
+Ka 0.079 0.562 0.488
+Kd 0.079 0.562 0.488
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl stone_bricks
 Ka 0.480 0.478 0.480
@@ -370,11 +370,11 @@ Kd 0.480 0.478 0.480
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl lime_stained_glass_pane
-Ka 0.060 0.096 0.012
-Kd 0.060 0.096 0.012
+newmtl lime_stained_glass_pane_top
+Ka 0.482 0.771 0.095
+Kd 0.482 0.771 0.095
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl quartz_pillar
 Ka 0.924 0.905 0.878
@@ -383,10 +383,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl dandelion
-Ka 0.072 0.084 0.021
-Kd 0.072 0.084 0.021
+Ka 0.579 0.675 0.170
+Kd 0.579 0.675 0.170
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl dripstone_block
 Ka 0.527 0.422 0.363
@@ -412,7 +412,7 @@ Kd 0.378 0.234 0.124
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl muddy_mangrove_roots
+newmtl muddy_mangrove_roots_top
 Ka 0.275 0.230 0.177
 Kd 0.275 0.230 0.177
 Ks 0.000 0.000 0.000
@@ -425,12 +425,12 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl large_fern_bottom
-Ka 0.668 0.668 0.668
-Kd 0.668 0.668 0.668
+Ka 0.517 0.517 0.517
+Kd 0.517 0.517 0.517
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
-newmtl sandstone
+newmtl sandstone_top
 Ka 0.878 0.840 0.668
 Kd 0.878 0.840 0.668
 Ks 0.000 0.000 0.000
@@ -449,22 +449,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl rose_bush_bottom
-Ka 0.267 0.230 0.103
-Kd 0.267 0.230 0.103
+Ka 0.383 0.329 0.147
+Kd 0.383 0.329 0.147
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl dead_tube_coral
-Ka 0.277 0.260 0.253
-Kd 0.277 0.260 0.253
+Ka 0.463 0.436 0.423
+Kd 0.463 0.436 0.423
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl oak_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl bamboo_block
 Ka 0.499 0.565 0.226
@@ -478,17 +478,17 @@ Kd 0.924 0.882 0.896
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl birch_door
+newmtl birch_door_top
 Ka 0.864 0.823 0.692
 Kd 0.864 0.823 0.692
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl iron_trapdoor
-Ka 0.684 0.682 0.682
-Kd 0.684 0.682 0.682
+Ka 0.796 0.793 0.793
+Kd 0.796 0.793 0.793
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl white_wool
 Ka 0.916 0.927 0.929
@@ -497,10 +497,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl carrots_stage0
-Ka 0.012 0.029 0.010
-Kd 0.012 0.029 0.010
+Ka 0.175 0.433 0.156
+Kd 0.175 0.433 0.156
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl orange_glazed_terracotta
 Ka 0.607 0.578 0.361
@@ -508,17 +508,17 @@ Kd 0.607 0.578 0.361
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl cartography_table
+newmtl cartography_table_top
 Ka 0.406 0.343 0.264
 Kd 0.406 0.343 0.264
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl wither_rose
-Ka 0.026 0.032 0.014
-Kd 0.026 0.032 0.014
+Ka 0.163 0.176 0.091
+Kd 0.163 0.176 0.091
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl lime_stained_glass
 Ka 0.498 0.800 0.098
@@ -536,7 +536,7 @@ newmtl mangrove_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl mycelium_side
 Ka 0.445 0.344 0.282
@@ -545,40 +545,40 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl wheat_stage7
-Ka 0.355 0.323 0.156
-Kd 0.355 0.323 0.156
+Ka 0.654 0.595 0.287
+Kd 0.654 0.595 0.287
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
-newmtl barrel
+newmtl barrel_top
 Ka 0.528 0.394 0.229
 Kd 0.528 0.394 0.229
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl nether_sprouts
-Ka 0.009 0.072 0.063
-Kd 0.009 0.072 0.063
+Ka 0.077 0.593 0.523
+Kd 0.077 0.593 0.523
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl grindstone_side
-Ka 0.308 0.308 0.308
-Kd 0.308 0.308 0.308
+Ka 0.548 0.548 0.548
+Kd 0.548 0.548 0.548
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl daylight_detector_inverted
+newmtl daylight_detector_inverted_top
 Ka 0.416 0.429 0.441
 Kd 0.416 0.429 0.441
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl enchanting_table_side
-Ka 0.147 0.137 0.168
-Kd 0.147 0.137 0.168
+Ka 0.195 0.182 0.224
+Kd 0.195 0.182 0.224
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl chiseled_quartz_block
 Ka 0.909 0.890 0.855
@@ -587,24 +587,24 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pointed_dripstone_down_tip_merge
-Ka 0.183 0.148 0.126
-Kd 0.183 0.148 0.126
+Ka 0.543 0.439 0.374
+Kd 0.543 0.439 0.374
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl potatoes_stage2
-Ka 0.059 0.089 0.033
-Kd 0.059 0.089 0.033
+Ka 0.336 0.506 0.187
+Kd 0.336 0.506 0.187
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl crimson_trapdoor
-Ka 0.344 0.168 0.240
-Kd 0.344 0.168 0.240
+Ka 0.408 0.199 0.284
+Kd 0.408 0.199 0.284
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
-newmtl target
+newmtl target_top
 Ka 0.888 0.668 0.619
 Kd 0.888 0.668 0.619
 Ks 0.000 0.000 0.000
@@ -628,17 +628,17 @@ Kd 0.274 0.418 0.410
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl cherry_log
+newmtl cherry_log_top
 Ka 0.726 0.553 0.538
 Kd 0.726 0.553 0.538
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl jungle_door
-Ka 0.566 0.414 0.293
-Kd 0.566 0.414 0.293
+newmtl jungle_door_top
+Ka 0.641 0.469 0.332
+Kd 0.641 0.469 0.332
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl black_shulker_box
 Ka 0.098 0.100 0.116
@@ -647,10 +647,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl composter_ready
-Ka 0.695 0.643 0.561
-Kd 0.695 0.643 0.561
+Ka 0.457 0.365 0.220
+Kd 0.457 0.365 0.220
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl polished_andesite
 Ka 0.519 0.528 0.525
@@ -658,7 +658,7 @@ Kd 0.519 0.528 0.525
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl smithing_table
+newmtl smithing_table_top
 Ka 0.225 0.231 0.278
 Kd 0.225 0.231 0.278
 Ks 0.000 0.000 0.000
@@ -677,22 +677,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl bubble_coral_fan
-Ka 0.275 0.056 0.274
-Kd 0.275 0.056 0.274
+Ka 0.628 0.128 0.625
+Kd 0.628 0.128 0.625
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl amethyst_cluster
-Ka 0.351 0.272 0.445
-Kd 0.351 0.272 0.445
+Ka 0.643 0.498 0.813
+Kd 0.643 0.498 0.813
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl sunflower_front
-Ka 0.196 0.157 0.043
-Kd 0.196 0.157 0.043
+Ka 0.965 0.771 0.212
+Kd 0.965 0.771 0.212
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl suspicious_sand_3
 Ka 0.826 0.757 0.570
@@ -707,28 +707,28 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl campfire_fire
-Ka 0.419 0.302 0.111
-Kd 0.419 0.302 0.111
+Ka 0.860 0.620 0.228
+Kd 0.860 0.620 0.228
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl magenta_candle_lit
-Ka 0.059 0.022 0.052
-Kd 0.059 0.022 0.052
+Ka 0.716 0.274 0.635
+Kd 0.716 0.274 0.635
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl red_mushroom
-Ka 0.106 0.037 0.033
-Kd 0.106 0.037 0.033
+Ka 0.851 0.296 0.266
+Kd 0.851 0.296 0.266
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl cherry_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl podzol_side
 Ka 0.480 0.344 0.224
@@ -736,29 +736,29 @@ Kd 0.480 0.344 0.224
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl peony
-Ka 0.218 0.213 0.235
-Kd 0.218 0.213 0.235
+newmtl peony_top
+Ka 0.508 0.496 0.547
+Kd 0.508 0.496 0.547
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl white_candle
-Ka 0.986 0.988 0.988
-Kd 0.986 0.988 0.988
+Ka 0.824 0.850 0.854
+Kd 0.824 0.850 0.854
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl pointed_dripstone_down_middle
-Ka 0.371 0.296 0.257
-Kd 0.371 0.296 0.257
+Ka 0.510 0.407 0.354
+Kd 0.510 0.407 0.354
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl beetroots_stage1
-Ka 0.031 0.064 0.019
-Kd 0.031 0.064 0.019
+Ka 0.262 0.545 0.162
+Kd 0.262 0.545 0.162
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl brown_glazed_terracotta
 Ka 0.470 0.417 0.337
@@ -772,17 +772,17 @@ Kd 0.973 0.741 0.115
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl lectern
+newmtl lectern_top
 Ka 0.682 0.540 0.327
 Kd 0.682 0.540 0.327
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl dirt_path_side
-Ka 0.502 0.372 0.245
-Kd 0.502 0.372 0.245
+Ka 0.535 0.396 0.261
+Kd 0.535 0.396 0.261
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl quartz_block_bottom
 Ka 0.929 0.903 0.878
@@ -796,7 +796,7 @@ Kd 0.791 0.667 0.471
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl end_portal_frame
+newmtl end_portal_frame_top
 Ka 0.357 0.473 0.382
 Kd 0.357 0.473 0.382
 Ks 0.000 0.000 0.000
@@ -820,29 +820,29 @@ Kd 0.269 0.226 0.273
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl ochre_froglight
+newmtl ochre_froglight_top
 Ka 0.983 0.961 0.810
 Kd 0.983 0.961 0.810
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl wheat_stage4
-Ka 0.045 0.161 0.022
-Kd 0.045 0.161 0.022
+Ka 0.146 0.521 0.072
+Kd 0.146 0.521 0.072
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl red_candle
-Ka 0.967 0.930 0.930
-Kd 0.967 0.930 0.930
+Ka 0.601 0.153 0.142
+Kd 0.601 0.153 0.142
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl birch_sapling
-Ka 0.192 0.241 0.119
-Kd 0.192 0.241 0.119
+Ka 0.502 0.631 0.312
+Kd 0.502 0.631 0.312
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl stripped_cherry_log
 Ka 0.843 0.569 0.584
@@ -869,22 +869,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl green_candle_lit
-Ka 0.032 0.037 0.007
-Kd 0.032 0.037 0.007
+Ka 0.395 0.452 0.086
+Kd 0.395 0.452 0.086
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl brain_coral
-Ka 0.339 0.145 0.261
-Kd 0.339 0.145 0.261
+Ka 0.775 0.332 0.596
+Kd 0.775 0.332 0.596
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl cornflower
-Ka 0.906 0.928 0.942
-Kd 0.906 0.928 0.942
+Ka 0.312 0.475 0.575
+Kd 0.312 0.475 0.575
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl stripped_bamboo_block
 Ka 0.758 0.679 0.316
@@ -905,16 +905,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl red_tulip
-Ka 0.075 0.102 0.030
-Kd 0.075 0.102 0.030
+Ka 0.351 0.504 0.129
+Kd 0.351 0.504 0.129
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl beetroots_stage3
-Ka 0.165 0.163 0.054
-Kd 0.165 0.163 0.054
+Ka 0.365 0.360 0.119
+Kd 0.365 0.360 0.119
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl frosted_ice_3
 Ka 0.531 0.699 0.989
@@ -923,22 +923,22 @@ Ks 0.000 0.000 0.000
 d 0.8
 illum 1
 newmtl red_candle_lit
-Ka 0.058 0.021 0.015
-Kd 0.058 0.021 0.015
+Ka 0.708 0.256 0.184
+Kd 0.708 0.256 0.184
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl rail
-Ka 0.277 0.246 0.195
-Kd 0.277 0.246 0.195
+Ka 0.493 0.438 0.347
+Kd 0.493 0.438 0.347
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl bamboo_door
-Ka 0.610 0.546 0.259
-Kd 0.610 0.546 0.259
+newmtl bamboo_door_top
+Ka 0.750 0.672 0.319
+Kd 0.750 0.672 0.319
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl gilded_blackstone
 Ka 0.218 0.168 0.150
@@ -953,10 +953,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl glass
-Ka 0.550 0.588 0.593
-Kd 0.550 0.588 0.593
+Ka 0.690 0.839 0.859
+Kd 0.690 0.839 0.859
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl lectern_front
 Ka 0.510 0.395 0.218
@@ -970,13 +970,13 @@ Kd 0.478 0.166 0.677
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl cake
-Ka 0.745 0.668 0.643
-Kd 0.745 0.668 0.643
+newmtl cake_top
+Ka 0.973 0.873 0.840
+Kd 0.973 0.873 0.840
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
-newmtl furnace
+newmtl furnace_top
 Ka 0.433 0.430 0.430
 Kd 0.433 0.430 0.430
 Ks 0.000 0.000 0.000
@@ -992,7 +992,7 @@ newmtl grass
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl cracked_nether_bricks
 Ka 0.158 0.079 0.094
@@ -1006,7 +1006,7 @@ Kd 0.837 0.396 0.560
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl crimson_stem
+newmtl crimson_stem_top
 Ka 0.442 0.194 0.275
 Kd 0.442 0.194 0.275
 Ks 0.000 0.000 0.000
@@ -1025,10 +1025,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl lily_of_the_valley
-Ka 0.876 0.924 0.850
-Kd 0.876 0.924 0.850
+Ka 0.483 0.685 0.373
+Kd 0.483 0.685 0.373
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl dirt
 Ka 0.526 0.378 0.263
@@ -1037,34 +1037,34 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl kelp
-Ka 0.065 0.104 0.033
-Kd 0.065 0.104 0.033
+Ka 0.342 0.550 0.175
+Kd 0.342 0.550 0.175
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl nether_wart_stage2
-Ka 0.272 0.044 0.047
-Kd 0.272 0.044 0.047
+Ka 0.436 0.071 0.075
+Kd 0.436 0.071 0.075
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl dead_horn_coral
-Ka 0.219 0.207 0.199
-Kd 0.219 0.207 0.199
+Ka 0.559 0.529 0.510
+Kd 0.559 0.529 0.510
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl horn_coral_fan
-Ka 0.297 0.264 0.088
-Kd 0.297 0.264 0.088
+Ka 0.808 0.718 0.239
+Kd 0.808 0.718 0.239
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl orange_tulip
-Ka 0.103 0.135 0.064
-Kd 0.103 0.135 0.064
+Ka 0.367 0.558 0.121
+Kd 0.367 0.558 0.121
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl orange_shulker_box
 Ka 0.918 0.417 0.034
@@ -1102,11 +1102,11 @@ Kd 0.885 0.892 0.893
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl acacia_door
-Ka 0.473 0.269 0.171
-Kd 0.473 0.269 0.171
+newmtl acacia_door_top
+Ka 0.658 0.374 0.238
+Kd 0.658 0.374 0.238
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl rooted_dirt
 Ka 0.565 0.406 0.300
@@ -1115,10 +1115,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl tube_coral_fan
-Ka 0.062 0.111 0.253
-Kd 0.062 0.111 0.253
+Ka 0.200 0.359 0.819
+Kd 0.200 0.359 0.819
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl lime_shulker_box
 Ka 0.391 0.677 0.090
@@ -1127,10 +1127,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl carrots_stage3
-Ka 0.138 0.209 0.063
-Kd 0.138 0.209 0.063
+Ka 0.320 0.487 0.148
+Kd 0.320 0.487 0.148
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl purpur_pillar
 Ka 0.674 0.508 0.673
@@ -1144,17 +1144,17 @@ Kd 0.501 0.499 0.500
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl birch_log
+newmtl birch_log_top
 Ka 0.758 0.704 0.530
 Kd 0.758 0.704 0.530
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl lime_candle
-Ka 0.950 0.973 0.925
-Kd 0.950 0.973 0.925
+Ka 0.385 0.674 0.089
+Kd 0.385 0.674 0.089
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl netherite_block
 Ka 0.261 0.241 0.251
@@ -1163,10 +1163,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cake_side
-Ka 0.349 0.261 0.209
-Kd 0.349 0.261 0.209
+Ka 0.797 0.596 0.478
+Kd 0.797 0.596 0.478
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl cartography_table_side1
 Ka 0.276 0.197 0.135
@@ -1202,13 +1202,13 @@ newmtl tall_grass_bottom
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
-newmtl iron_door
-Ka 0.619 0.615 0.615
-Kd 0.619 0.615 0.615
+newmtl iron_door_top
+Ka 0.761 0.757 0.757
+Kd 0.761 0.757 0.757
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl gray_concrete
 Ka 0.214 0.226 0.242
@@ -1259,40 +1259,40 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl blue_orchid
-Ka 0.032 0.110 0.113
-Kd 0.032 0.110 0.113
+Ka 0.185 0.637 0.660
+Kd 0.185 0.637 0.660
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl soul_torch
-Ka 0.033 0.035 0.027
-Kd 0.033 0.035 0.027
+Ka 0.429 0.452 0.351
+Kd 0.429 0.452 0.351
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl lever
-Ka 0.034 0.029 0.021
-Kd 0.034 0.029 0.021
+Ka 0.436 0.366 0.263
+Kd 0.436 0.366 0.263
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl respawn_anchor_off
+newmtl respawn_anchor_top_off
 Ka 0.132 0.086 0.204
 Kd 0.132 0.086 0.204
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl crimson_fungus
-Ka 0.130 0.041 0.027
-Kd 0.130 0.041 0.027
+Ka 0.554 0.173 0.116
+Kd 0.554 0.173 0.116
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl bubble_coral
-Ka 0.329 0.049 0.325
-Kd 0.329 0.049 0.325
+Ka 0.633 0.094 0.626
+Kd 0.633 0.094 0.626
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl gray_concrete_powder
 Ka 0.302 0.318 0.333
@@ -1301,10 +1301,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pink_petals
-Ka 0.389 0.285 0.345
-Kd 0.389 0.285 0.345
+Ka 0.967 0.708 0.857
+Kd 0.967 0.708 0.857
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl anvil
 Ka 0.269 0.269 0.269
@@ -1313,22 +1313,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl black_candle_lit
-Ka 0.024 0.016 0.017
-Kd 0.024 0.016 0.017
+Ka 0.290 0.190 0.203
+Kd 0.290 0.190 0.203
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl loom
+newmtl loom_top
 Ka 0.558 0.468 0.360
 Kd 0.558 0.468 0.360
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl horn_coral
-Ka 0.320 0.285 0.096
-Kd 0.320 0.285 0.096
+Ka 0.820 0.730 0.246
+Kd 0.820 0.730 0.246
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl chiseled_bookshelf_occupied
 Ka 0.476 0.369 0.274
@@ -1337,22 +1337,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl light_gray_candle
-Ka 0.956 0.957 0.954
-Kd 0.956 0.957 0.954
+Ka 0.465 0.473 0.441
+Kd 0.465 0.473 0.441
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl piston_sticky
+newmtl piston_top_sticky
 Ka 0.481 0.586 0.359
 Kd 0.481 0.586 0.359
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl white_stained_glass_pane
-Ka 0.121 0.121 0.121
-Kd 0.121 0.121 0.121
+newmtl white_stained_glass_pane_top
+Ka 0.965 0.965 0.965
+Kd 0.965 0.965 0.965
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl bamboo_stalk
 Ka 0.367 0.567 0.076
@@ -1367,10 +1367,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl wheat_stage6
-Ka 0.274 0.257 0.072
-Kd 0.274 0.257 0.072
+Ka 0.557 0.522 0.146
+Kd 0.557 0.522 0.146
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl item_frame
 Ka 0.458 0.264 0.168
@@ -1378,11 +1378,11 @@ Kd 0.458 0.264 0.168
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl small_dripleaf
-Ka 0.093 0.117 0.045
-Kd 0.093 0.117 0.045
+newmtl small_dripleaf_top
+Ka 0.371 0.469 0.179
+Kd 0.371 0.469 0.179
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl mossy_stone_bricks
 Ka 0.453 0.475 0.412
@@ -1397,10 +1397,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl tube_coral
-Ka 0.112 0.196 0.462
-Kd 0.112 0.196 0.462
+Ka 0.187 0.327 0.773
+Kd 0.187 0.327 0.773
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl light_blue_wool
 Ka 0.228 0.686 0.852
@@ -1415,10 +1415,10 @@ Ks 0.000 0.000 0.000
 d 0.0
 illum 1
 newmtl pointed_dripstone_down_frustum
-Ka 0.328 0.261 0.227
-Kd 0.328 0.261 0.227
+Ka 0.505 0.402 0.351
+Kd 0.505 0.402 0.351
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl oxidized_cut_copper
 Ka 0.313 0.602 0.496
@@ -1433,10 +1433,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl scaffolding_side
-Ka 0.466 0.410 0.194
-Kd 0.466 0.410 0.194
+Ka 0.756 0.667 0.309
+Kd 0.756 0.667 0.309
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl smooth_stone_slab_side
 Ka 0.657 0.657 0.657
@@ -1462,7 +1462,7 @@ Kd 0.098 0.098 0.098
 Ks 0.000 0.000 0.000
 d 0.5
 illum 1
-newmtl chiseled_bookshelf
+newmtl chiseled_bookshelf_top
 Ka 0.698 0.567 0.348
 Kd 0.698 0.567 0.348
 Ks 0.000 0.000 0.000
@@ -1481,22 +1481,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl potted_azalea_bush_side
-Ka 0.085 0.106 0.041
-Kd 0.085 0.106 0.041
+Ka 0.376 0.467 0.183
+Kd 0.376 0.467 0.183
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
-newmtl daylight_detector
+newmtl daylight_detector_top
 Ka 0.512 0.456 0.371
 Kd 0.512 0.456 0.371
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl lantern
-Ka 0.172 0.148 0.136
-Kd 0.172 0.148 0.136
+Ka 0.416 0.358 0.329
+Kd 0.416 0.358 0.329
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl composter_side
 Ka 0.440 0.276 0.125
@@ -1522,17 +1522,17 @@ Kd 0.812 0.836 0.840
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl black_stained_glass_pane
-Ka 0.012 0.012 0.012
-Kd 0.012 0.012 0.012
+newmtl black_stained_glass_pane_top
+Ka 0.095 0.095 0.095
+Kd 0.095 0.095 0.095
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl sugar_cane
-Ka 0.321 0.417 0.218
-Kd 0.321 0.417 0.218
+Ka 0.583 0.756 0.396
+Kd 0.583 0.756 0.396
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl gray_stained_glass
 Ka 0.298 0.298 0.298
@@ -1547,10 +1547,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl light_blue_candle
-Ka 0.929 0.962 0.981
-Kd 0.929 0.962 0.981
+Ka 0.136 0.540 0.771
+Kd 0.136 0.540 0.771
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl bamboo_planks
 Ka 0.758 0.679 0.316
@@ -1600,13 +1600,13 @@ Kd 0.814 0.357 0.625
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl chipped_anvil
-Ka 0.179 0.179 0.179
-Kd 0.179 0.179 0.179
+newmtl chipped_anvil_top
+Ka 0.286 0.286 0.286
+Kd 0.286 0.286 0.286
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl stripped_crimson_stem
+newmtl stripped_crimson_stem_top
 Ka 0.477 0.221 0.324
 Kd 0.477 0.221 0.324
 Ks 0.000 0.000 0.000
@@ -1619,10 +1619,10 @@ Ks 0.000 0.000 0.000
 d 0.5
 illum 1
 newmtl lightning_rod
-Ka 0.120 0.068 0.051
-Kd 0.120 0.068 0.051
+Ka 0.771 0.436 0.325
+Kd 0.771 0.436 0.325
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl dropper_front
 Ka 0.480 0.478 0.478
@@ -1631,10 +1631,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl white_tulip
-Ka 0.077 0.123 0.060
-Kd 0.077 0.123 0.060
+Ka 0.367 0.646 0.279
+Kd 0.367 0.646 0.279
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl respawn_anchor_side0
 Ka 0.155 0.094 0.246
@@ -1643,10 +1643,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl dark_oak_sapling
-Ka 0.103 0.153 0.052
-Kd 0.103 0.153 0.052
+Ka 0.240 0.356 0.121
+Kd 0.240 0.356 0.121
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl orange_concrete
 Ka 0.880 0.381 0.002
@@ -1655,10 +1655,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl small_dripleaf_side
-Ka 0.007 0.008 0.003
-Kd 0.007 0.008 0.003
+Ka 0.424 0.502 0.192
+Kd 0.424 0.502 0.192
 Ks 0.000 0.000 0.000
-d 0.0
+d 1.0
 illum 1
 newmtl destroy_stage_2
 Ka 0.957 0.957 0.957
@@ -1667,16 +1667,16 @@ Ks 0.000 0.000 0.000
 d 0.1
 illum 1
 newmtl oxeye_daisy
-Ka 0.192 0.243 0.151
-Kd 0.192 0.243 0.151
+Ka 0.703 0.794 0.562
+Kd 0.703 0.794 0.562
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl turtle_egg_slightly_cracked
-Ka 0.765 0.758 0.682
-Kd 0.765 0.758 0.682
+Ka 0.856 0.843 0.696
+Kd 0.856 0.843 0.696
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl lightning_rod_on
 Ka 1.000 1.000 1.000
@@ -1684,7 +1684,7 @@ Kd 1.000 1.000 1.000
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl podzol
+newmtl podzol_top
 Ka 0.360 0.248 0.094
 Kd 0.360 0.248 0.094
 Ks 0.000 0.000 0.000
@@ -1703,10 +1703,10 @@ Ks 0.000 0.000 0.000
 d 0.5
 illum 1
 newmtl fire_0
-Ka 0.793 0.499 0.272
-Kd 0.793 0.499 0.272
+Ka 0.831 0.550 0.211
+Kd 0.831 0.550 0.211
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl chiseled_stone_bricks
 Ka 0.470 0.466 0.470
@@ -1733,16 +1733,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pointed_dripstone_up_frustum
-Ka 0.328 0.261 0.227
-Kd 0.328 0.261 0.227
+Ka 0.505 0.402 0.351
+Kd 0.505 0.402 0.351
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl campfire_log
-Ka 0.253 0.238 0.216
-Kd 0.253 0.238 0.216
+Ka 0.312 0.292 0.265
+Kd 0.312 0.292 0.265
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl cyan_stained_glass
 Ka 0.298 0.498 0.600
@@ -1769,10 +1769,10 @@ Ks 0.000 0.000 0.000
 d 0.5
 illum 1
 newmtl nether_wart_stage0
-Ka 0.079 0.013 0.015
-Kd 0.079 0.013 0.015
+Ka 0.461 0.073 0.085
+Kd 0.461 0.073 0.085
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl mushroom_stem
 Ka 0.797 0.771 0.728
@@ -1811,10 +1811,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl bamboo_fence
-Ka 0.542 0.488 0.234
-Kd 0.542 0.488 0.234
+Ka 0.811 0.731 0.351
+Kd 0.811 0.731 0.351
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl repeater
 Ka 0.628 0.616 0.612
@@ -1846,13 +1846,13 @@ Kd 0.976 0.776 0.155
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl honey_block
+newmtl honey_block_top
 Ka 0.985 0.727 0.206
 Kd 0.985 0.727 0.206
 Ks 0.000 0.000 0.000
 d 0.7
 illum 1
-newmtl dark_oak_log
+newmtl dark_oak_log_top
 Ka 0.265 0.177 0.088
 Kd 0.265 0.177 0.088
 Ks 0.000 0.000 0.000
@@ -1862,7 +1862,7 @@ newmtl bamboo_small_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl netherrack
 Ka 0.383 0.151 0.151
@@ -1883,10 +1883,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl sculk_vein
-Ka 0.021 0.131 0.157
-Kd 0.021 0.131 0.157
+Ka 0.031 0.190 0.227
+Kd 0.031 0.190 0.227
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl cut_sandstone
 Ka 0.854 0.810 0.627
@@ -1907,34 +1907,34 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl weeping_vines_plant
-Ka 0.234 0.029 0.021
-Kd 0.234 0.029 0.021
+Ka 0.521 0.064 0.048
+Kd 0.521 0.064 0.048
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl bamboo_singleleaf
-Ka 0.943 0.957 0.919
-Kd 0.943 0.957 0.919
+Ka 0.393 0.544 0.138
+Kd 0.393 0.544 0.138
 Ks 0.000 0.000 0.000
-d 0.0
+d 1.0
 illum 1
 newmtl pointed_dripstone_up_tip
-Ka 0.111 0.089 0.076
-Kd 0.111 0.089 0.076
+Ka 0.537 0.429 0.368
+Kd 0.537 0.429 0.368
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
-newmtl chiseled_quartz_block
+newmtl chiseled_quartz_block_top
 Ka 0.908 0.889 0.852
 Kd 0.908 0.889 0.852
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cauldron_bottom
-Ka 0.052 0.052 0.057
-Kd 0.052 0.052 0.057
+Ka 0.159 0.159 0.175
+Kd 0.159 0.159 0.175
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl frosted_ice_0
 Ka 0.550 0.711 0.991
@@ -1946,37 +1946,37 @@ newmtl grass_block_side_overlay
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl stonecutter_saw
-Ka 0.279 0.279 0.279
-Kd 0.279 0.279 0.279
+Ka 0.872 0.872 0.872
+Kd 0.872 0.872 0.872
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl activator_rail
-Ka 0.275 0.208 0.178
-Kd 0.275 0.208 0.178
+Ka 0.451 0.342 0.291
+Kd 0.451 0.342 0.291
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl stripped_warped_stem
+newmtl stripped_warped_stem_top
 Ka 0.204 0.506 0.488
 Kd 0.204 0.506 0.488
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl large_fern
-Ka 0.199 0.200 0.199
-Kd 0.199 0.200 0.199
+newmtl large_fern_top
+Ka 0.491 0.493 0.491
+Kd 0.491 0.493 0.491
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl redstone_dust_line1
-Ka 0.081 0.081 0.081
-Kd 0.081 0.081 0.081
+Ka 0.943 0.943 0.943
+Kd 0.943 0.943 0.943
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl end_stone_bricks
 Ka 0.857 0.879 0.636
@@ -1985,10 +1985,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl large_amethyst_bud
-Ka 0.193 0.151 0.242
-Kd 0.193 0.151 0.242
+Ka 0.632 0.496 0.795
+Kd 0.632 0.496 0.795
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl nether_gold_ore
 Ka 0.452 0.216 0.165
@@ -2003,10 +2003,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl beetroots_stage0
-Ka 0.015 0.032 0.009
-Kd 0.015 0.032 0.009
+Ka 0.257 0.539 0.161
+Kd 0.257 0.539 0.161
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl light_gray_stained_glass
 Ka 0.600 0.600 0.600
@@ -2014,7 +2014,7 @@ Kd 0.600 0.600 0.600
 Ks 0.000 0.000 0.000
 d 0.5
 illum 1
-newmtl jigsaw
+newmtl jigsaw_top
 Ka 0.314 0.273 0.318
 Kd 0.314 0.273 0.318
 Ks 0.000 0.000 0.000
@@ -2027,22 +2027,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl jungle_sapling
-Ka 0.063 0.107 0.022
-Kd 0.063 0.107 0.022
+Ka 0.187 0.318 0.066
+Kd 0.187 0.318 0.066
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
-newmtl stonecutter
+newmtl stonecutter_top
 Ka 0.484 0.466 0.436
 Kd 0.484 0.466 0.436
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl acacia_trapdoor
-Ka 0.470 0.262 0.154
-Kd 0.470 0.262 0.154
+Ka 0.615 0.342 0.201
+Kd 0.615 0.342 0.201
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl copper_ore
 Ka 0.489 0.493 0.471
@@ -2080,11 +2080,11 @@ Kd 0.498 0.247 0.698
 Ks 0.000 0.000 0.000
 d 0.5
 illum 1
-newmtl purple_stained_glass_pane
-Ka 0.060 0.030 0.084
-Kd 0.060 0.030 0.084
+newmtl purple_stained_glass_pane_top
+Ka 0.482 0.240 0.672
+Kd 0.482 0.240 0.672
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl observer_front
 Ka 0.406 0.405 0.405
@@ -2099,16 +2099,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl soul_lantern
-Ka 0.117 0.161 0.187
-Kd 0.117 0.161 0.187
+Ka 0.282 0.390 0.451
+Kd 0.282 0.390 0.451
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
-newmtl small_dripleaf_stem
-Ka 0.052 0.065 0.025
-Kd 0.052 0.065 0.025
+newmtl small_dripleaf_stem_top
+Ka 0.381 0.476 0.182
+Kd 0.381 0.476 0.182
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl structure_block
 Ka 0.349 0.292 0.353
@@ -2135,10 +2135,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl fire_coral_fan
-Ka 0.255 0.056 0.073
-Kd 0.255 0.056 0.073
+Ka 0.623 0.136 0.179
+Kd 0.623 0.136 0.179
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl destroy_stage_6
 Ka 0.835 0.835 0.835
@@ -2183,10 +2183,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl purple_candle
-Ka 0.952 0.929 0.969
-Kd 0.952 0.929 0.969
+Ka 0.413 0.135 0.625
+Kd 0.413 0.135 0.625
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl deepslate_iron_ore
 Ka 0.419 0.391 0.371
@@ -2212,7 +2212,7 @@ Kd 0.328 0.262 0.161
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl polished_basalt
+newmtl polished_basalt_top
 Ka 0.390 0.387 0.395
 Kd 0.390 0.387 0.395
 Ks 0.000 0.000 0.000
@@ -2231,16 +2231,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl spawner
-Ka 0.098 0.125 0.169
-Kd 0.098 0.125 0.169
+Ka 0.143 0.182 0.246
+Kd 0.143 0.182 0.246
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl torch
-Ka 0.043 0.035 0.020
-Kd 0.043 0.035 0.020
+Ka 0.545 0.445 0.251
+Kd 0.545 0.445 0.251
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl grass_block_snow
 Ka 0.557 0.725 0.443
@@ -2255,34 +2255,34 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pink_tulip
-Ka 0.087 0.127 0.069
-Kd 0.087 0.127 0.069
+Ka 0.389 0.618 0.307
+Kd 0.389 0.618 0.307
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl redstone_dust_line0
-Ka 0.074 0.074 0.074
-Kd 0.074 0.074 0.074
+Ka 0.941 0.941 0.941
+Kd 0.941 0.941 0.941
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl grass_block
+newmtl grass_block_top
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pointed_dripstone_up_middle
-Ka 0.371 0.296 0.257
-Kd 0.371 0.296 0.257
+Ka 0.510 0.407 0.354
+Kd 0.510 0.407 0.354
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
-newmtl composter
-Ka 0.824 0.732 0.651
-Kd 0.824 0.732 0.651
+newmtl composter_top
+Ka 0.599 0.388 0.202
+Kd 0.599 0.388 0.202
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl magenta_concrete
 Ka 0.664 0.190 0.624
@@ -2290,11 +2290,11 @@ Kd 0.664 0.190 0.624
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl blue_stained_glass_pane
-Ka 0.024 0.036 0.084
-Kd 0.024 0.036 0.084
+newmtl blue_stained_glass_pane_top
+Ka 0.190 0.289 0.672
+Kd 0.190 0.289 0.672
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl magma
 Ka 0.560 0.249 0.124
@@ -2315,16 +2315,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl spore_blossom_base
-Ka 0.275 0.347 0.123
-Kd 0.275 0.347 0.123
+Ka 0.443 0.558 0.198
+Kd 0.443 0.558 0.198
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl cherry_trapdoor
-Ka 0.763 0.602 0.581
-Kd 0.763 0.602 0.581
+Ka 0.888 0.700 0.676
+Kd 0.888 0.700 0.676
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl suspicious_sand_2
 Ka 0.839 0.780 0.593
@@ -2333,10 +2333,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl mangrove_propagule
-Ka 0.049 0.088 0.042
-Kd 0.049 0.088 0.042
+Ka 0.378 0.685 0.329
+Kd 0.378 0.685 0.329
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl command_block_back
 Ka 0.682 0.515 0.419
@@ -2344,11 +2344,11 @@ Kd 0.682 0.515 0.419
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl yellow_stained_glass_pane
-Ka 0.108 0.108 0.024
-Kd 0.108 0.108 0.024
+newmtl yellow_stained_glass_pane_top
+Ka 0.867 0.867 0.190
+Kd 0.867 0.867 0.190
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl cherry_planks
 Ka 0.888 0.701 0.677
@@ -2357,16 +2357,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl lime_candle_lit
-Ka 0.040 0.058 0.010
-Kd 0.040 0.058 0.010
+Ka 0.487 0.711 0.120
+Kd 0.487 0.711 0.120
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl allium
-Ka 0.139 0.135 0.175
-Kd 0.139 0.135 0.175
+Ka 0.623 0.538 0.721
+Kd 0.623 0.538 0.721
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl gray_wool
 Ka 0.246 0.268 0.281
@@ -2374,17 +2374,17 @@ Kd 0.246 0.268 0.281
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl bamboo_block
+newmtl bamboo_block_top
 Ka 0.546 0.556 0.245
 Kd 0.546 0.556 0.245
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl sunflower
-Ka 0.024 0.061 0.013
-Kd 0.024 0.061 0.013
+newmtl sunflower_top
+Ka 0.195 0.507 0.107
+Kd 0.195 0.507 0.107
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl budding_amethyst
 Ka 0.519 0.377 0.732
@@ -2392,29 +2392,29 @@ Kd 0.519 0.377 0.732
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl stripped_jungle_log
+newmtl stripped_jungle_log_top
 Ka 0.650 0.482 0.321
 Kd 0.650 0.482 0.321
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl grindstone_round
-Ka 0.209 0.209 0.209
-Kd 0.209 0.209 0.209
+Ka 0.557 0.557 0.557
+Kd 0.557 0.557 0.557
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
-newmtl gray_stained_glass_pane
-Ka 0.036 0.036 0.036
-Kd 0.036 0.036 0.036
+newmtl gray_stained_glass_pane_top
+Ka 0.289 0.289 0.289
+Kd 0.289 0.289 0.289
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl flowering_azalea_side
-Ka 0.262 0.268 0.173
-Kd 0.262 0.268 0.173
+Ka 0.435 0.445 0.288
+Kd 0.435 0.445 0.288
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl light_blue_concrete
 Ka 0.140 0.537 0.780
@@ -2422,17 +2422,17 @@ Kd 0.140 0.537 0.780
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl bell
-Ka 0.248 0.231 0.109
-Kd 0.248 0.231 0.109
+newmtl bell_top
+Ka 0.993 0.922 0.435
+Kd 0.993 0.922 0.435
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl pointed_dripstone_up_tip_merge
-Ka 0.183 0.148 0.126
-Kd 0.183 0.148 0.126
+Ka 0.543 0.439 0.374
+Kd 0.543 0.439 0.374
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl crimson_planks
 Ka 0.396 0.191 0.277
@@ -2446,29 +2446,29 @@ Kd 0.945 0.575 0.278
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl melon
+newmtl melon_top
 Ka 0.435 0.567 0.120
 Kd 0.435 0.567 0.120
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl turtle_egg
-Ka 0.785 0.783 0.711
-Kd 0.785 0.783 0.711
+Ka 0.894 0.890 0.752
+Kd 0.894 0.890 0.752
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
-newmtl purpur_pillar
+newmtl purpur_pillar_top
 Ka 0.674 0.503 0.673
 Kd 0.674 0.503 0.673
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl cyan_stained_glass_pane
-Ka 0.036 0.060 0.072
-Kd 0.036 0.060 0.072
+newmtl cyan_stained_glass_pane_top
+Ka 0.289 0.482 0.578
+Kd 0.289 0.482 0.578
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl green_stained_glass
 Ka 0.400 0.498 0.200
@@ -2477,10 +2477,10 @@ Ks 0.000 0.000 0.000
 d 0.5
 illum 1
 newmtl potatoes_stage0
-Ka 0.013 0.030 0.009
-Kd 0.013 0.030 0.009
+Ka 0.230 0.508 0.160
+Kd 0.230 0.508 0.160
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl repeating_command_block_back
 Ka 0.502 0.430 0.654
@@ -2489,16 +2489,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl soul_fire_0
-Ka 0.121 0.846 0.869
-Kd 0.121 0.846 0.869
+Ka 0.200 0.755 0.773
+Kd 0.200 0.755 0.773
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl small_amethyst_bud
-Ka 0.065 0.049 0.094
-Kd 0.065 0.049 0.094
+Ka 0.517 0.389 0.755
+Kd 0.517 0.389 0.755
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl iron_ore
 Ka 0.535 0.507 0.481
@@ -2507,16 +2507,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cyan_candle_lit
-Ka 0.014 0.047 0.043
-Kd 0.014 0.047 0.043
+Ka 0.169 0.576 0.528
+Kd 0.169 0.576 0.528
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl torchflower_crop_stage1
-Ka 0.068 0.114 0.080
-Kd 0.068 0.114 0.080
+Ka 0.254 0.428 0.300
+Kd 0.254 0.428 0.300
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl cracked_stone_bricks
 Ka 0.464 0.461 0.464
@@ -2534,19 +2534,19 @@ newmtl birch_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl mangrove_roots
-Ka 0.203 0.162 0.105
-Kd 0.203 0.162 0.105
+newmtl mangrove_roots_top
+Ka 0.293 0.234 0.152
+Kd 0.293 0.234 0.152
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl crimson_roots_pot
-Ka 0.123 0.008 0.040
-Kd 0.123 0.008 0.040
+Ka 0.499 0.032 0.163
+Kd 0.499 0.032 0.163
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl structure_block_save
 Ka 0.339 0.281 0.343
@@ -2566,7 +2566,7 @@ Kd 0.586 0.438 0.319
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl hay_block
+newmtl hay_block_top
 Ka 0.651 0.546 0.049
 Kd 0.651 0.546 0.049
 Ks 0.000 0.000 0.000
@@ -2591,24 +2591,24 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl grindstone_pivot
-Ka 0.067 0.042 0.019
-Kd 0.067 0.042 0.019
+Ka 0.287 0.180 0.083
+Kd 0.287 0.180 0.083
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl brain_coral_fan
-Ka 0.295 0.123 0.224
-Kd 0.295 0.123 0.224
+Ka 0.794 0.330 0.604
+Kd 0.794 0.330 0.604
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl pointed_dripstone_up_base
-Ka 0.456 0.363 0.316
-Kd 0.456 0.363 0.316
+Ka 0.508 0.404 0.351
+Kd 0.508 0.404 0.351
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
-newmtl stripped_birch_log
+newmtl stripped_birch_log_top
 Ka 0.750 0.674 0.456
 Kd 0.750 0.674 0.456
 Ks 0.000 0.000 0.000
@@ -2630,13 +2630,13 @@ newmtl flowering_azalea_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl end_rod
-Ka 0.184 0.176 0.166
-Kd 0.184 0.176 0.166
+Ka 0.814 0.778 0.734
+Kd 0.814 0.778 0.734
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl magenta_wool
 Ka 0.743 0.270 0.706
@@ -2645,10 +2645,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl torchflower_crop_stage2
-Ka 0.150 0.150 0.115
-Kd 0.150 0.150 0.115
+Ka 0.396 0.397 0.302
+Kd 0.396 0.397 0.302
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl dried_kelp_bottom
 Ka 0.197 0.230 0.153
@@ -2656,11 +2656,11 @@ Kd 0.197 0.230 0.153
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl glass_pane
-Ka 0.083 0.103 0.107
-Kd 0.083 0.103 0.107
+newmtl glass_pane_top
+Ka 0.668 0.824 0.852
+Kd 0.668 0.824 0.852
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl gray_shulker_box
 Ka 0.217 0.231 0.245
@@ -2674,7 +2674,7 @@ Kd 0.326 0.354 0.367
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl quartz_pillar
+newmtl quartz_pillar_top
 Ka 0.922 0.901 0.874
 Kd 0.922 0.901 0.874
 Ks 0.000 0.000 0.000
@@ -2684,7 +2684,7 @@ newmtl azalea_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl deepslate_gold_ore
 Ka 0.452 0.404 0.307
@@ -2693,10 +2693,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl rail_corner
-Ka 0.215 0.190 0.149
-Kd 0.215 0.190 0.149
+Ka 0.510 0.451 0.352
+Kd 0.510 0.451 0.352
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl stripped_dark_oak_log
 Ka 0.286 0.223 0.141
@@ -2710,19 +2710,19 @@ Kd 0.213 0.213 0.215
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl fletching_table
+newmtl fletching_table_top
 Ka 0.773 0.708 0.523
 Kd 0.773 0.708 0.523
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cave_vines_lit
-Ka 0.240 0.258 0.096
-Kd 0.240 0.258 0.096
+Ka 0.412 0.443 0.164
+Kd 0.412 0.443 0.164
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl flowering_azalea
+newmtl flowering_azalea_top
 Ka 0.439 0.478 0.252
 Kd 0.439 0.478 0.252
 Ks 0.000 0.000 0.000
@@ -2765,10 +2765,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pink_candle
-Ka 0.985 0.951 0.964
-Kd 0.985 0.951 0.964
+Ka 0.816 0.400 0.558
+Kd 0.816 0.400 0.558
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl pumpkin_side
 Ka 0.767 0.450 0.095
@@ -2825,10 +2825,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cave_vines_plant
-Ka 0.195 0.224 0.084
-Kd 0.195 0.224 0.084
+Ka 0.346 0.399 0.150
+Kd 0.346 0.399 0.150
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl daylight_detector_side
 Ka 0.262 0.217 0.140
@@ -2836,7 +2836,7 @@ Kd 0.262 0.217 0.140
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl pumpkin
+newmtl pumpkin_top
 Ka 0.777 0.466 0.096
 Kd 0.777 0.466 0.096
 Ks 0.000 0.000 0.000
@@ -2854,17 +2854,17 @@ Kd 0.414 0.415 0.413
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl cactus
-Ka 0.258 0.382 0.130
-Kd 0.258 0.382 0.130
+newmtl cactus_top
+Ka 0.337 0.498 0.170
+Kd 0.337 0.498 0.170
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl detector_rail_on
-Ka 0.328 0.247 0.213
-Kd 0.328 0.247 0.213
+Ka 0.539 0.405 0.349
+Kd 0.539 0.405 0.349
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl dropper_front_vertical
 Ka 0.383 0.380 0.380
@@ -2885,10 +2885,10 @@ Ks 0.000 0.000 0.000
 d 0.8
 illum 1
 newmtl warped_roots
-Ka 0.029 0.195 0.175
-Kd 0.029 0.195 0.175
+Ka 0.080 0.542 0.487
+Kd 0.080 0.542 0.487
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl dark_prismarine
 Ka 0.203 0.359 0.298
@@ -2897,20 +2897,20 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl oak_sapling
-Ka 0.132 0.181 0.069
-Kd 0.132 0.181 0.069
+Ka 0.304 0.418 0.160
+Kd 0.304 0.418 0.160
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl brown_mushroom
-Ka 0.080 0.061 0.048
-Kd 0.080 0.061 0.048
+Ka 0.602 0.458 0.363
+Kd 0.602 0.458 0.363
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl cherry_door_bottom
-Ka 0.878 0.685 0.660
-Kd 0.878 0.685 0.660
+Ka 0.885 0.691 0.665
+Kd 0.885 0.691 0.665
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
@@ -2932,7 +2932,7 @@ Kd 0.492 0.492 0.492
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl stripped_bamboo_block
+newmtl stripped_bamboo_block_top
 Ka 0.700 0.623 0.285
 Kd 0.700 0.623 0.285
 Ks 0.000 0.000 0.000
@@ -2944,19 +2944,19 @@ Kd 0.750 0.419 0.316
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl potted_flowering_azalea_bush
-Ka 0.113 0.117 0.069
-Kd 0.113 0.117 0.069
+newmtl potted_flowering_azalea_bush_top
+Ka 0.450 0.469 0.275
+Kd 0.450 0.469 0.275
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl green_candle
-Ka 0.941 0.949 0.925
-Kd 0.941 0.949 0.925
+Ka 0.286 0.378 0.082
+Kd 0.286 0.378 0.082
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl stripped_mangrove_log
+newmtl stripped_mangrove_log_top
 Ka 0.428 0.171 0.170
 Kd 0.428 0.171 0.170
 Ks 0.000 0.000 0.000
@@ -2968,17 +2968,17 @@ Kd 0.303 0.303 0.316
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl bone_block
+newmtl bone_block_top
 Ka 0.823 0.809 0.704
 Kd 0.823 0.809 0.704
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl carrots_stage1
-Ka 0.034 0.077 0.026
-Kd 0.034 0.077 0.026
+Ka 0.206 0.472 0.157
+Kd 0.206 0.472 0.157
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl lapis_block
 Ka 0.120 0.264 0.549
@@ -2993,12 +2993,12 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cake_inner
-Ka 0.229 0.146 0.104
-Kd 0.229 0.146 0.104
+Ka 0.524 0.333 0.237
+Kd 0.524 0.333 0.237
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
-newmtl lodestone
+newmtl lodestone_top
 Ka 0.577 0.585 0.599
 Kd 0.577 0.585 0.599
 Ks 0.000 0.000 0.000
@@ -3017,10 +3017,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cocoa_stage1
-Ka 0.199 0.151 0.076
-Kd 0.199 0.151 0.076
+Ka 0.574 0.434 0.220
+Kd 0.574 0.434 0.220
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl warped_planks
 Ka 0.169 0.411 0.389
@@ -3046,7 +3046,7 @@ Kd 0.812 0.728 0.332
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl crafting_table
+newmtl crafting_table_top
 Ka 0.470 0.287 0.166
 Kd 0.470 0.287 0.166
 Ks 0.000 0.000 0.000
@@ -3059,16 +3059,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl peony_bottom
-Ka 0.187 0.219 0.202
-Kd 0.187 0.219 0.202
+Ka 0.339 0.398 0.367
+Kd 0.339 0.398 0.367
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl cauldron
-Ka 0.176 0.174 0.177
-Kd 0.176 0.174 0.177
+newmtl cauldron_top
+Ka 0.289 0.285 0.291
+Kd 0.289 0.285 0.291
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl lava_flow
 Ka 0.814 0.360 0.078
@@ -3089,16 +3089,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl fire_coral
-Ka 0.279 0.063 0.078
-Kd 0.279 0.063 0.078
+Ka 0.655 0.148 0.184
+Kd 0.655 0.148 0.184
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
-newmtl tall_seagrass
+newmtl tall_seagrass_top
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl suspicious_sand_0
 Ka 0.854 0.801 0.624
@@ -3107,10 +3107,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl dead_tube_coral_fan
-Ka 0.793 0.783 0.778
-Kd 0.793 0.783 0.778
+Ka 0.504 0.479 0.464
+Kd 0.504 0.479 0.464
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl blue_glazed_terracotta
 Ka 0.186 0.254 0.547
@@ -3118,11 +3118,11 @@ Kd 0.186 0.254 0.547
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl sculk_shrieker
-Ka 0.158 0.163 0.135
-Kd 0.158 0.163 0.135
+newmtl sculk_shrieker_top
+Ka 0.780 0.805 0.665
+Kd 0.780 0.805 0.665
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl honey_block_bottom
 Ka 0.946 0.573 0.070
@@ -3131,16 +3131,16 @@ Ks 0.000 0.000 0.000
 d 0.5
 illum 1
 newmtl cherry_sapling
-Ka 0.307 0.220 0.268
-Kd 0.307 0.220 0.268
+Ka 0.643 0.462 0.562
+Kd 0.643 0.462 0.562
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl cave_vines
-Ka 0.198 0.240 0.089
-Kd 0.198 0.240 0.089
+Ka 0.355 0.429 0.160
+Kd 0.355 0.429 0.160
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl spruce_trapdoor
 Ka 0.407 0.310 0.188
@@ -3149,16 +3149,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl warped_trapdoor
-Ka 0.146 0.368 0.344
-Kd 0.146 0.368 0.344
+Ka 0.186 0.469 0.438
+Kd 0.186 0.469 0.438
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl dead_fire_coral
-Ka 0.229 0.214 0.207
-Kd 0.229 0.214 0.207
+Ka 0.537 0.504 0.486
+Kd 0.537 0.504 0.486
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl dispenser_front
 Ka 0.479 0.477 0.477
@@ -3167,10 +3167,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl end_portal_frame_side
-Ka 0.480 0.519 0.392
-Kd 0.480 0.519 0.392
+Ka 0.591 0.639 0.482
+Kd 0.591 0.639 0.482
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl cherry_log
 Ka 0.215 0.129 0.174
@@ -3184,11 +3184,11 @@ Kd 0.222 0.146 0.151
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl magenta_stained_glass_pane
-Ka 0.084 0.036 0.102
-Kd 0.084 0.036 0.102
+newmtl magenta_stained_glass_pane_top
+Ka 0.672 0.289 0.818
+Kd 0.672 0.289 0.818
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl destroy_stage_7
 Ka 0.766 0.766 0.766
@@ -3197,10 +3197,10 @@ Ks 0.000 0.000 0.000
 d 0.4
 illum 1
 newmtl spruce_sapling
-Ka 0.057 0.076 0.047
-Kd 0.057 0.076 0.047
+Ka 0.176 0.236 0.144
+Kd 0.176 0.236 0.144
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl blue_shulker_box
 Ka 0.171 0.179 0.550
@@ -3208,7 +3208,7 @@ Kd 0.171 0.179 0.550
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl mangrove_door
+newmtl mangrove_door_top
 Ka 0.443 0.192 0.183
 Kd 0.443 0.192 0.183
 Ks 0.000 0.000 0.000
@@ -3245,12 +3245,12 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl dead_bubble_coral_fan
-Ka 0.757 0.744 0.735
-Kd 0.757 0.744 0.735
+Ka 0.552 0.528 0.510
+Kd 0.552 0.528 0.510
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
-newmtl stripped_spruce_log
+newmtl stripped_spruce_log_top
 Ka 0.415 0.315 0.183
 Kd 0.415 0.315 0.183
 Ks 0.000 0.000 0.000
@@ -3262,29 +3262,29 @@ Kd 0.425 0.600 0.433
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl brown_stained_glass_pane
-Ka 0.048 0.036 0.024
-Kd 0.048 0.036 0.024
+newmtl brown_stained_glass_pane_top
+Ka 0.384 0.289 0.190
+Kd 0.384 0.289 0.190
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
-newmtl oak_log
+newmtl oak_log_top
 Ka 0.594 0.477 0.286
 Kd 0.594 0.477 0.286
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl bamboo_trapdoor
-Ka 0.645 0.582 0.277
-Kd 0.645 0.582 0.277
+Ka 0.779 0.703 0.335
+Kd 0.779 0.703 0.335
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl mangrove_propagule_hanging
-Ka 0.090 0.112 0.058
-Kd 0.090 0.112 0.058
+Ka 0.427 0.531 0.273
+Kd 0.427 0.531 0.273
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl birch_planks
 Ka 0.755 0.687 0.475
@@ -3292,29 +3292,29 @@ Kd 0.755 0.687 0.475
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl anvil
-Ka 0.178 0.178 0.178
-Kd 0.178 0.178 0.178
+newmtl anvil_top
+Ka 0.284 0.284 0.284
+Kd 0.284 0.284 0.284
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl candle
-Ka 0.989 0.979 0.963
-Kd 0.989 0.979 0.963
+Ka 0.910 0.787 0.601
+Kd 0.910 0.787 0.601
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl jukebox
+newmtl jukebox_top
 Ka 0.368 0.253 0.186
 Kd 0.368 0.253 0.186
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl activator_rail_on
-Ka 0.343 0.209 0.177
-Kd 0.343 0.209 0.177
+Ka 0.562 0.343 0.291
+Kd 0.562 0.343 0.291
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl amethyst_block
 Ka 0.525 0.384 0.750
@@ -3323,10 +3323,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl twisting_vines_plant
-Ka 0.028 0.187 0.168
-Kd 0.028 0.187 0.168
+Ka 0.079 0.533 0.479
+Kd 0.079 0.533 0.479
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl stripped_warped_stem
 Ka 0.226 0.592 0.580
@@ -3335,10 +3335,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pumpkin_stem
-Ka 0.083 0.083 0.083
-Kd 0.083 0.083 0.083
+Ka 0.604 0.605 0.604
+Kd 0.604 0.605 0.604
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl warped_nylium_side
 Ka 0.285 0.243 0.233
@@ -3347,10 +3347,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl potted_flowering_azalea_bush_side
-Ka 0.097 0.101 0.062
-Kd 0.097 0.101 0.062
+Ka 0.430 0.445 0.273
+Kd 0.430 0.445 0.273
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl purple_terracotta
 Ka 0.464 0.276 0.338
@@ -3371,16 +3371,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl light_gray_candle_lit
-Ka 0.049 0.047 0.041
-Kd 0.049 0.047 0.041
+Ka 0.594 0.578 0.495
+Kd 0.594 0.578 0.495
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl acacia_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl light_gray_wool
 Ka 0.557 0.558 0.528
@@ -3395,24 +3395,24 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl potted_azalea_bush_plant
-Ka 0.111 0.129 0.051
-Kd 0.111 0.129 0.051
+Ka 0.363 0.424 0.167
+Kd 0.363 0.424 0.167
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl spore_blossom
-Ka 0.405 0.189 0.310
-Kd 0.405 0.189 0.310
+Ka 0.812 0.380 0.622
+Kd 0.812 0.380 0.622
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl warped_fungus
-Ka 0.057 0.084 0.067
-Kd 0.057 0.084 0.067
+Ka 0.291 0.428 0.345
+Kd 0.291 0.428 0.345
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
-newmtl spruce_door
+newmtl spruce_door_top
 Ka 0.418 0.316 0.191
 Kd 0.418 0.316 0.191
 Ks 0.000 0.000 0.000
@@ -3431,28 +3431,28 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl yellow_candle
-Ka 0.985 0.971 0.934
-Kd 0.985 0.971 0.934
+Ka 0.820 0.646 0.197
+Kd 0.820 0.646 0.197
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl fern
-Ka 0.701 0.701 0.701
-Kd 0.701 0.701 0.701
+Ka 0.488 0.489 0.488
+Kd 0.488 0.489 0.488
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl spruce_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl hanging_roots
-Ka 0.185 0.132 0.105
-Kd 0.185 0.132 0.105
+Ka 0.632 0.452 0.359
+Kd 0.632 0.452 0.359
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl blue_wool
 Ka 0.208 0.225 0.618
@@ -3472,11 +3472,11 @@ Kd 0.284 0.285 0.287
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl damaged_anvil
-Ka 0.177 0.177 0.177
-Kd 0.177 0.177 0.177
+newmtl damaged_anvil_top
+Ka 0.284 0.283 0.283
+Kd 0.284 0.283 0.283
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl furnace_side
 Ka 0.473 0.471 0.471
@@ -3509,22 +3509,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl carrots_stage2
-Ka 0.071 0.143 0.048
-Kd 0.071 0.143 0.048
+Ka 0.222 0.446 0.148
+Kd 0.222 0.446 0.148
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl orange_candle_lit
-Ka 0.073 0.042 0.009
-Kd 0.073 0.042 0.009
+Ka 0.889 0.514 0.105
+Kd 0.889 0.514 0.105
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl attached_melon_stem
-Ka 0.072 0.072 0.072
-Kd 0.072 0.072 0.072
+Ka 0.555 0.557 0.555
+Kd 0.555 0.557 0.555
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl bee_nest_side
 Ka 0.770 0.591 0.303
@@ -3568,7 +3568,7 @@ Kd 0.466 0.381 0.262
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl stripped_dark_oak_log
+newmtl stripped_dark_oak_log_top
 Ka 0.258 0.173 0.089
 Kd 0.258 0.173 0.089
 Ks 0.000 0.000 0.000
@@ -3580,35 +3580,35 @@ Kd 0.676 0.784 0.745
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl sculk_catalyst
+newmtl sculk_catalyst_top
 Ka 0.060 0.125 0.151
 Kd 0.060 0.125 0.151
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cave_vines_plant_lit
-Ka 0.258 0.263 0.099
-Kd 0.258 0.263 0.099
+Ka 0.413 0.421 0.158
+Kd 0.413 0.421 0.158
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl pearlescent_froglight
+newmtl pearlescent_froglight_top
 Ka 0.964 0.941 0.940
 Kd 0.964 0.941 0.940
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl vine
-Ka 0.260 0.260 0.260
-Kd 0.260 0.260 0.260
+Ka 0.455 0.455 0.455
+Kd 0.455 0.455 0.455
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl light_gray_stained_glass_pane
-Ka 0.072 0.072 0.072
-Kd 0.072 0.072 0.072
+newmtl light_gray_stained_glass_pane_top
+Ka 0.578 0.578 0.578
+Kd 0.578 0.578 0.578
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl lectern_sides
 Ka 0.588 0.459 0.265
@@ -3628,7 +3628,7 @@ Kd 0.869 0.664 0.184
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl blast_furnace
+newmtl blast_furnace_top
 Ka 0.317 0.315 0.318
 Kd 0.317 0.315 0.318
 Ks 0.000 0.000 0.000
@@ -3647,16 +3647,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl redstone_dust_dot
-Ka 0.107 0.107 0.107
-Kd 0.107 0.107 0.107
+Ka 0.943 0.943 0.943
+Kd 0.943 0.943 0.943
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl purple_candle_lit
-Ka 0.040 0.011 0.047
-Kd 0.040 0.011 0.047
+Ka 0.490 0.131 0.567
+Kd 0.490 0.131 0.567
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl granite
 Ka 0.586 0.405 0.337
@@ -3671,10 +3671,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl detector_rail
-Ka 0.294 0.251 0.216
-Kd 0.294 0.251 0.216
+Ka 0.483 0.411 0.355
+Kd 0.483 0.411 0.355
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl fletching_table_side
 Ka 0.751 0.655 0.508
@@ -3683,34 +3683,34 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl big_dripleaf_side
-Ka 0.003 0.005 0.002
-Kd 0.003 0.005 0.002
+Ka 0.295 0.386 0.174
+Kd 0.295 0.386 0.174
 Ks 0.000 0.000 0.000
-d 0.0
+d 1.0
 illum 1
 newmtl soul_campfire_fire
-Ka 0.155 0.391 0.398
-Kd 0.155 0.391 0.398
+Ka 0.317 0.802 0.816
+Kd 0.317 0.802 0.816
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl torchflower
-Ka 0.150 0.150 0.115
-Kd 0.150 0.150 0.115
+Ka 0.396 0.397 0.302
+Kd 0.396 0.397 0.302
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
-newmtl crimson_door
+newmtl crimson_door_top
 Ka 0.449 0.216 0.310
 Kd 0.449 0.216 0.310
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl sculk_sensor_tendril_active
-Ka 0.004 0.060 0.062
-Kd 0.004 0.060 0.062
+Ka 0.035 0.481 0.497
+Kd 0.035 0.481 0.497
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl brewing_stand_base
 Ka 0.457 0.415 0.415
@@ -3749,10 +3749,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl sweet_berry_bush_stage3
-Ka 0.170 0.193 0.126
-Kd 0.170 0.193 0.126
+Ka 0.268 0.305 0.200
+Kd 0.268 0.305 0.200
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl jungle_log
 Ka 0.334 0.267 0.099
@@ -3778,41 +3778,41 @@ Kd 0.169 0.448 0.397
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl green_stained_glass_pane
-Ka 0.048 0.060 0.024
-Kd 0.048 0.060 0.024
+newmtl green_stained_glass_pane_top
+Ka 0.384 0.482 0.190
+Kd 0.384 0.482 0.190
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl glow_lichen
-Ka 0.181 0.210 0.196
-Kd 0.181 0.210 0.196
+Ka 0.441 0.512 0.477
+Kd 0.441 0.512 0.477
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl sculk_shrieker_side
-Ka 0.223 0.300 0.284
-Kd 0.223 0.300 0.284
+Ka 0.295 0.396 0.374
+Kd 0.295 0.396 0.374
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl tripwire
-Ka 0.083 0.083 0.083
-Kd 0.083 0.083 0.083
+Ka 0.506 0.506 0.506
+Kd 0.506 0.506 0.506
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.7
 illum 1
 newmtl wheat_stage3
-Ka 0.009 0.116 0.012
-Kd 0.009 0.116 0.012
+Ka 0.041 0.513 0.052
+Kd 0.041 0.513 0.052
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
-newmtl orange_stained_glass_pane
-Ka 0.102 0.060 0.024
-Kd 0.102 0.060 0.024
+newmtl orange_stained_glass_pane_top
+Ka 0.818 0.482 0.190
+Kd 0.818 0.482 0.190
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl red_wool
 Ka 0.631 0.154 0.136
@@ -3821,10 +3821,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl beetroots_stage2
-Ka 0.094 0.176 0.053
-Kd 0.094 0.176 0.053
+Ka 0.273 0.513 0.155
+Kd 0.273 0.513 0.155
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl suspicious_sand_1
 Ka 0.849 0.795 0.614
@@ -3839,16 +3839,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl powered_rail_on
-Ka 0.407 0.290 0.195
-Kd 0.407 0.290 0.195
+Ka 0.606 0.431 0.291
+Kd 0.606 0.431 0.291
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl big_dripleaf_stem
-Ka 0.118 0.148 0.059
-Kd 0.118 0.148 0.059
+Ka 0.358 0.452 0.180
+Kd 0.358 0.452 0.180
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl gold_block
 Ka 0.966 0.817 0.242
@@ -3863,16 +3863,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl oak_trapdoor
-Ka 0.421 0.335 0.191
-Kd 0.421 0.335 0.191
+Ka 0.490 0.390 0.222
+Kd 0.490 0.390 0.222
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl stonecutter_side
-Ka 0.235 0.199 0.172
-Kd 0.235 0.199 0.172
+Ka 0.418 0.354 0.306
+Kd 0.418 0.354 0.306
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl lime_concrete
 Ka 0.369 0.662 0.096
@@ -3881,10 +3881,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl bamboo_fence_gate
-Ka 0.493 0.444 0.211
-Kd 0.493 0.444 0.211
+Ka 0.815 0.734 0.348
+Kd 0.815 0.734 0.348
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl light_gray_concrete
 Ka 0.490 0.490 0.451
@@ -3893,16 +3893,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl bell_side
-Ka 0.225 0.204 0.086
-Kd 0.225 0.204 0.086
+Ka 0.991 0.899 0.380
+Kd 0.991 0.899 0.380
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl sea_pickle
-Ka 0.442 0.467 0.272
-Kd 0.442 0.467 0.272
+Ka 0.355 0.382 0.155
+Kd 0.355 0.382 0.155
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl light_blue_stained_glass
 Ka 0.400 0.600 0.847
@@ -3916,17 +3916,17 @@ Kd 0.438 0.753 0.359
 Ks 0.000 0.000 0.000
 d 0.7
 illum 1
-newmtl basalt
+newmtl basalt_top
 Ka 0.316 0.320 0.338
 Kd 0.316 0.320 0.338
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl brown_candle
-Ka 0.954 0.941 0.931
-Kd 0.954 0.941 0.931
+Ka 0.438 0.275 0.161
+Kd 0.438 0.275 0.161
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl orange_wool
 Ka 0.944 0.463 0.077
@@ -3941,10 +3941,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl warped_roots_pot
-Ka 0.022 0.149 0.134
-Kd 0.022 0.149 0.134
+Ka 0.080 0.536 0.483
+Kd 0.080 0.536 0.483
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl jigsaw_lock
 Ka 0.176 0.150 0.186
@@ -3970,17 +3970,17 @@ Kd 0.697 0.697 0.697
 Ks 0.000 0.000 0.000
 d 0.5
 illum 1
-newmtl tall_grass
+newmtl tall_grass_top
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl weeping_vines
-Ka 0.045 0.001 0.000
-Kd 0.045 0.001 0.000
+Ka 0.410 0.005 0.000
+Kd 0.410 0.005 0.000
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl destroy_stage_9
 Ka 0.658 0.658 0.658
@@ -3989,12 +3989,12 @@ Ks 0.000 0.000 0.000
 d 0.6
 illum 1
 newmtl lily_pad
-Ka 0.307 0.307 0.307
-Kd 0.307 0.307 0.307
+Ka 0.524 0.524 0.524
+Kd 0.524 0.524 0.524
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl sculk_shrieker_inner
+newmtl sculk_shrieker_inner_top
 Ka 0.118 0.213 0.217
 Kd 0.118 0.213 0.217
 Ks 0.000 0.000 0.000
@@ -4010,13 +4010,13 @@ newmtl jungle_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl gray_candle
-Ka 0.944 0.948 0.949
-Kd 0.944 0.948 0.949
+Ka 0.315 0.370 0.380
+Kd 0.315 0.370 0.380
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl dark_oak_planks
 Ka 0.261 0.169 0.079
@@ -4049,10 +4049,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cocoa_stage0
-Ka 0.096 0.097 0.045
-Kd 0.096 0.097 0.045
+Ka 0.523 0.528 0.243
+Kd 0.523 0.528 0.243
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl sculk
 Ka 0.050 0.117 0.141
@@ -4060,23 +4060,23 @@ Kd 0.050 0.117 0.141
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl red_sandstone
+newmtl red_sandstone_top
 Ka 0.711 0.384 0.123
 Kd 0.711 0.384 0.123
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl powered_rail
-Ka 0.363 0.290 0.195
-Kd 0.363 0.290 0.195
+Ka 0.541 0.431 0.291
+Kd 0.541 0.431 0.291
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl yellow_candle_lit
-Ka 0.070 0.059 0.024
-Kd 0.070 0.059 0.024
+Ka 0.850 0.720 0.292
+Kd 0.850 0.720 0.292
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl polished_basalt_side
 Ka 0.347 0.346 0.359
@@ -4091,10 +4091,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl soul_fire_1
-Ka 0.125 0.853 0.877
-Kd 0.125 0.853 0.877
+Ka 0.216 0.758 0.776
+Kd 0.216 0.758 0.776
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl acacia_log
 Ka 0.405 0.379 0.341
@@ -4108,13 +4108,13 @@ Kd 0.730 0.522 0.139
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl red_stained_glass_pane
-Ka 0.072 0.024 0.024
-Kd 0.072 0.024 0.024
+newmtl red_stained_glass_pane_top
+Ka 0.578 0.190 0.190
+Kd 0.578 0.190 0.190
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
-newmtl enchanting_table
+newmtl enchanting_table_top
 Ka 0.505 0.295 0.335
 Kd 0.505 0.295 0.335
 Ks 0.000 0.000 0.000
@@ -4150,7 +4150,7 @@ Kd 0.394 0.124 0.613
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl tnt
+newmtl tnt_top
 Ka 0.560 0.244 0.211
 Kd 0.560 0.244 0.211
 Ks 0.000 0.000 0.000
@@ -4163,22 +4163,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl gray_candle_lit
-Ka 0.038 0.039 0.035
-Kd 0.038 0.039 0.035
+Ka 0.465 0.479 0.425
+Kd 0.465 0.479 0.425
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl pink_candle_lit
-Ka 0.070 0.042 0.048
-Kd 0.070 0.042 0.048
+Ka 0.855 0.514 0.591
+Kd 0.855 0.514 0.591
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl lilac
-Ka 0.178 0.144 0.169
-Kd 0.178 0.144 0.169
+newmtl lilac_top
+Ka 0.606 0.490 0.578
+Kd 0.606 0.490 0.578
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl green_shulker_box
 Ka 0.310 0.396 0.124
@@ -4205,10 +4205,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl orange_candle
-Ka 0.989 0.950 0.921
-Kd 0.989 0.950 0.921
+Ka 0.860 0.394 0.035
+Kd 0.860 0.394 0.035
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl end_stone
 Ka 0.861 0.874 0.621
@@ -4226,7 +4226,7 @@ newmtl bamboo_large_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl snow
 Ka 0.977 0.997 0.997
@@ -4241,10 +4241,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl potatoes_stage3
-Ka 0.105 0.168 0.059
-Kd 0.105 0.168 0.059
+Ka 0.332 0.530 0.186
+Kd 0.332 0.530 0.186
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl quartz_bricks
 Ka 0.920 0.899 0.870
@@ -4253,10 +4253,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pink_petals_stem
-Ka 0.008 0.008 0.008
-Kd 0.008 0.008 0.008
+Ka 0.664 0.664 0.664
+Kd 0.664 0.664 0.664
 Ks 0.000 0.000 0.000
-d 0.0
+d 1.0
 illum 1
 newmtl dark_oak_log
 Ka 0.237 0.183 0.103
@@ -4265,12 +4265,12 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl frogspawn
-Ka 0.137 0.118 0.108
-Kd 0.137 0.118 0.108
+Ka 0.432 0.373 0.340
+Kd 0.432 0.373 0.340
 Ks 0.000 0.000 0.000
-d 0.2
+d 0.7
 illum 1
-newmtl verdant_froglight
+newmtl verdant_froglight_top
 Ka 0.899 0.959 0.895
 Kd 0.899 0.959 0.895
 Ks 0.000 0.000 0.000
@@ -4283,16 +4283,16 @@ Ks 0.000 0.000 0.000
 d 0.8
 illum 1
 newmtl redstone_torch_off
-Ka 0.031 0.021 0.013
-Kd 0.031 0.021 0.013
+Ka 0.398 0.274 0.171
+Kd 0.398 0.274 0.171
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl scaffolding
-Ka 0.699 0.561 0.354
-Kd 0.699 0.561 0.354
+newmtl scaffolding_top
+Ka 0.667 0.516 0.287
+Kd 0.667 0.516 0.287
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl gray_terracotta
 Ka 0.227 0.166 0.139
@@ -4307,10 +4307,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl blue_candle_lit
-Ka 0.021 0.027 0.058
-Kd 0.021 0.027 0.058
+Ka 0.254 0.333 0.703
+Kd 0.254 0.333 0.703
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl polished_blackstone_bricks
 Ka 0.189 0.167 0.195
@@ -4318,7 +4318,7 @@ Kd 0.189 0.167 0.195
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl dark_oak_door
+newmtl dark_oak_door_top
 Ka 0.300 0.203 0.099
 Kd 0.300 0.203 0.099
 Ks 0.000 0.000 0.000
@@ -4337,10 +4337,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl medium_amethyst_bud
-Ka 0.124 0.094 0.157
-Kd 0.124 0.094 0.157
+Ka 0.621 0.472 0.790
+Kd 0.621 0.472 0.790
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl copper_block
 Ka 0.755 0.422 0.313
@@ -4348,29 +4348,29 @@ Kd 0.755 0.422 0.313
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl light_blue_stained_glass_pane
-Ka 0.048 0.072 0.102
-Kd 0.048 0.072 0.102
+newmtl light_blue_stained_glass_pane_top
+Ka 0.384 0.578 0.818
+Kd 0.384 0.578 0.818
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
 newmtl nether_wart_stage1
-Ka 0.211 0.031 0.034
-Kd 0.211 0.031 0.034
+Ka 0.455 0.067 0.074
+Kd 0.455 0.067 0.074
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl dead_brain_coral
-Ka 0.229 0.215 0.207
-Kd 0.229 0.215 0.207
+Ka 0.525 0.490 0.474
+Kd 0.525 0.490 0.474
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl acacia_door_bottom
-Ka 0.459 0.259 0.162
-Kd 0.459 0.259 0.162
+Ka 0.639 0.360 0.225
+Kd 0.639 0.360 0.225
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl debug2
 Ka 0.486 0.470 0.462
@@ -4378,17 +4378,17 @@ Kd 0.486 0.470 0.462
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl piston
+newmtl piston_top
 Ka 0.601 0.500 0.334
 Kd 0.601 0.500 0.334
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl azure_bluet
-Ka 0.153 0.191 0.150
-Kd 0.153 0.191 0.150
+Ka 0.664 0.802 0.500
+Kd 0.664 0.802 0.500
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl terracotta
 Ka 0.597 0.369 0.266
@@ -4415,10 +4415,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl kelp_plant
-Ka 0.132 0.199 0.065
-Kd 0.132 0.199 0.065
+Ka 0.340 0.512 0.167
+Kd 0.340 0.512 0.167
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl bee_nest_bottom
 Ka 0.630 0.499 0.344
@@ -4438,19 +4438,19 @@ Kd 0.278 0.278 0.280
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl azalea
+newmtl azalea_top
 Ka 0.399 0.489 0.187
 Kd 0.399 0.489 0.187
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl bamboo_stage0
-Ka 0.842 0.845 0.790
-Kd 0.842 0.845 0.790
+Ka 0.362 0.349 0.141
+Kd 0.362 0.349 0.141
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
-newmtl warped_stem
+newmtl warped_stem_top
 Ka 0.209 0.430 0.432
 Kd 0.209 0.430 0.432
 Ks 0.000 0.000 0.000
@@ -4463,10 +4463,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl flower_pot
-Ka 0.095 0.053 0.041
-Kd 0.095 0.053 0.041
+Ka 0.487 0.269 0.209
+Kd 0.487 0.269 0.209
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl cyan_shulker_box
 Ka 0.079 0.476 0.530
@@ -4498,7 +4498,7 @@ Kd 0.685 0.364 0.234
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl sculk_sensor
+newmtl sculk_sensor_top
 Ka 0.028 0.275 0.331
 Kd 0.028 0.275 0.331
 Ks 0.000 0.000 0.000
@@ -4511,10 +4511,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pointed_dripstone_down_base
-Ka 0.456 0.363 0.316
-Kd 0.456 0.363 0.316
+Ka 0.508 0.404 0.351
+Kd 0.508 0.404 0.351
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl grass_block_side
 Ka 0.557 0.725 0.443
@@ -4528,17 +4528,17 @@ Kd 0.517 0.484 0.468
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl bee_nest
+newmtl bee_nest_top
 Ka 0.793 0.628 0.293
 Kd 0.793 0.628 0.293
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl dead_bush
-Ka 0.128 0.094 0.048
-Kd 0.128 0.094 0.048
+Ka 0.421 0.309 0.159
+Kd 0.421 0.309 0.159
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
 newmtl smoker_front
 Ka 0.345 0.296 0.227
@@ -4552,17 +4552,17 @@ Kd 0.420 0.462 0.554
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl stripped_acacia_log
+newmtl stripped_acacia_log_top
 Ka 0.651 0.357 0.202
 Kd 0.651 0.357 0.202
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl iron_bars
-Ka 0.243 0.247 0.241
-Kd 0.243 0.247 0.241
+Ka 0.537 0.546 0.532
+Kd 0.537 0.546 0.532
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl deepslate
 Ka 0.314 0.314 0.324
@@ -4571,10 +4571,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl conduit
-Ka 0.790 0.746 0.687
-Kd 0.790 0.746 0.687
+Ka 0.626 0.548 0.443
+Kd 0.626 0.548 0.443
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl white_terracotta
 Ka 0.822 0.698 0.633
@@ -4613,10 +4613,10 @@ Ks 0.000 0.000 0.000
 d 0.2
 illum 1
 newmtl sweet_berry_bush_stage0
-Ka 0.035 0.073 0.046
-Kd 0.035 0.073 0.046
+Ka 0.168 0.351 0.220
+Kd 0.168 0.351 0.220
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl wet_sponge
 Ka 0.671 0.711 0.276
@@ -4625,10 +4625,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl composter_compost
-Ka 0.633 0.573 0.490
-Kd 0.633 0.573 0.490
+Ka 0.347 0.241 0.093
+Kd 0.347 0.241 0.093
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl respawn_anchor_side1
 Ka 0.166 0.104 0.253
@@ -4654,17 +4654,17 @@ Kd 0.756 0.329 0.724
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl dried_kelp
+newmtl dried_kelp_top
 Ka 0.197 0.230 0.153
 Kd 0.197 0.230 0.153
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl fire_1
-Ka 0.774 0.454 0.207
-Kd 0.774 0.454 0.207
+Ka 0.828 0.543 0.195
+Kd 0.828 0.543 0.195
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl brown_concrete_powder
 Ka 0.492 0.333 0.211
@@ -4703,22 +4703,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl potted_flowering_azalea_bush_plant
-Ka 0.119 0.124 0.067
-Kd 0.119 0.124 0.067
+Ka 0.392 0.407 0.221
+Kd 0.392 0.407 0.221
 Ks 0.000 0.000 0.000
-d 0.3
+d 1.0
 illum 1
-newmtl mycelium
+newmtl mycelium_top
 Ka 0.436 0.387 0.397
 Kd 0.436 0.387 0.397
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl small_dripleaf_stem_bottom
-Ka 0.062 0.080 0.030
-Kd 0.062 0.080 0.030
+Ka 0.371 0.479 0.177
+Kd 0.371 0.479 0.177
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl packed_ice
 Ka 0.555 0.706 0.982
@@ -4727,22 +4727,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl acacia_sapling
-Ka 0.202 0.200 0.040
-Kd 0.202 0.200 0.040
+Ka 0.466 0.462 0.093
+Kd 0.466 0.462 0.093
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl dead_horn_coral_fan
-Ka 0.746 0.728 0.719
-Kd 0.746 0.728 0.719
+Ka 0.526 0.493 0.476
+Kd 0.526 0.493 0.476
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl sculk_sensor_tendril_inactive
-Ka 0.007 0.032 0.038
-Kd 0.007 0.032 0.038
+Ka 0.058 0.258 0.303
+Kd 0.058 0.258 0.303
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl loom_bottom
 Ka 0.299 0.236 0.141
@@ -4750,19 +4750,19 @@ Kd 0.299 0.236 0.141
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl pink_stained_glass_pane
-Ka 0.114 0.060 0.078
-Kd 0.114 0.060 0.078
+newmtl pink_stained_glass_pane_top
+Ka 0.915 0.482 0.626
+Kd 0.915 0.482 0.626
 Ks 0.000 0.000 0.000
-d 0.1
+d 0.9
 illum 1
-newmtl ancient_debris
+newmtl ancient_debris_top
 Ka 0.372 0.261 0.229
 Kd 0.372 0.261 0.229
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl blackstone
+newmtl blackstone_top
 Ka 0.166 0.143 0.165
 Kd 0.166 0.143 0.165
 Ks 0.000 0.000 0.000
@@ -4810,23 +4810,23 @@ Kd 0.561 0.402 0.278
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl sculk_catalyst_bloom
+newmtl sculk_catalyst_top_bloom
 Ka 0.063 0.177 0.199
 Kd 0.063 0.177 0.199
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl warped_door
+newmtl warped_door_top
 Ka 0.175 0.498 0.473
 Kd 0.175 0.498 0.473
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl crimson_roots
-Ka 0.176 0.011 0.058
-Kd 0.176 0.011 0.058
+Ka 0.494 0.032 0.164
+Kd 0.494 0.032 0.164
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl lime_glazed_terracotta
 Ka 0.639 0.775 0.217
@@ -4853,22 +4853,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl dead_bubble_coral
-Ka 0.270 0.254 0.246
-Kd 0.270 0.254 0.246
+Ka 0.520 0.489 0.473
+Kd 0.520 0.489 0.473
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl brown_candle_lit
-Ka 0.048 0.031 0.017
-Kd 0.048 0.031 0.017
+Ka 0.580 0.377 0.202
+Kd 0.580 0.377 0.202
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl mangrove_roots_side
-Ka 0.162 0.128 0.082
-Kd 0.162 0.128 0.082
+Ka 0.295 0.235 0.151
+Kd 0.295 0.235 0.151
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl stonecutter_bottom
 Ka 0.463 0.462 0.463
@@ -4876,7 +4876,7 @@ Kd 0.463 0.462 0.463
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl mangrove_log
+newmtl mangrove_log_top
 Ka 0.403 0.191 0.166
 Kd 0.403 0.191 0.166
 Ks 0.000 0.000 0.000
@@ -4886,37 +4886,37 @@ newmtl tall_seagrass_bottom
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl dead_fire_coral_fan
-Ka 0.669 0.654 0.647
-Kd 0.669 0.654 0.647
+Ka 0.490 0.463 0.450
+Kd 0.490 0.463 0.450
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl lilac_bottom
-Ka 0.189 0.171 0.175
-Kd 0.189 0.171 0.175
+Ka 0.538 0.487 0.498
+Kd 0.538 0.487 0.498
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
-newmtl hopper
-Ka 0.181 0.178 0.181
-Kd 0.181 0.178 0.181
+newmtl hopper_top
+Ka 0.297 0.292 0.296
+Kd 0.297 0.292 0.296
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl candle_lit
-Ka 0.076 0.068 0.056
-Kd 0.076 0.068 0.056
+Ka 0.923 0.825 0.680
+Kd 0.923 0.825 0.680
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl redstone_torch
-Ka 0.068 0.031 0.018
-Kd 0.068 0.031 0.018
+Ka 0.672 0.310 0.173
+Kd 0.672 0.310 0.173
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl diamond_ore
 Ka 0.475 0.554 0.552
@@ -4937,10 +4937,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl wheat_stage0
-Ka 0.001 0.014 0.002
-Kd 0.001 0.014 0.002
+Ka 0.034 0.501 0.061
+Kd 0.034 0.501 0.061
 Ks 0.000 0.000 0.000
-d 0.0
+d 1.0
 illum 1
 newmtl structure_block_load
 Ka 0.272 0.226 0.277
@@ -4949,22 +4949,22 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl wheat_stage2
-Ka 0.003 0.067 0.006
-Kd 0.003 0.067 0.006
+Ka 0.027 0.523 0.050
+Kd 0.027 0.523 0.050
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl sunflower_bottom
-Ka 0.050 0.118 0.027
-Kd 0.050 0.118 0.027
+Ka 0.223 0.530 0.121
+Kd 0.223 0.530 0.121
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl dark_oak_leaves
 Ka 0.557 0.725 0.443
 Kd 0.557 0.725 0.443
 Ks 0.000 0.000 0.000
-d 0.7
+d 1.0
 illum 1
 newmtl blue_concrete_powder
 Ka 0.275 0.287 0.654
@@ -4972,7 +4972,7 @@ Kd 0.275 0.287 0.654
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl deepslate
+newmtl deepslate_top
 Ka 0.342 0.342 0.351
 Kd 0.342 0.342 0.351
 Ks 0.000 0.000 0.000
@@ -5003,10 +5003,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cobweb
-Ka 0.368 0.375 0.377
-Kd 0.368 0.375 0.377
+Ka 0.896 0.915 0.919
+Kd 0.896 0.915 0.919
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl chorus_plant
 Ka 0.368 0.224 0.368
@@ -5015,16 +5015,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl turtle_egg_very_cracked
-Ka 0.744 0.736 0.657
-Kd 0.744 0.736 0.657
+Ka 0.816 0.799 0.649
+Kd 0.816 0.799 0.649
 Ks 0.000 0.000 0.000
-d 0.5
+d 1.0
 illum 1
 newmtl melon_stem
-Ka 0.082 0.082 0.082
-Kd 0.082 0.082 0.082
+Ka 0.603 0.603 0.603
+Kd 0.603 0.603 0.603
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl obsidian
 Ka 0.059 0.042 0.096
@@ -5033,10 +5033,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl big_dripleaf_tip
-Ka 0.060 0.076 0.030
-Kd 0.060 0.076 0.030
+Ka 0.383 0.489 0.189
+Kd 0.383 0.489 0.189
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl sculk_catalyst_side_bloom
 Ka 0.301 0.382 0.366
@@ -5045,10 +5045,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl wheat_stage5
-Ka 0.102 0.206 0.030
-Kd 0.102 0.206 0.030
+Ka 0.250 0.506 0.073
+Kd 0.250 0.506 0.073
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl destroy_stage_3
 Ka 0.934 0.934 0.934
@@ -5057,28 +5057,28 @@ Ks 0.000 0.000 0.000
 d 0.1
 illum 1
 newmtl ladder
-Ka 0.275 0.213 0.121
-Kd 0.275 0.213 0.121
+Ka 0.489 0.379 0.214
+Kd 0.489 0.379 0.214
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl scaffolding_bottom
-Ka 0.880 0.834 0.644
-Kd 0.880 0.834 0.644
+Ka 0.759 0.677 0.312
+Kd 0.759 0.677 0.312
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl sunflower_back
-Ka 0.044 0.102 0.028
-Kd 0.044 0.102 0.028
+Ka 0.214 0.501 0.136
+Kd 0.214 0.501 0.136
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl end_portal_frame_eye
-Ka 0.053 0.103 0.091
-Kd 0.053 0.103 0.091
+Ka 0.140 0.275 0.244
+Kd 0.140 0.275 0.244
 Ks 0.000 0.000 0.000
-d 0.4
+d 1.0
 illum 1
 newmtl brown_shulker_box
 Ka 0.417 0.259 0.141
@@ -5087,16 +5087,16 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cactus_bottom
-Ka 0.430 0.512 0.258
-Kd 0.430 0.512 0.258
+Ka 0.561 0.668 0.337
+Kd 0.561 0.668 0.337
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl cyan_candle
-Ka 0.923 0.958 0.958
-Kd 0.923 0.958 0.958
+Ka 0.067 0.485 0.485
+Kd 0.067 0.485 0.485
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl calcite
 Ka 0.876 0.880 0.865
@@ -5104,7 +5104,7 @@ Kd 0.876 0.880 0.865
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl spruce_log
+newmtl spruce_log_top
 Ka 0.427 0.315 0.184
 Kd 0.427 0.315 0.184
 Ks 0.000 0.000 0.000
@@ -5123,28 +5123,28 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl mangrove_trapdoor
-Ka 0.380 0.160 0.146
-Kd 0.380 0.160 0.146
+Ka 0.435 0.183 0.166
+Kd 0.435 0.183 0.166
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
-newmtl reinforced_deepslate
+newmtl reinforced_deepslate_top
 Ka 0.315 0.325 0.309
 Kd 0.315 0.325 0.309
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl pointed_dripstone_down_tip
-Ka 0.111 0.089 0.076
-Kd 0.111 0.089 0.076
+Ka 0.537 0.429 0.368
+Kd 0.537 0.429 0.368
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl cactus_side
-Ka 0.309 0.454 0.158
-Kd 0.309 0.454 0.158
+Ka 0.347 0.510 0.178
+Kd 0.347 0.510 0.178
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl hay_block_side
 Ka 0.652 0.535 0.150
@@ -5182,11 +5182,11 @@ Kd 0.922 0.608 0.712
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl big_dripleaf
-Ka 0.396 0.504 0.184
-Kd 0.396 0.504 0.184
+newmtl big_dripleaf_top
+Ka 0.437 0.556 0.203
+Kd 0.437 0.556 0.203
 Ks 0.000 0.000 0.000
-d 0.9
+d 1.0
 illum 1
 newmtl purple_shulker_box
 Ka 0.405 0.127 0.613
@@ -5195,10 +5195,10 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl torchflower_crop_stage0
-Ka 0.011 0.039 0.027
-Kd 0.011 0.039 0.027
+Ka 0.113 0.383 0.264
+Kd 0.113 0.383 0.264
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
 newmtl reinforced_deepslate_side
 Ka 0.402 0.429 0.396
@@ -5218,7 +5218,7 @@ Kd 0.252 0.110 0.093
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl barrel_open
+newmtl barrel_top_open
 Ka 0.363 0.265 0.134
 Kd 0.363 0.265 0.134
 Ks 0.000 0.000 0.000
@@ -5237,34 +5237,34 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl attached_pumpkin_stem
-Ka 0.070 0.070 0.070
-Kd 0.070 0.070 0.070
+Ka 0.545 0.545 0.545
+Kd 0.545 0.545 0.545
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl oak_door
-Ka 0.448 0.353 0.210
-Kd 0.448 0.353 0.210
+newmtl oak_door_top
+Ka 0.552 0.435 0.259
+Kd 0.552 0.435 0.259
 Ks 0.000 0.000 0.000
-d 0.8
+d 1.0
 illum 1
 newmtl wheat_stage1
-Ka 0.001 0.031 0.002
-Kd 0.001 0.031 0.002
+Ka 0.022 0.500 0.031
+Kd 0.022 0.500 0.031
 Ks 0.000 0.000 0.000
-d 0.1
+d 1.0
 illum 1
-newmtl quartz_block
+newmtl quartz_block_top
 Ka 0.925 0.902 0.874
 Kd 0.925 0.902 0.874
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl azalea_side
-Ka 0.222 0.278 0.107
-Kd 0.222 0.278 0.107
+Ka 0.369 0.463 0.178
+Kd 0.369 0.463 0.178
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
 newmtl black_terracotta
 Ka 0.146 0.090 0.064
@@ -5302,11 +5302,11 @@ Kd 0.083 0.540 0.570
 Ks 0.000 0.000 0.000
 d 1.0
 illum 1
-newmtl potted_azalea_bush
-Ka 0.099 0.120 0.047
-Kd 0.099 0.120 0.047
+newmtl potted_azalea_bush_top
+Ka 0.395 0.481 0.188
+Kd 0.395 0.481 0.188
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
 newmtl comparator_on
 Ka 0.689 0.628 0.619
@@ -5315,12 +5315,12 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl cocoa_stage2
-Ka 0.348 0.206 0.092
-Kd 0.348 0.206 0.092
+Ka 0.606 0.359 0.160
+Kd 0.606 0.359 0.160
 Ks 0.000 0.000 0.000
-d 0.6
+d 1.0
 illum 1
-newmtl acacia_log
+newmtl acacia_log_top
 Ka 0.592 0.348 0.216
 Kd 0.592 0.348 0.216
 Ks 0.000 0.000 0.000
@@ -5339,12 +5339,12 @@ Ks 0.000 0.000 0.000
 d 1.0
 illum 1
 newmtl chain
-Ka 0.044 0.050 0.064
-Kd 0.044 0.050 0.064
+Ka 0.201 0.227 0.292
+Kd 0.201 0.227 0.292
 Ks 0.000 0.000 0.000
-d 0.2
+d 1.0
 illum 1
-newmtl jungle_log
+newmtl jungle_log_top
 Ka 0.587 0.429 0.277
 Kd 0.587 0.429 0.277
 Ks 0.000 0.000 0.000

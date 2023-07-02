@@ -8,7 +8,7 @@ extractedProperties = ["direction", "half", "shape", "color", "part", "open", "s
 
 def getModelFilename(rawName:str) -> str:
     """Removes weird boilerplate from model filenames"""
-    return rawName.replace("minecraft:block/", "").replace("block/", "")
+    return rawName.split("/")[-1]
 
 def getKey(d:dict) -> str:
     """Internal function that properly formats the key for further processing"""
@@ -34,8 +34,7 @@ class cube:
             endx = t[0] / 16
             endy = t[1] / 16
             endz = t[2] / 16
-            self.vertices = ((startx, starty, startz), (endx, starty, startz), (startx, endy, startz), (startx, starty, endz), 
-                        (startx, endy, endz), (endx, starty, endz), (endx, endy, startz), (endx, endy, endz))
+            self.vertices = ((endx, endy, endz), (endx, endy, startz), (endx, starty, endz), (endx, starty, startz), (startx, endy, endz), (startx, endy, startz), (startx, starty, endz), (startx, starty, startz))
             if faces == None:
                 self.faces = (self.eastTemplate, self.upTemplate, self.southTemplate, self.northTemplate, self.westTemplate, self.downTemplate)
                 #E,+y,S,N,W,-y
@@ -157,7 +156,7 @@ if __name__ == "__main__":
                         for face in c.faces:
                             if not simpleTexture and c.materials != None:
                                 tmpStr += "usemtl %s\n" % c.materials[i]
-                            tmpStr += "f %d %d %d %d\n" % (vertexCounter - face[0], vertexCounter - face[1], vertexCounter - face[2], vertexCounter - face[3])
+                            tmpStr += "f %d %d %d %d\n" % (vertexCounter + face[0] - 8, vertexCounter + face[1] - 8, vertexCounter + face[2] - 8, vertexCounter + face[3] - 8)
                             i += 1
                     resultStr += tmpStr
         f.write(resultStr)
