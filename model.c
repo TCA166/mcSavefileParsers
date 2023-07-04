@@ -10,7 +10,9 @@
 
 #define freeCubeFace(c, n) free((*c).faces[n]); (*c).faces[n] = NULL;
 
-#define faceCheck(t) t!=NULL && ((*t).m == NULL || (*t).m->d == 1) && !isPresent((*t).type, ignoreTypes, ignoreLen)
+#define faceCheck(t) t!=NULL && ((*t).m == NULL || (*t).m->d == 1) && !isPresent((*t).type, specialObjects)
+
+#define objCount 6000
 
 int digits(int i){
     if(i == 0){
@@ -80,19 +82,15 @@ struct objFace deCube(struct cubeFace face){
     return new;
 }
 
-char isPresent(char* string, char** arr, int arrLen){
-    if(arr == NULL){
+char isPresent(char* string, hashTable* objects){
+    if(objects == NULL){
         return 0;
     }
-    for(int i = 0; i < arrLen; i++){
-        if(strcmp(string, arr[i]) == 0){
-            return 1;
-        }
-    }
-    return 0;
+    struct object* ptr = getVal(objects, string);
+    return ptr == NULL;
 }
 
-void cullFaces(struct cubeModel* thisModel, char cullChunkBorder, char** ignoreTypes, int ignoreLen){
+void cullFaces(struct cubeModel* thisModel, char cullChunkBorder, hashTable* specialObjects){
     for(int x = 0; x < thisModel->x; x++){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
@@ -181,31 +179,19 @@ struct object deCubeObject(struct cube* c){
     return result;
 }
 
-int typeInObjects(char* type, struct object* objects, int objLen){
-    if(objects == NULL || type == NULL){
-        return 0;
-    }
-    for(int i = 0; i < objLen; i++){
-        if(strcmp(type, objects[i].type) == 0){
-            return i;
-        }
-    }
-    return 0;
-}
-
-model cubeModelToModel(struct cubeModel* m, struct object* specialObjects, int specialLen){
+model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
     model result = initModel(m->x, m->y, m->z);
     for(int x = 0; x < m->x; x++){
         for(int y = 0; y < m->y; y++){
             for(int z = 0; z < m->z; z++){
                 if(m->cubes[x][y][z] != NULL){
-                    int pos = typeInObjects(m->cubes[x][y][z]->type, specialObjects, specialLen);
+                    struct object* prot = getVal(specialObjects, m->cubes[x][y][z]->type);
                     result.objects[x][y][z] = malloc(sizeof(struct object));
-                    if(pos){
+                    if(prot != NULL){
                         float xx = result.objects[x][y][z]->x;
                         float yx = result.objects[x][y][z]->y;
                         float zx = result.objects[x][y][z]->z;
-                        *(result.objects[x][y][z]) = specialObjects[pos];
+                        *(result.objects[x][y][z]) = *prot;
                         result.objects[x][y][z]->x = xx;
                         result.objects[x][y][z]->y = yx; 
                         result.objects[x][y][z]->z = zx;
@@ -363,12 +349,11 @@ void freeCubeModel(struct cubeModel* m){
     free(m->cubes);
 }
 
-struct material* getMaterials(char* filename, int* outLen){
+hashTable* getMaterials(char* filename){
     FILE* mtlFile = fopen(filename, "r");
     if(mtlFile == NULL){
         fileError(filename, "opened");
     }
-    struct material* result = malloc(0);
     int i = 0;
     if(fseek(mtlFile, 0, SEEK_END) != 0){
         fileError(filename, "seek");
@@ -382,13 +367,14 @@ struct material* getMaterials(char* filename, int* outLen){
         fileError(filename, "read");
     }
     bytes[sz] = '\0';
+    hashTable* result = initHashTable(objCount);
     char* token = strtok(bytes, "\n");
     struct material newMaterial;
     while(token != NULL){ //foreach line
         int len = strlen(token);
         if(len > 7){
             if(token[0] == 'n' && token[4] == 't' && token[6] == ' '){
-                //we are in the newmtl line
+                //we are in the new mtl line
                 char* name = strchr(token, ' ');
                 if(name != NULL){
                     name++;
@@ -404,8 +390,14 @@ struct material* getMaterials(char* filename, int* outLen){
                 if(f != NULL){
                     f++;
                     newMaterial.d = atof(f);
-                    result = realloc(result, (i + 1) * sizeof(struct material));
-                    result[i] = newMaterial;
+                    struct material* ptr = malloc(sizeof(struct material));
+                    *ptr = newMaterial;
+                    if(insertHashItem(result, newMaterial.name, ptr) < 0){
+                        hashWarning(newMaterial.name);
+                    }
+                    /*if(strcmp(((struct material*)getVal(result, newMaterial.name))->name, newMaterial.name) != 0){
+                        fprintf(stderr, "%s\n", ptr->name);
+                    }*/
                     i++;
                 }
             }
@@ -413,11 +405,10 @@ struct material* getMaterials(char* filename, int* outLen){
         token = strtok(NULL, "\n");
     }
     free(bytes);
-    *outLen = i;
     return result;
 }
 
-struct object* readWavefront(char* filename, int* outLen, struct material* materials, int materialLen, int side){
+hashTable* readWavefront(char* filename, hashTable* materials, int side){
     FILE* fp = fopen(filename, "r");
     if(fp == NULL){
         return NULL;
@@ -436,9 +427,8 @@ struct object* readWavefront(char* filename, int* outLen, struct material* mater
     if(fclose(fp) == EOF){
         fileError(filename, "closed");
     }
+    hashTable* result = initHashTable(objCount); 
     char* token = strtok(bytes, "\n");
-    *outLen = 0;
-    struct object* objects = malloc(0);
     struct object newObject;
     newObject.vertices = malloc(0);
     newObject.faces = malloc(0);
@@ -448,11 +438,7 @@ struct object* readWavefront(char* filename, int* outLen, struct material* mater
                 if(materials != NULL){
                     char* mtlName = strchr(token, ' ');
                     mtlName++;
-                    for(int n = 0; n < materialLen; n++){
-                        if(strcmp(materials[n].name, mtlName) == 0){
-                            newObject.m = &materials[n];
-                        }
-                    }
+                    newObject.m = (struct material*)getVal(materials, mtlName);
                 }
                 break;
             case 'o':;
@@ -460,13 +446,13 @@ struct object* readWavefront(char* filename, int* outLen, struct material* mater
                 name++;
                 newObject.type = malloc(strlen(name));
                 strcpy(newObject.type, name);
-                objects = realloc(objects, (*outLen + 1) * sizeof(struct object));
-                objects[*outLen] = newObject;
+                struct object* ptr = malloc(sizeof(struct object));
+                *ptr = newObject;
+                insertHashItem(result, name, ptr);
                 //this should 'reset' the newObject
                 newObject.faceCount = 0;
                 newObject.vertexCount = 0;
                 newObject.m = NULL;
-                (*outLen)++;
                 break;
             case 'v':;
                 float x;
@@ -510,5 +496,5 @@ struct object* readWavefront(char* filename, int* outLen, struct material* mater
         }
         token = strtok(NULL, "\n");
     }
-    return objects;
+    return result;
 }

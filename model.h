@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include "hTable.h"
 
 //obj file vertex
 struct vertex{
@@ -92,13 +92,13 @@ Removes all outward or internal faces from a model.
 All cubes that are NULL or whose type is in ignoreType are considered to be outward and faces touching those cubes are not culled.
 Culled faces are free'd and set as null.
 */
-void cullFaces(struct cubeModel* thisModel, char cullChunkBorder, char** ignoreTypes, int ignoreLen);
+void cullFaces(struct cubeModel* thisModel, char cullChunkBorder, hashTable* specialObjects);
 
 /*
 Converts a cubeModel to a normal model, and inserts special objects if specialObjects!=NULL when types match.
 Uses initModel to create a new model reference, and also creates new object references within the new model.
 */
-model cubeModelToModel(struct cubeModel* m, struct object* specialObjects, int specialLen);
+model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects);
 
 /*
 Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
@@ -118,12 +118,12 @@ struct cubeFace* newCubeFace(int a, int b, int c, int d);
 /*
 Extracts materials from a mtl file.
 Allocates necessary memory for material type strings.
-Returns a new reference to a material array.
+Returns a new reference to a material hash table.
 */
-struct material* getMaterials(char* filename, int* outLen);
+hashTable* getMaterials(char* filename);
 
 /*
-Converts a cubeface to the dynamic obj face.
+Converts a cubeFace to the dynamic obj face.
 Allocates necessary for face vertices.
 */
 struct objFace deCube(struct cubeFace face);
@@ -136,7 +136,6 @@ Utilizes deCube for face conversion so by proxy allocates memory for face vertic
 struct object deCubeObject(struct cube* c);
 
 /*
-Returns an array of objects from a .obj file with the given filename. Outputs into outlen the amount of returned objects.
-Allocates memory for objectNames (if it isn't NULL), for the objects themselves and ofcourse for readWavefront. Returns NULL if it can't open filename
+Returns a hash table with objects from a wavefront file. Returns NULL if fails.
 */
-struct object* readWavefront(char* filename, int* outLen, struct material* materials, int materialLen, int side);
+hashTable* readWavefront(char* filename, hashTable* materials, int side);

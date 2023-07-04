@@ -83,7 +83,7 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
         if(palette == NULL){
             nbtTagError("palette");
         }
-        //const struct list_head* palleteHead = &palette->payload.tag_list->entry;
+        //const struct list_head* paletteHead = &palette->payload.tag_list->entry;
         char** blockPalette = malloc(1 * sizeof(char*));
         int i = 0;
         struct list_head* paletteCur = &palette->payload.tag_list->entry;
@@ -240,7 +240,7 @@ char contains(char** arr, char* str, int arrLen){
 }
 
 //this code feels wrong to write in C ngl...
-char** createGlobalPalette(struct section* sections, int len, int* outLen, char freeSectionPalletes){
+char** createGlobalPalette(struct section* sections, int len, int* outLen, char freeSectionPalettes){
     char** globalPalette = malloc(0);
     int j = 0;
     for(int i = 0; i < len; i++){
@@ -251,7 +251,7 @@ char** createGlobalPalette(struct section* sections, int len, int* outLen, char 
                 j++;
             }
         }
-        if(freeSectionPalletes){
+        if(freeSectionPalettes){
             free(sections[i].blockPalette);
         }
     }

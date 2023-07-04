@@ -10,9 +10,13 @@
         "math.h": "c",
         "regionparser.h": "c",
         "type_traits": "c",
-        "random": "c"
+        "random": "c",
+        "string.h": "c"
     },
     "cSpell.words": [
-        "resourcepack"
+        "blockstates",
+        "mtllib",
+        "resourcepack",
+        "usemtl"
     ]
 }

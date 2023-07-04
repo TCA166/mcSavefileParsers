@@ -1,4 +1,3 @@
-#include <stdlib.h>
 
 //16x16x16 big section of a chunk
 struct section{
@@ -49,7 +48,7 @@ struct block createBlock(int x, int y, int z, unsigned int* blockStates, struct 
 Returns an array of strings containing a complete total block palette
 The only memory it allocates is the returned array
 */
-char** createGlobalPalette(struct section* sections, int len, int* outLen, char freeSectionPalletes);
+char** createGlobalPalette(struct section* sections, int len, int* outLen, char freeSectionPalettes);
 
 //Frees all the allocated memory by getSections
 void freeSections(struct section* sections, int sectionLen);

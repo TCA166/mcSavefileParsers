@@ -14,8 +14,8 @@
 //Creates a new cube object based on a block object
 struct cube cubeFromBlock(struct block block, const int side, struct material* material);
 
-//Isolated from the main code to maybe in the future enable for a multiprocessed version that can do multiple chunks
-struct cubeModel createCubeModel(struct section* sections, int sectionLen, struct material* materials, int materialLen, int upLim, int downLim, char yLim, int side);
+//Isolated from the main code to maybe in the future enable for a multithreaded version that can do multiple chunks
+struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, int upLim, int downLim, char yLim, int side);
 
 int main(int argc, char** argv){
     if(argc < 2){
@@ -26,10 +26,8 @@ int main(int argc, char** argv){
     int downLim = 0; //y- cutoff
     char f = 0; //if we don't want to cull faces
     char b = 0; //if we don't want to cull chunk border faces
-    struct object* objects = NULL; //special objects
-    int objLen = 0; //amount of objects in the objects array
+    hashTable* objects = NULL; //special objects
     char* objFilename = NULL;
-    char** specialObjects = NULL; //array of strings containing special object names
     char* materialFilename = NULL;
     int side = 2;
     char* outFilename = "out.obj";
@@ -110,48 +108,46 @@ int main(int argc, char** argv){
     /*It is possible to not have to iterate over each block again, and do everything in a single loop.
     But that would be less readable and put more of a strain on memory since the entire nbt file would have to be there
     Also it's C already. Just by the virtue of doing it in C I'm pretty fast.
-    Also also the resulting API and code would be less open and more goal centric, which is something I don't really want. Hey if I create code for handling obj file in C whhy not make it reusable?
+    Also also the resulting API and code would be less open and more goal centric, which is something I don't really want. Hey if I create code for handling obj file in C why not make it reusable?
     */
-    int materialLen = 0; //length of materials
-    struct material* materials = NULL; //array of materials
+    hashTable* materials = NULL; //array of materials
     if(materialFilename != NULL){
-        //parse the material file, afterall we have to account for transparent textures
-        materials = getMaterials(materialFilename, &materialLen);
+        //parse the material file, after-all we have to account for transparent textures
+        materials = getMaterials(materialFilename);
     } 
     /*Note on the objects
     So generally the workflow looks thusly: file->sections->blocks->cubes->objects->model
     Naturally I could just not use cubes at all and go straight to objects.
     This would indeed be faster and lower the complexity from ~O(6n) to O(5n).
-    However that would mean the faceculling algorithm would be severely slower.
+    However that would mean the face culling algorithm would be severely slower.
     Instead of the simple algorithm that assumes everything is a cube and has 6 faces it would need to iterate over each face of each neighboring object to determine if a single face can be culled.
     That's bad. So for now I much rather do one more iteration rather than make culling slow.
     */
     if(objFilename != NULL){
-        objects = readWavefront(objFilename, &objLen, materials, materialLen, side);
-        specialObjects = malloc(objLen * sizeof(char*));
-        for(int i = 0; i < objLen; i++){
-            specialObjects[i] = objects[i].type;
-        }
+        objects = readWavefront(objFilename, materials, side);
     }
     //now we have to decrypt the data in sections
-    struct cubeModel cubeModel = createCubeModel(sections, n, materials, materialLen, upLim, downLim, yLim, side);
+    struct cubeModel cubeModel = createCubeModel(sections, n, materials, upLim, downLim, yLim, side);
     if(!f){
-        cullFaces(&cubeModel, !b, specialObjects, objLen);
+        cullFaces(&cubeModel, !b, objects);
         printf("Model faces culled\n");
     }
-    free(specialObjects);
-    model newModel = cubeModelToModel(&cubeModel, objects, objLen);
+    model newModel = cubeModelToModel(&cubeModel, objects);
+    if(objects != NULL){
+        freeHashTable(objects);
+    }
     freeCubeModel(&cubeModel);
     size_t size = 0;
     char* content = generateModel(&newModel, &size, materialFilename);
     freeModel(&newModel);
     freeSections(sections, n);
-    for(int i = 0; i < materialLen; i++){
-        free(materials[i].name);
+    for(int i = 0; i < materials->size; i++){
+        struct hTableItem* item = materials->items[i];
+        if(item != NULL){
+            free(item->value);
+        }
     }
-    if(materialFilename != NULL){
-        free(materials);
-    }
+    freeHashTable(materials);
     printf("Model string generated\n");
     FILE* outFile = fopen(outFilename, "w");
     if(outFile == NULL){
@@ -167,7 +163,7 @@ int main(int argc, char** argv){
     return EXIT_SUCCESS;
 }
 
-struct cubeModel createCubeModel(struct section* sections, int sectionLen, struct material* materials, int materialLen, int upLim, int downLim, char yLim, int side){
+struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, int upLim, int downLim, char yLim, int side){
     struct cubeModel cubeModel = initCubeModel(16,16 * sectionLen, 16);
     for(int i = 0; i < sectionLen; i++){
         //create the block state array
@@ -190,14 +186,9 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, struc
                         else{
                             nameEnd = newBlock.type;
                         }
-                        for(int n = 0; n < materialLen; n++){
-                            //materials[n].name == NULL when compiled with -O. No clue why
-                            if(strcmp(materials[n].name, nameEnd) == 0){
-                                m = &materials[n];
-                            }
-                        }
+                        m = (struct material*)getVal(materials, nameEnd);
                         if(m == NULL && strcmp(newBlock.type, mcAir) != 0){ //material wasn't found oops
-                            materialWarning(newBlock.type);
+                            materialWarning(nameEnd);
                         }
                     }
                     if(strcmp(newBlock.type, mcAir) != 0){

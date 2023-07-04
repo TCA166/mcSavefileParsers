@@ -1,4 +1,3 @@
-#include <stdio.h>
 
 //How many chunks are in a region
 #define chunkN 1024
