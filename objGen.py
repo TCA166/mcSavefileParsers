@@ -13,6 +13,9 @@ def getModelFilename(rawName:str) -> str:
 def getKey(d:dict) -> str:
     """Internal function that properly formats the key for further processing"""
     res = []
+    keys = list(d.keys())
+    keys.sort()
+    d = {i:d[i] for i in keys}
     for k in d.keys():
         if k in extractedProperties:
             res.append("%s=%s" % (k, d[k]))
@@ -107,6 +110,7 @@ def getBlockstates(pathToBlockstates:str) -> dict:
                 #annoyingly enough the format has two versions
                 if "variants" in contents.keys():
                     keys = [(k, v) for k, v in contents["variants"].items()]
+                    keys.sort(key=lambda x: x[0])
                     for key, v in keys:
                         if not isinstance(v, list):
                             v = [v]

@@ -19,10 +19,12 @@ char* getProperty(const char* property, nbt_node* tree){
     return result;
 }
 
-char* appendProperty(char* string, char* property){
-    string = realloc(string, strlen(string) + 2 + strlen(property));
-    strcat(string, "_");
+char* appendProperty(char* string, char* property, const char* propertyName){
+    string = realloc(string, strlen(string) + 3 + strlen(property) + strlen(propertyName));
+    strcat(string, propertyName);
+    strcat(string, "=");
     strcat(string, property);
+    strcat(string, ",");
     free(property);
     return string;
 }
@@ -107,55 +109,61 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
             char* south = NULL;
             nbt_node* properties = nbt_find_by_name(pal->data, "Properties");
             if(properties != NULL){
+                color = getProperty("color", properties);
+                east = getProperty("east", properties);
                 direction = getProperty("facing", properties);
                 half = getProperty("half", properties);
-                shape = getProperty("shape", properties);
-                color = getProperty("color", properties);
-                part = getProperty("part", properties);
-                open = getProperty("open", properties);
-                snowy = getProperty("snowy", properties);
                 north = getProperty("north", properties);
-                west = getProperty("west", properties);
-                east = getProperty("east", properties);
+                open = getProperty("open", properties);
+                part = getProperty("part", properties);
+                shape = getProperty("shape", properties);
+                snowy = getProperty("snowy", properties);
                 south = getProperty("south", properties);
+                west = getProperty("west", properties);
             }
             blockPalette[i] = malloc(strlen(string->payload.tag_string) + 1);
             strcpy(blockPalette[i], string->payload.tag_string);
+            char* propertyString = malloc(2);
+            propertyString[0] = ';';
+            propertyString[1] = '\0';
+            if(color != NULL){
+                propertyString = appendProperty(propertyString, color, "color");
+            }
+            if(east != NULL){
+                propertyString = appendProperty(propertyString, east, "east");
+            }
             if(direction != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], direction);
+                propertyString = appendProperty(propertyString, direction, "facing");
             }
             if(half != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], half);
+                propertyString = appendProperty(propertyString, half, "half");
             }
-            if(shape != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], shape);
-            }
-            if(color != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], color);
-            }
-            if(part != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], part);
+            if(north != NULL){
+                propertyString = appendProperty(propertyString, north, "north");
             }
             if(open != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], part);
+                propertyString = appendProperty(propertyString, part, "open");
+            }
+            if(part != NULL){
+                propertyString = appendProperty(propertyString, part, "part");
+            }
+            if(shape != NULL){
+                propertyString = appendProperty(propertyString, shape, "shape");
             }
             if(snowy != NULL){
                 if(strcmp(snowy, "false") != 0){
-                    blockPalette[i] = appendProperty(blockPalette[i], snowy);
+                    propertyString = appendProperty(propertyString, snowy, "snowy");
                 }
             }
-            if(north != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], north);
+            if(south != NULL){
+                propertyString = appendProperty(propertyString, south, "south");
             }
             if(west != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], west);
+                propertyString = appendProperty(propertyString, west, "west");
             }
-            if(east != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], east);
-            }
-            if(south != NULL){
-                blockPalette[i] = appendProperty(blockPalette[i], south);
-            }
+            propertyString[strlen(propertyString) - 1] = '\0';
+            blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 1 + strlen(propertyString));
+            strcat(blockPalette[i], propertyString);
             i++;
             blockPalette = realloc(blockPalette, (i + 1) * sizeof(char*));
         }
