@@ -191,7 +191,7 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
                         float xx = result.objects[x][y][z]->x;
                         float yx = result.objects[x][y][z]->y;
                         float zx = result.objects[x][y][z]->z;
-                        *(result.objects[x][y][z]) = *prot;
+                        result.objects[x][y][z] = prot;
                         result.objects[x][y][z]->x = xx;
                         result.objects[x][y][z]->y = yx; 
                         result.objects[x][y][z]->z = zx;
@@ -420,16 +420,18 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
     if(fseek(fp, 0, SEEK_SET) != 0){
         fileError(filename, "seek");
     }
-    char* bytes = malloc(sz);
+    char* bytes = malloc(sz + 1);
     if(fread(bytes, sz, 1, fp) != 1){
         fileError(filename, "read");
     }
+    bytes[sz] = '\0'; //done to fix an invalid read
     if(fclose(fp) == EOF){
         fileError(filename, "closed");
     }
     hashTable* result = initHashTable(objCount); 
     char* token = strtok(bytes, "\n");
     struct object newObject;
+    newObject.type = NULL;
     newObject.vertices = malloc(0);
     newObject.faces = malloc(0);
     while(token != NULL){
@@ -442,13 +444,20 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 }
                 break;
             case 'o':;
+                //something is up here with key
                 char* name = strchr(token, ' ');
                 name++;
-                newObject.type = malloc(strlen(name));
+                char isNew = newObject.type == NULL;
+                if(!isNew){
+                    free(newObject.type);
+                }
+                newObject.type = malloc(strlen(name) + 1);
                 strcpy(newObject.type, name);
-                struct object* ptr = malloc(sizeof(struct object));
-                *ptr = newObject;
-                insertHashItem(result, name, ptr);
+                if(!isNew){
+                    struct object* ptr = malloc(sizeof(struct object));
+                    *ptr = newObject;
+                    insertHashItem(result, newObject.type, ptr);
+                }
                 //this should 'reset' the newObject
                 newObject.faceCount = 0;
                 newObject.vertexCount = 0;
@@ -494,7 +503,7 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 newObject.faceCount++;
                 break;
         }
-        token = strtok(NULL, "\n");
+        token = strtok(NULL, "\n"); //invalid read here?
     }
     return result;
 }

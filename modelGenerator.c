@@ -71,7 +71,7 @@ int main(int argc, char** argv){
             if(argc <= i + 1){
                 argError("-o", "1");
             }
-            materialFilename = argv[i + 1];
+            objFilename = argv[i + 1];
             i += 1;
         }
         else if(strcmp(argv[i], "-out") == 0){
