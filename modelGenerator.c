@@ -125,16 +125,12 @@ int main(int argc, char** argv){
     */
     if(objFilename != NULL){
         objects = readWavefront(objFilename, materials, side);
-        //fprintf(stderr, "test:%s\n", ((struct object*)getVal(objects, "large_fern;half=lower"))->type);
+        //struct object* test = (struct object*)getVal(objects, "large_fern;half=lower");
+        //fprintf(stderr, "test:%s\n", test->type);
     }
     //now we have to decrypt the data in sections
     struct cubeModel cubeModel = createCubeModel(sections, n, materials, upLim, downLim, yLim, side);
-    for(int i = 0; i < materials->size; i++){
-        struct hTableItem* item = materials->items[i];
-        if(item != NULL){
-            free(item->value);
-        }
-    }
+    //we can free the materials hash table here because all the functions using materials do memcpy
     freeHashTable(materials);
     if(!f){
         long count = cullFaces(&cubeModel, !b, objects);

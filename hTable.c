@@ -41,6 +41,9 @@ hashTable* initHashTable(size_t size){
 }
 
 void freeHashItem(struct hTableItem* item){
+    if(item->value != NULL){
+        free(item->value);
+    }
     free(item->key);
     free(item);
 }
@@ -50,6 +53,7 @@ void freeHashTable(hashTable* table){
         struct hTableItem* item = table->items[i];
         if(item != NULL){
             freeHashItem(item);
+            table->items[i] = NULL;
         }
     }
     free(table->items);

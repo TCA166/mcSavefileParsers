@@ -199,9 +199,22 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
                     result.objects[x][y][z] = malloc(sizeof(struct object));
                     if(prot != NULL){
                         memcpy(result.objects[x][y][z], prot, sizeof(struct object));
-                        result.objects[x][y][z]->x = m->cubes[x][y][z]->x;
-                        result.objects[x][y][z]->y = m->cubes[x][y][z]->y; 
-                        result.objects[x][y][z]->z = m->cubes[x][y][z]->z;
+                        struct object* newObject = result.objects[x][y][z];
+                        newObject->x = m->cubes[x][y][z]->x;
+                        newObject->y = m->cubes[x][y][z]->y; 
+                        newObject->z = m->cubes[x][y][z]->z;
+                        //we need to copy everything so that we can free the entire hash table earlier
+                        newObject->vertices = calloc(newObject->vertexCount, sizeof(struct vertex));
+                        memcpy(newObject->vertices, prot->vertices, sizeof(struct vertex) * newObject->vertexCount);
+                        newObject->faces = calloc(newObject->faceCount, sizeof(struct objFace));
+                        memcpy(newObject->faces, prot->faces, sizeof(struct objFace) * newObject->faceCount);
+                        for(int i = 0; i < newObject->faceCount; i++){
+                            newObject->faces[i].vertices = calloc(prot->faces[i].vertexCount, sizeof(int));
+                            memcpy(newObject->faces[i].vertices, prot->faces[i].vertices, sizeof(int));
+                        }
+                        newObject->type = calloc(strlen(prot->type) + 1, 1);
+                        strcpy(newObject->type, prot->type);
+
                     }
                     else{
                         //fprintf(stderr, "%s", m->cubes[x][y][z]->type);
@@ -455,23 +468,31 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 if(materials != NULL){
                     char* mtlName = strchr(token, ' ');
                     mtlName++;
-                    nextM = (struct material*)getVal(materials, mtlName);
+                    nextM = malloc(sizeof(struct material));
+                    struct material* val = getVal(materials, mtlName);
+                    if(val != NULL){
+                        memcpy(nextM, val, sizeof(struct material));
+                    }
                 }
                 break;
             case 'o':;
                 //something is up here with key
-                if(newObject.type != NULL && newObject.vertexCount > 0 && newObject.faceCount > 0){
-                    //fprintf(stderr, "%s,%d,%d\n", newObject.type, newObject.vertexCount, newObject.faceCount);
-                    struct object* ptr = malloc(sizeof(struct object));
-                    *ptr = newObject;
-                    insertHashItem(result, newObject.type, ptr);
+                if(newObject.type != NULL){
+                    if(newObject.vertexCount > 0 && newObject.faceCount > 0){
+                        //fprintf(stderr, "%s,%d,%d\n", newObject.type, newObject.vertexCount, newObject.faceCount);
+                        struct object* ptr = malloc(sizeof(struct object));
+                        *ptr = newObject;
+                        insertHashItem(result, newObject.type, ptr);
+                    }
                     //free(newObject.type);
                 }
                 //this should 'reset' the newObject
                 newObject.faceCount = 0;
-                newObject.faces = realloc(newObject.faces, 0);
+                //free(newObject.faces);
+                newObject.faces = malloc(0);
                 newObject.vertexCount = 0;
-                newObject.vertices = realloc(newObject.vertices, 0);
+                //free(newObject.vertices);
+                newObject.vertices = malloc(0);
                 if(nextM != NULL){
                     newObject.m = nextM;
                     nextM = NULL;
@@ -523,6 +544,9 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 if(nextM != NULL){
                     newFace.m = nextM;
                     nextM = NULL;
+                }
+                else{
+                    newFace.m = NULL;
                 }
                 newObject.faces = realloc(newObject.faces, (newObject.faceCount + 1) * sizeof(struct objFace));
                 newObject.faces[newObject.faceCount] = newFace;
