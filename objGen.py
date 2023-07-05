@@ -162,5 +162,6 @@ if __name__ == "__main__":
                                 tmpStr += "usemtl %s\n" % c.materials[i]
                             tmpStr += "f %d %d %d %d\n" % (vertexCounter + face[0] - 8, vertexCounter + face[1] - 8, vertexCounter + face[2] - 8, vertexCounter + face[3] - 8)
                             i += 1
-                    resultStr += tmpStr
+                    if tmpStr.count("\n") > 1:
+                        resultStr += tmpStr
         f.write(resultStr)

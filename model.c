@@ -189,21 +189,25 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
         for(int y = 0; y < m->y; y++){
             for(int z = 0; z < m->z; z++){
                 if(m->cubes[x][y][z] != NULL){
-                    struct object* prot = getVal(specialObjects, m->cubes[x][y][z]->type);
+                    char* strippedName = strchr(m->cubes[x][y][z]->type, ':') + 1;
+                    if(strippedName == NULL){
+                        strippedName = m->cubes[x][y][z]->type;
+                    }
+                    //somewhere between here
+                    //fprintf(stderr, "%s,", strippedName);
+                    struct object* prot = (struct object*)getVal(specialObjects, strippedName);
                     result.objects[x][y][z] = malloc(sizeof(struct object));
                     if(prot != NULL){
-                        float xx = result.objects[x][y][z]->x;
-                        float yx = result.objects[x][y][z]->y;
-                        float zx = result.objects[x][y][z]->z;
-                        result.objects[x][y][z] = prot;
-                        result.objects[x][y][z]->x = xx;
-                        result.objects[x][y][z]->y = yx; 
-                        result.objects[x][y][z]->z = zx;
+                        memcpy(result.objects[x][y][z], prot, sizeof(struct object));
+                        result.objects[x][y][z]->x = m->cubes[x][y][z]->x;
+                        result.objects[x][y][z]->y = m->cubes[x][y][z]->y; 
+                        result.objects[x][y][z]->z = m->cubes[x][y][z]->z;
                     }
                     else{
                         //fprintf(stderr, "%s", m->cubes[x][y][z]->type);
                         *(result.objects[x][y][z]) = deCubeObject(m->cubes[x][y][z]);
                     }
+                    //and here the object gets corrupted
                 }
                 else{
                     result.objects[x][y][z] = NULL;
@@ -248,7 +252,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
         strcat(fileContents, materialFileName);
         strcat(fileContents, "\n");
     }
-    int n = 0;
+    long n = 0;
     //foreach object
     for(int x = 0; x < thisModel->x; x++){
         //detailed enough progress feedback for me
@@ -271,10 +275,10 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                     fileContents = realloc(fileContents, *outSize);
                     strcat(fileContents, objectLine);
                     free(objectLine);
+                    //fprintf(stderr, "%s-%d\n", thisObject->type, thisObject->vertexCount); 
                     //foreach vertex
                     for(int i = 0; i < thisObject->vertexCount; i++){
                         struct vertex v = thisObject->vertices[i];
-                        //fprintf(stderr, "%f %f %f", thisObject->x, thisObject->y, thisObject->z);
                         v.x += thisObject->x;
                         v.y += thisObject->y;
                         v.z += thisObject->z;
@@ -294,19 +298,19 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                         if(face.m != NULL){
                             fileContents = appendMtlLine(face.m->name, fileContents, outSize);
                         }
-                        int offset = n*8 + 1;
+                        long offset = (n*8) + 1;
                         size_t size = 4;
-                        for(int n = 0; n < face.vertexCount; n++){
-                            face.vertices[n] += offset;
-                            size += digits(face.vertices[n]) + 1;
+                        for(int m = 0; m < face.vertexCount; m++){
+                            face.vertices[m] += offset;
+                            size += digits(face.vertices[m]) + 1;
                         }
                         char* line = malloc(size);
                         line[0] = '\0';
                         strcat(line, "f ");
                         int lineOff = 2;
-                        for(int n = 0; n < face.vertexCount; n++){
-                            size_t len = digits(face.vertices[n]) + 1;
-                            snprintf(line + lineOff, len + 1, "%d ", face.vertices[n]);
+                        for(int m = 0; m < face.vertexCount; m++){
+                            size_t len = digits(face.vertices[m]) + 1;
+                            snprintf(line + lineOff, len + 1, "%d ", face.vertices[m]);
                             lineOff += len;
                         }
                         strcat(line, "\n");
@@ -441,6 +445,9 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
     newObject.type = NULL;
     newObject.vertices = malloc(0);
     newObject.faces = malloc(0);
+    newObject.x = -1;
+    newObject.y = -1;
+    newObject.z = -1;
     struct material* nextM = NULL;
     while(token != NULL){
         switch(token[0]){
@@ -453,24 +460,29 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 break;
             case 'o':;
                 //something is up here with key
-                if(newObject.type != NULL){
+                if(newObject.type != NULL && newObject.vertexCount > 0 && newObject.faceCount > 0){
+                    //fprintf(stderr, "%s,%d,%d\n", newObject.type, newObject.vertexCount, newObject.faceCount);
                     struct object* ptr = malloc(sizeof(struct object));
                     *ptr = newObject;
                     insertHashItem(result, newObject.type, ptr);
-                    free(newObject.type);
+                    //free(newObject.type);
                 }
                 //this should 'reset' the newObject
                 newObject.faceCount = 0;
+                newObject.faces = realloc(newObject.faces, 0);
                 newObject.vertexCount = 0;
-                newObject.m = NULL;
+                newObject.vertices = realloc(newObject.vertices, 0);
                 if(nextM != NULL){
                     newObject.m = nextM;
                     nextM = NULL;
                 }
+                else{
+                    newObject.m = NULL;
+                }
                 char* name = strchr(token, ' ');
                 name++;
                 //these two lines cause a very weird memory error
-                newObject.type = (char*)malloc(strlen(name) + 1);
+                newObject.type = malloc(strlen(name) + 1);
                 strcpy(newObject.type, name);
                 break;
             case 'v':;

@@ -125,9 +125,17 @@ int main(int argc, char** argv){
     */
     if(objFilename != NULL){
         objects = readWavefront(objFilename, materials, side);
+        //fprintf(stderr, "test:%s\n", ((struct object*)getVal(objects, "large_fern;half=lower"))->type);
     }
     //now we have to decrypt the data in sections
     struct cubeModel cubeModel = createCubeModel(sections, n, materials, upLim, downLim, yLim, side);
+    for(int i = 0; i < materials->size; i++){
+        struct hTableItem* item = materials->items[i];
+        if(item != NULL){
+            free(item->value);
+        }
+    }
+    freeHashTable(materials);
     if(!f){
         long count = cullFaces(&cubeModel, !b, objects);
         printf("%ld model faces culled\n", count);
@@ -141,13 +149,6 @@ int main(int argc, char** argv){
     char* content = generateModel(&newModel, &size, materialFilename);
     freeModel(&newModel);
     freeSections(sections, n);
-    for(int i = 0; i < materials->size; i++){
-        struct hTableItem* item = materials->items[i];
-        if(item != NULL){
-            free(item->value);
-        }
-    }
-    freeHashTable(materials);
     printf("Model string generated\n");
     FILE* outFile = fopen(outFilename, "w");
     if(outFile == NULL){
@@ -232,7 +233,14 @@ struct cube cubeFromBlock(struct block block, const int side, struct material* m
     newCube.faces[4] = newCubeFace(7, 5, 4, 6); //left -x
     newCube.faces[5] = newCubeFace(7, 6, 2, 3); //down -y
 
-    newCube.m = material;
+    if(material != NULL){
+        newCube.m = malloc(sizeof(struct material));
+        memcpy(newCube.m, material, sizeof(struct material));
+    }
+    else{
+        newCube.m = NULL;
+    }
+    //newCube.m = material;
 
     newCube.type = block.type;
     return newCube;
