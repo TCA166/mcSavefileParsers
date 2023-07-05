@@ -12,6 +12,16 @@ typedef struct hashTable{
     int count; //how many elements we have in the array
 } hashTable;
 
+//Debug macro that prints out all keys in the hash table in stderr
+#define debugHashKeyPrint(table) \
+    for(int i = 0; i < table->count; i++){ \
+        struct hTableItem* item = table->items[i]; \
+        while(item != NULL){ \
+            fprintf(stderr, "%d:%s\n", i, item->key); \
+            item = item->next; \
+        } \
+    }
+
 //Initializes a hash table with a given size preallocated and set to NULL
 hashTable* initHashTable(size_t size);
 

@@ -129,8 +129,8 @@ int main(int argc, char** argv){
     //now we have to decrypt the data in sections
     struct cubeModel cubeModel = createCubeModel(sections, n, materials, upLim, downLim, yLim, side);
     if(!f){
-        cullFaces(&cubeModel, !b, objects);
-        printf("Model faces culled\n");
+        long count = cullFaces(&cubeModel, !b, objects);
+        printf("%ld model faces culled\n", count);
     }
     model newModel = cubeModelToModel(&cubeModel, objects);
     if(objects != NULL){

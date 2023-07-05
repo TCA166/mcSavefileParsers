@@ -31,6 +31,7 @@ struct cubeFace{
 struct objFace{
     int vertexCount;
     int* vertices;
+    struct material* m;
 };
 
 //A dynamic obj file object
@@ -92,7 +93,7 @@ Removes all outward or internal faces from a model.
 All cubes that are NULL or whose type is in ignoreType are considered to be outward and faces touching those cubes are not culled.
 Culled faces are free'd and set as null.
 */
-void cullFaces(struct cubeModel* thisModel, char cullChunkBorder, hashTable* specialObjects);
+int cullFaces(struct cubeModel* thisModel, char cullChunkBorder, hashTable* specialObjects);
 
 /*
 Converts a cubeModel to a normal model, and inserts special objects if specialObjects!=NULL when types match.

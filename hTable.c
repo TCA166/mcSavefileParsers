@@ -26,8 +26,8 @@ uint64_t hash(const char* key)
 struct hTableItem* initHashItem(const char* key, const void* value){
     struct hTableItem* item = malloc(sizeof(struct hTableItem));
     item->key = malloc(strlen(key) + 1);
-    item->value = (void*)value;
     strcpy(item->key, key);
+    item->value = (void*)value;
     item->next = NULL;
     return item;
 }
@@ -69,18 +69,27 @@ int insertHashItem(hashTable* table, const char* key, const void* value){
         }
     }*/
     struct hTableItem* currentItem = table->items[index]; //currently stored item
-    while(currentItem != NULL){
-        if(strcmp(key, currentItem->key) == 0){
-            currentItem->value = (void*)value;
-            return table->count;
-        }
-        else{
-            currentItem = currentItem->next;
-        }
-    }
     struct hTableItem* newItem = initHashItem(key, value);
-    table->items[index] = newItem;
     table->count++;
+    if(currentItem == NULL){
+        table->items[index] = newItem;
+    }
+    else{
+        struct hTableItem* nextItem = currentItem->next;
+        while(nextItem != NULL){
+            if(strcmp(key, currentItem->key) == 0){
+                currentItem->value = (void*)value;
+                freeHashItem(newItem);
+                return table->count;
+            }
+            else{
+                currentItem = nextItem;
+                nextItem = nextItem->next;
+            }
+        }
+        currentItem->next = newItem;    
+    }
+    
     return table->count;
 }
 
@@ -96,7 +105,7 @@ void* getVal(hashTable* table, const char* key){
     while(strcmp(key, item->key) != 0){
         item = item->next;
         if(item == NULL){
-            return table->items[index];
+            return NULL;
         }
     }
     return item->value;

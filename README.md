@@ -109,7 +109,7 @@ For parsing of the nbt files I have chosen to use the [cNBT](https://github.com/
 ## API
 
 Most of the code has been organized into three "libraries".
-regionParser handles nbt extraction from region files, chunkParser extracts data from chunk nbts and finally model handles generating models from chunk data.
+regionParser handles nbt extraction from region files, chunkParser extracts data from chunk nbts, hTable is an implementation of a hash table and finally model handles generating models from chunk data.
 Feel free to use these as libraries in your projects just make sure to read the license before you do so.
 The documentation for functions in these libraries should be mainly in header files, and I will gladly expand it should there be a need so just let me know.
 
