@@ -11,7 +11,8 @@
         "regionparser.h": "c",
         "type_traits": "c",
         "random": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "compare": "c"
     },
     "cSpell.words": [
         "blockstates",

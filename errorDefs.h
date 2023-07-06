@@ -53,5 +53,5 @@
 #define materialWarning(type) \
         fprintf(stderr, "Material for %s couldn't be found in the mtl file.\n", type);
 
-#define hashWarning(key) \
-        fprintf(stderr, "A hash collision has occured for key %s\n", key);
+#define vertexWarning(objName) \
+        fprintf(stderr, "A possible vertex-face mismatch in object %s\n", objName);

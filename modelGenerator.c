@@ -125,8 +125,6 @@ int main(int argc, char** argv){
     */
     if(objFilename != NULL){
         objects = readWavefront(objFilename, materials, side);
-        //struct object* test = (struct object*)getVal(objects, "large_fern;half=lower");
-        //fprintf(stderr, "test:%s\n", test->type);
     }
     //now we have to decrypt the data in sections
     struct cubeModel cubeModel = createCubeModel(sections, n, materials, upLim, downLim, yLim, side);
@@ -211,7 +209,6 @@ struct cube cubeFromBlock(struct block block, const int side, struct material* m
     newCube.y = block.y;
     newCube.z = block.z;
     float dist = side/2;
-    //fprintf(stderr, "%f %f %f", newCube.x, newCube.y, newCube.z);
     //binary 8 to 0
     newCube.vertices[0] = newVertex(dist, dist,  dist);
     newCube.vertices[1] = newVertex(dist, dist, 0 - dist);

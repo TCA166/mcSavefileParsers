@@ -90,7 +90,6 @@ char isPresent(char* string, hashTable* objects){
         return 0;
     }
     struct object* ptr = getVal(objects, string);
-    //fprintf(stderr, "%s-%p\n", string, (void*)ptr);
     return ptr != NULL;
 }
 
@@ -200,10 +199,10 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
                     if(prot != NULL){
                         memcpy(result.objects[x][y][z], prot, sizeof(struct object));
                         struct object* newObject = result.objects[x][y][z];
-                        float dist = m->cubes[x][y][z]->side/2;
-                        newObject->x = objCoordCorrect(m->cubes[x][y][z], x, dist);
-                        newObject->y = objCoordCorrect(m->cubes[x][y][z], y, dist); 
-                        newObject->z = objCoordCorrect(m->cubes[x][y][z], z, dist);
+                        //float dist = m->cubes[x][y][z]->side/2;
+                        newObject->x = m->cubes[x][y][z]->x * m->cubes[x][y][z]->side;
+                        newObject->y = m->cubes[x][y][z]->y * m->cubes[x][y][z]->side; 
+                        newObject->z = m->cubes[x][y][z]->z * m->cubes[x][y][z]->side;
                         //we need to copy everything so that we can free the entire hash table earlier
                         newObject->vertices = calloc(newObject->vertexCount, sizeof(struct vertex));
                         memcpy(newObject->vertices, prot->vertices, sizeof(struct vertex) * newObject->vertexCount);
@@ -211,14 +210,13 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
                         memcpy(newObject->faces, prot->faces, sizeof(struct objFace) * newObject->faceCount);
                         for(int i = 0; i < newObject->faceCount; i++){
                             newObject->faces[i].vertices = calloc(prot->faces[i].vertexCount, sizeof(int));
-                            memcpy(newObject->faces[i].vertices, prot->faces[i].vertices, sizeof(int));
+                            memcpy(newObject->faces[i].vertices, prot->faces[i].vertices, sizeof(int) * prot->faces[i].vertexCount);
                         }
                         newObject->type = calloc(strlen(prot->type) + 1, 1);
                         strcpy(newObject->type, prot->type);
 
                     }
                     else{
-                        //fprintf(stderr, "%s", m->cubes[x][y][z]->type);
                         *(result.objects[x][y][z]) = deCubeObject(m->cubes[x][y][z]);
                     }
                 }
@@ -265,7 +263,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
         strcat(fileContents, materialFileName);
         strcat(fileContents, "\n");
     }
-    long n = 0;
+    long offset = 1; //vertex offset
     //foreach object
     for(int x = 0; x < thisModel->x; x++){
         //detailed enough progress feedback for me
@@ -280,15 +278,14 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                         fileContents = appendMtlLine(thisObject->m->name, fileContents, outSize);
                     }
                     //object definition
-                    size_t objectLineSize = 11 + digits(x) + digits(y) + digits(z) + strlen(thisObject->type);
+                    size_t objectLineSize = 12 + digits(x) + digits(y) + digits(z) + strlen(thisObject->type) + digits(offset);
                     char* objectLine = NULL;
                     objectLine = malloc(objectLineSize);
-                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s\n", x, y, z, thisObject->type);
+                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%ld\n", x, y, z, thisObject->type, offset);
                     *outSize += objectLineSize;
                     fileContents = realloc(fileContents, *outSize);
                     strcat(fileContents, objectLine);
                     free(objectLine);
-                    //fprintf(stderr, "%s-%d\n", thisObject->type, thisObject->vertexCount); 
                     //foreach vertex
                     for(int i = 0; i < thisObject->vertexCount; i++){
                         struct vertex v = thisObject->vertices[i];
@@ -311,7 +308,6 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                         if(face.m != NULL){
                             fileContents = appendMtlLine(face.m->name, fileContents, outSize);
                         }
-                        long offset = (n*8) + 1;
                         size_t size = 4;
                         for(int m = 0; m < face.vertexCount; m++){
                             face.vertices[m] += offset;
@@ -332,7 +328,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                         strcat(fileContents, line);
                         free(line);
                     }
-                    n++;
+                    offset += thisObject->vertexCount;
                 }
                 
             }
@@ -479,10 +475,6 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 //something is up here with key
                 if(newObject.type != NULL){
                     if(newObject.vertexCount > 0 && newObject.faceCount > 0){
-                        //fprintf(stderr, "%s,%d,%d\n", newObject.type, newObject.vertexCount, newObject.faceCount);
-                        /*if(strcmp(newObject.type, "grass_block;snowy=false") == 0){
-                            fprintf(stderr, "test");
-                        }*/
                         struct object* ptr = malloc(sizeof(struct object));
                         *ptr = newObject;
                         insertHashItem(result, newObject.type, ptr);
@@ -529,6 +521,9 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                             //parse the num string, append the result to vertices and reset num
                             vertices = realloc(vertices, (f + 1) * sizeof(int));
                             vertices[f] = atoi(num);
+                            if(vertices[f] > newObject.vertexCount){
+                                vertexWarning(newObject.type);
+                            }
                             f++;
                             free(num);
                             num = calloc(1, 1);

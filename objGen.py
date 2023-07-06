@@ -144,7 +144,7 @@ if __name__ == "__main__":
         modelFolder = os.path.join(path, "models", "block")
         for k, v in blockstates.items():
             tmpStr = "o %s\n" % k
-            vertexCounter = 1 #how many vertices we have
+            vertexCounter = 0 #how many vertices we have
             for modelName in v:
                 cubes = getModel(modelName, modelFolder)
                 if not (cubes == None and len(v) == 1):
