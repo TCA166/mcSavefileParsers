@@ -14,6 +14,8 @@
 
 #define objCount 6000
 
+#define objCoordCorrect(c, coord, dist) (c->coord * c->side) + dist
+
 int digits(int i){
     if(i == 0){
         return 1;
@@ -162,9 +164,9 @@ int cullFaces(struct cubeModel* thisModel, char cullChunkBorder, hashTable* spec
 struct object deCubeObject(struct cube* c){
     struct object result;
     float dist = c->side/2;
-    result.x = (c->x * c->side) + dist;
-    result.y = (c->y * c->side) + dist;
-    result.z = (c->z * c->side) + dist;
+    result.x = objCoordCorrect(c, x, dist);
+    result.y = objCoordCorrect(c, y, dist);
+    result.z = objCoordCorrect(c, z, dist);
     result.faceCount = 0;
     result.faces = malloc(0);
     for(int i = 0; i < 6; i++){
@@ -193,16 +195,15 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
                     if(strippedName == NULL){
                         strippedName = m->cubes[x][y][z]->type;
                     }
-                    //somewhere between here
-                    //fprintf(stderr, "%s,", strippedName);
                     struct object* prot = (struct object*)getVal(specialObjects, strippedName);
                     result.objects[x][y][z] = malloc(sizeof(struct object));
                     if(prot != NULL){
                         memcpy(result.objects[x][y][z], prot, sizeof(struct object));
                         struct object* newObject = result.objects[x][y][z];
-                        newObject->x = m->cubes[x][y][z]->x;
-                        newObject->y = m->cubes[x][y][z]->y; 
-                        newObject->z = m->cubes[x][y][z]->z;
+                        float dist = m->cubes[x][y][z]->side/2;
+                        newObject->x = objCoordCorrect(m->cubes[x][y][z], x, dist);
+                        newObject->y = objCoordCorrect(m->cubes[x][y][z], y, dist); 
+                        newObject->z = objCoordCorrect(m->cubes[x][y][z], z, dist);
                         //we need to copy everything so that we can free the entire hash table earlier
                         newObject->vertices = calloc(newObject->vertexCount, sizeof(struct vertex));
                         memcpy(newObject->vertices, prot->vertices, sizeof(struct vertex) * newObject->vertexCount);
@@ -220,7 +221,6 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
                         //fprintf(stderr, "%s", m->cubes[x][y][z]->type);
                         *(result.objects[x][y][z]) = deCubeObject(m->cubes[x][y][z]);
                     }
-                    //and here the object gets corrupted
                 }
                 else{
                     result.objects[x][y][z] = NULL;
@@ -280,10 +280,10 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                         fileContents = appendMtlLine(thisObject->m->name, fileContents, outSize);
                     }
                     //object definition
-                    size_t objectLineSize = 10 + digits(x) + digits(y) + digits(z);
+                    size_t objectLineSize = 11 + digits(x) + digits(y) + digits(z) + strlen(thisObject->type);
                     char* objectLine = NULL;
                     objectLine = malloc(objectLineSize);
-                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d\n", x, y, z);
+                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s\n", x, y, z, thisObject->type);
                     *outSize += objectLineSize;
                     fileContents = realloc(fileContents, *outSize);
                     strcat(fileContents, objectLine);
@@ -480,6 +480,9 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 if(newObject.type != NULL){
                     if(newObject.vertexCount > 0 && newObject.faceCount > 0){
                         //fprintf(stderr, "%s,%d,%d\n", newObject.type, newObject.vertexCount, newObject.faceCount);
+                        /*if(strcmp(newObject.type, "grass_block;snowy=false") == 0){
+                            fprintf(stderr, "test");
+                        }*/
                         struct object* ptr = malloc(sizeof(struct object));
                         *ptr = newObject;
                         insertHashItem(result, newObject.type, ptr);
@@ -517,29 +520,37 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 break;
             case 'f':;
                 int* vertices = malloc(0);
-                char* num = malloc(0);
+                char* num = calloc(1, 1);
                 int n = 0;
                 int f = 0;
-                for(int i = 1; i < strlen(token); i++){
+                for(int i = 2; i < strlen(token); i++){
                     if(token[i] == ' '){
                         if(n > 0){
+                            //parse the num string, append the result to vertices and reset num
                             vertices = realloc(vertices, (f + 1) * sizeof(int));
-                            num = realloc(num, n + 1);
-                            num[n] = '\0';
                             vertices[f] = atoi(num);
                             f++;
+                            free(num);
+                            num = calloc(1, 1);
                         }
                         n = 0;
                     }
                     else{
+                        //append to the WIP number string that will be parsed by atoi
                         num = realloc(num, n + 1);
                         num[n] = token[i];
+                        num[n + 1] = '\0';
                         n++;
                     }
                 }
+                if(strlen(num) > 0){
+                    vertices = realloc(vertices, (f + 1) * sizeof(int));
+                    vertices[f] = atoi(num);
+                    f++;
+                }
                 free(num);
                 struct objFace newFace;
-                newFace.vertexCount = n;
+                newFace.vertexCount = f;
                 newFace.vertices = vertices;
                 if(nextM != NULL){
                     newFace.m = nextM;

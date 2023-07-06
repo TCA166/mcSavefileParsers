@@ -206,11 +206,11 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashT
 
 struct cube cubeFromBlock(struct block block, const int side, struct material* material){
     struct cube newCube;
-    float dist = side/2;
     newCube.side = side;
     newCube.x = block.x;
     newCube.y = block.y;
     newCube.z = block.z;
+    float dist = side/2;
     //fprintf(stderr, "%f %f %f", newCube.x, newCube.y, newCube.z);
     //binary 8 to 0
     newCube.vertices[0] = newVertex(dist, dist,  dist);

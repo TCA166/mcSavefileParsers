@@ -151,9 +151,7 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
                 propertyString = appendProperty(propertyString, shape, "shape");
             }
             if(snowy != NULL){
-                if(strcmp(snowy, "false") != 0){
-                    propertyString = appendProperty(propertyString, snowy, "snowy");
-                }
+                propertyString = appendProperty(propertyString, snowy, "snowy");
             }
             if(south != NULL){
                 propertyString = appendProperty(propertyString, south, "south");
