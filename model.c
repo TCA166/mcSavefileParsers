@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include <math.h>
 
@@ -85,7 +86,7 @@ struct objFace deCube(struct cubeFace face){
     return new;
 }
 
-char isPresent(char* string, hashTable* objects){
+bool isPresent(char* string, hashTable* objects){
     if(objects == NULL){
         return 0;
     }
@@ -93,7 +94,7 @@ char isPresent(char* string, hashTable* objects){
     return ptr != NULL;
 }
 
-int cullFaces(struct cubeModel* thisModel, char cullChunkBorder, hashTable* specialObjects){
+int cullFaces(struct cubeModel* thisModel, bool cullChunkBorder, hashTable* specialObjects){
     long count = 0;
     for(int x = 0; x < thisModel->x; x++){
         for(int y = 0; y < thisModel->y; y++){
@@ -229,7 +230,7 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
     return result;
 }
 
-unsigned char isNotEmpty(struct object* c){
+bool isNotEmpty(struct object* c){
     if(c == NULL){
         return 0;
     }

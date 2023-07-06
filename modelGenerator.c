@@ -7,16 +7,7 @@
 #include <math.h>
 
 #include "errorDefs.h"
-#include "model.h"
-#include "chunkParser.h"
-
-//moved this here from model.c in order to properly separate that file into a proper 3d model rendering lib and a chunk nbt handling lib
-
-//Creates a new cube object based on a block object
-struct cube cubeFromBlock(struct block block, const int side, struct material* material);
-
-//Isolated from the main code to maybe in the future enable for a multithreaded version that can do multiple chunks
-struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, int side, bool matCheck);
+#include "modelGenerator.h"
 
 int main(int argc, char** argv){
     if(argc < 2){
@@ -27,7 +18,6 @@ int main(int argc, char** argv){
     int downLim = 0; //y- cutoff
     bool f = 0; //if we don't want to cull faces
     bool b = 0; //if we don't want to cull chunk border faces
-    hashTable* objects = NULL; //special objects
     char* objFilename = NULL;
     char* materialFilename = NULL;
     int side = 2;
@@ -83,6 +73,24 @@ int main(int argc, char** argv){
             i += 1;
         }
     }
+    //Ok so first we get the auxiliary files and then the main file
+    hashTable* materials = NULL; //array of materials
+    if(materialFilename != NULL){
+        //parse the material file, after-all we have to account for transparent textures
+        materials = getMaterials(materialFilename);
+    } 
+    /*Note on the objects
+    So generally the workflow looks thusly: file->sections->blocks->cubes->objects->model
+    Naturally I could just not use cubes at all and go straight to objects.
+    This would indeed be faster and lower the complexity from ~O(6n) to O(5n).
+    However that would mean the face culling algorithm would be severely slower.
+    Instead of the simple algorithm that assumes everything is a cube and has 6 faces it would need to iterate over each face of each neighboring object to determine if a single face can be culled.
+    That's bad. So for now I much rather do one more iteration rather than make culling slow.
+    */
+    hashTable* objects = NULL; //special objects
+    if(objFilename != NULL){
+        objects = readWavefront(objFilename, materials, side);
+    }
     //Get the nbt data
     FILE* nbtFile = fopen(argv[1], "rb");
     if(nbtFile == NULL){
@@ -102,33 +110,37 @@ int main(int argc, char** argv){
     if(fclose(nbtFile) == EOF){
         fileError(argv[1], "closed");
     }
+    model newModel = generateFromNbt(data, sz, materials, objects, yLim, upLim, downLim, b, f, side);
+    size_t size = 0;
+    char* content = generateModel(&newModel, &size, materialFilename);
+    freeModel(&newModel);
+    printf("Model string generated\n");
+    FILE* outFile = fopen(outFilename, "w");
+    if(outFile == NULL){
+        fileError(outFilename, "opened");
+    }
+    if(fwrite(content, size, 1, outFile) != 1){
+        fileError(outFilename, "written");
+    }
+    if(fclose(outFile) == EOF){
+        fileError(outFilename, "closed");
+    }
+    free(content);
+    return EXIT_SUCCESS;
+}
+
+model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, hashTable* objects, bool yLim, int upLim, int downLim, bool b, bool f, int side){
     //Array of sections in this chunk
     struct section sections[maxSections] = {0};
-    int n = getSections(data, sz, sections);
+    int n = getSections(data, dataSize, sections);
     free(data);
     /*It is possible to not have to iterate over each block again, and do everything in a single loop.
     But that would be less readable and put more of a strain on memory since the entire nbt file would have to be there
     Also it's C already. Just by the virtue of doing it in C I'm pretty fast.
     Also also the resulting API and code would be less open and more goal centric, which is something I don't really want. Hey if I create code for handling obj file in C why not make it reusable?
     */
-    hashTable* materials = NULL; //array of materials
-    if(materialFilename != NULL){
-        //parse the material file, after-all we have to account for transparent textures
-        materials = getMaterials(materialFilename);
-    } 
-    /*Note on the objects
-    So generally the workflow looks thusly: file->sections->blocks->cubes->objects->model
-    Naturally I could just not use cubes at all and go straight to objects.
-    This would indeed be faster and lower the complexity from ~O(6n) to O(5n).
-    However that would mean the face culling algorithm would be severely slower.
-    Instead of the simple algorithm that assumes everything is a cube and has 6 faces it would need to iterate over each face of each neighboring object to determine if a single face can be culled.
-    That's bad. So for now I much rather do one more iteration rather than make culling slow.
-    */
-    if(objFilename != NULL){
-        objects = readWavefront(objFilename, materials, side);
-    }
     //now we have to decrypt the data in sections
-    struct cubeModel cubeModel = createCubeModel(sections, n, materials, yLim, upLim, downLim, side, objFilename == NULL);
+    struct cubeModel cubeModel = createCubeModel(sections, n, materials, yLim, upLim, downLim, side, objects == NULL);
     /*
     Here we transfer the used materials to an array to save memory since we aren't going to be looking up stuff anymore
     The alternative would be to free the entirety of materials now but have copies stored in objects. That probably would be worse
@@ -166,8 +178,6 @@ int main(int argc, char** argv){
         freeHashTable(objects);
     }
     freeCubeModel(&cubeModel);
-    size_t size = 0;
-    char* content = generateModel(&newModel, &size, materialFilename);
     //Free the compressed array of materials
     for(int i = 0; i < materialsLen; i++){
         struct material* m = (struct material*)materialsArr[i];
@@ -177,21 +187,8 @@ int main(int argc, char** argv){
         }
     }
     free(materialsArr);
-    freeModel(&newModel);
     freeSections(sections, n);
-    printf("Model string generated\n");
-    FILE* outFile = fopen(outFilename, "w");
-    if(outFile == NULL){
-        fileError(outFilename, "opened");
-    }
-    if(fwrite(content, size, 1, outFile) != 1){
-        fileError(outFilename, "written");
-    }
-    if(fclose(outFile) == EOF){
-        fileError(outFilename, "closed");
-    }
-    free(content);
-    return EXIT_SUCCESS;
+    return newModel;
 }
 
 struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, int side, bool matCheck){
