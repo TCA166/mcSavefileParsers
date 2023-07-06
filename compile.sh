@@ -1,5 +1,6 @@
 #!/bin/bash
 #apt install gcc
+#Cmake? never heard of it :)
 if ! test -f "buffer.o"; then
     cd ./cNBT
     ./cNBTcompile.sh "$@"

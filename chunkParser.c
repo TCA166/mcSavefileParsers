@@ -162,6 +162,7 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
             propertyString[strlen(propertyString) - 1] = '\0';
             blockPalette[i] = realloc(blockPalette[i], strlen(blockPalette[i]) + 1 + strlen(propertyString));
             strcat(blockPalette[i], propertyString);
+            free(propertyString);
             i++;
             blockPalette = realloc(blockPalette, (i + 1) * sizeof(char*));
         }

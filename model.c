@@ -452,8 +452,8 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
     char* token = strtok(bytes, "\n");
     struct object newObject;
     newObject.type = NULL;
-    newObject.vertices = malloc(0);
-    newObject.faces = malloc(0);
+    newObject.vertices = NULL;
+    newObject.faces = NULL;
     newObject.x = -1;
     newObject.y = -1;
     newObject.z = -1;
@@ -464,11 +464,7 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 if(materials != NULL){
                     char* mtlName = strchr(token, ' ');
                     mtlName++;
-                    nextM = malloc(sizeof(struct material));
-                    struct material* val = getVal(materials, mtlName);
-                    if(val != NULL){
-                        memcpy(nextM, val, sizeof(struct material));
-                    }
+                    nextM = (struct material*)getVal(materials, mtlName);
                 }
                 break;
             case 'o':;
@@ -506,13 +502,19 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 float y;
                 float z;
                 sscanf(token, "v %f %f %f", &x, &y, &z);
-                newObject.vertices = realloc(newObject.vertices, (newObject.vertexCount + 1) * sizeof(struct vertex));
+                if(newObject.vertices == NULL){
+                    newObject.vertices = malloc(sizeof(struct vertex));
+                }
+                else{
+                    newObject.vertices = realloc(newObject.vertices, (newObject.vertexCount + 1) * sizeof(struct vertex));
+                }
                 newObject.vertices[newObject.vertexCount] = newVertex(x * side, y * side, z * side);
                 newObject.vertexCount++;
                 break;
             case 'f':;
                 int* vertices = malloc(0);
                 char* num = calloc(1, 1);
+                num[0] = '\0';
                 int n = 0;
                 int f = 0;
                 for(int i = 2; i < strlen(token); i++){
@@ -525,14 +527,14 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                                 vertexWarning(newObject.type);
                             }
                             f++;
-                            free(num);
-                            num = calloc(1, 1);
+                            num = realloc(num, 1);
+                            num[0] = '\0';
                         }
                         n = 0;
                     }
                     else{
                         //append to the WIP number string that will be parsed by atoi
-                        num = realloc(num, n + 1);
+                        num = realloc(num, n + 2);
                         num[n] = token[i];
                         num[n + 1] = '\0';
                         n++;
@@ -554,12 +556,23 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 else{
                     newFace.m = NULL;
                 }
-                newObject.faces = realloc(newObject.faces, (newObject.faceCount + 1) * sizeof(struct objFace));
+                if(newObject.faces == NULL){
+                    newObject.faces = malloc(sizeof(struct objFace));
+                }
+                else{
+                    newObject.faces = realloc(newObject.faces, (newObject.faceCount + 1) * sizeof(struct objFace));
+                }
                 newObject.faces[newObject.faceCount] = newFace;
                 newObject.faceCount++;
                 break;
         }
         token = strtok(NULL, "\n");
+    }
+    free(bytes);
+    if(newObject.vertexCount > 0 && newObject.faceCount > 0){
+        struct object* ptr = malloc(sizeof(struct object));
+        *ptr = newObject;
+        insertHashItem(result, newObject.type, ptr);
     }
     return result;
 }

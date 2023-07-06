@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include <math.h>
 
@@ -15,17 +16,17 @@
 struct cube cubeFromBlock(struct block block, const int side, struct material* material);
 
 //Isolated from the main code to maybe in the future enable for a multithreaded version that can do multiple chunks
-struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, int upLim, int downLim, char yLim, int side);
+struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, int side, bool matCheck);
 
 int main(int argc, char** argv){
     if(argc < 2){
         argCountError();
     }
-    char yLim = 0; //if we wan't to remove some verticality
+    bool yLim = 0; //if we wan't to remove some verticality
     int upLim = 0; //y+ cutoff
     int downLim = 0; //y- cutoff
-    char f = 0; //if we don't want to cull faces
-    char b = 0; //if we don't want to cull chunk border faces
+    bool f = 0; //if we don't want to cull faces
+    bool b = 0; //if we don't want to cull chunk border faces
     hashTable* objects = NULL; //special objects
     char* objFilename = NULL;
     char* materialFilename = NULL;
@@ -37,17 +38,17 @@ int main(int argc, char** argv){
             if(argc <= i + 2){
                 argError("-l", "2");
             }
-            yLim = 1;
+            yLim = true;
             upLim = atoi(argv[i + 1]);
             downLim = atoi(argv[i + 2]);
             printf("Enabled vertical limit from y=%d to y=%d\n", downLim, upLim);
             i += 2;
         }
         else if(strcmp(argv[i], "-f") == 0){
-            f = 1;
+            f = true;
         }
         else if(strcmp(argv[i], "-b") == 0){
-            b = 1;
+            b = true;
         }
         else if(strcmp(argv[i], "-h") == 0){
             printf("modelGenerator <path to nbt file> <arg1> <arg2> ...\nArgs:\n-l <y+> <y-> |limits the result to the given vertical range\n-b|enables chunk border rendering\n-f|disables face culling\n-s <s> |changes the block side in the result side to the given s argument\n-m <filename> | sets the given filename as the .mtl source\n-o <filename> | sets the given filename as special object source\n-out <filename> | sets the given filename as the output filename");
@@ -127,20 +128,55 @@ int main(int argc, char** argv){
         objects = readWavefront(objFilename, materials, side);
     }
     //now we have to decrypt the data in sections
-    struct cubeModel cubeModel = createCubeModel(sections, n, materials, upLim, downLim, yLim, side);
-    //we can free the materials hash table here because all the functions using materials do memcpy
-    freeHashTable(materials);
+    struct cubeModel cubeModel = createCubeModel(sections, n, materials, yLim, upLim, downLim, side, objFilename == NULL);
+    /*
+    Here we transfer the used materials to an array to save memory since we aren't going to be looking up stuff anymore
+    The alternative would be to free the entirety of materials now but have copies stored in objects. That probably would be worse
+    */
+    void** materialsArr = NULL;
+    int materialsLen = 0;
+    if(materials != NULL){
+        /*
+        forHashTableItem(materials){
+            struct material* mat = (struct material*)item->value;
+            free(mat->name);
+            free(mat);
+        }*/
+        materialsArr = hashTableToArray(materials);
+        materialsLen = materials->count;
+        freeHashTable(materials);
+    }
     if(!f){
         long count = cullFaces(&cubeModel, !b, objects);
         printf("%ld model faces culled\n", count);
     }
     model newModel = cubeModelToModel(&cubeModel, objects);
+    //We don't need objects, they have already been copied in cubeModelToModel so let's free that hash table
     if(objects != NULL){
+        forHashTableItem(objects){
+            struct object* obj = (struct object*)item->value;
+            free(obj->type);
+            free(obj->vertices);
+            for(int i = 0; i < obj->faceCount; i++){
+                free(obj->faces[i].vertices);
+            }
+            free(obj->faces);
+            free(obj);
+        }
         freeHashTable(objects);
     }
     freeCubeModel(&cubeModel);
     size_t size = 0;
     char* content = generateModel(&newModel, &size, materialFilename);
+    //Free the compressed array of materials
+    for(int i = 0; i < materialsLen; i++){
+        struct material* m = (struct material*)materialsArr[i];
+        if(m != NULL){
+            free(m->name);
+            free(m);
+        }
+    }
+    free(materialsArr);
     freeModel(&newModel);
     freeSections(sections, n);
     printf("Model string generated\n");
@@ -158,7 +194,7 @@ int main(int argc, char** argv){
     return EXIT_SUCCESS;
 }
 
-struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, int upLim, int downLim, char yLim, int side){
+struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, int side, bool matCheck){
     struct cubeModel cubeModel = initCubeModel(16,16 * sectionLen, 16);
     for(int i = 0; i < sectionLen; i++){
         //create the block state array
@@ -182,7 +218,7 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashT
                             nameEnd = newBlock.type;
                         }
                         m = (struct material*)getVal(materials, nameEnd);
-                        if(m == NULL && strcmp(newBlock.type, mcAir) != 0){ //material wasn't found oops
+                        if(m == NULL && strcmp(newBlock.type, mcAir) != 0 && matCheck){ //material wasn't found oops
                             materialWarning(nameEnd);
                         }
                     }
@@ -226,14 +262,7 @@ struct cube cubeFromBlock(struct block block, const int side, struct material* m
     newCube.faces[4] = newCubeFace(7, 5, 4, 6); //left -x
     newCube.faces[5] = newCubeFace(7, 6, 2, 3); //down -y
 
-    if(material != NULL){
-        newCube.m = malloc(sizeof(struct material));
-        memcpy(newCube.m, material, sizeof(struct material));
-    }
-    else{
-        newCube.m = NULL;
-    }
-    //newCube.m = material;
+    newCube.m = material;
 
     newCube.type = block.type;
     return newCube;

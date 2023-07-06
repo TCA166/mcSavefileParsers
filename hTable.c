@@ -41,8 +41,8 @@ hashTable* initHashTable(size_t size){
 }
 
 void freeHashItem(struct hTableItem* item){
-    if(item->value != NULL){
-        free(item->value);
+    if(item->next != NULL){
+        freeHashItem(item->next);
     }
     free(item->key);
     free(item);
@@ -113,4 +113,14 @@ void* getVal(hashTable* table, const char* key){
         }
     }
     return item->value;
+}
+
+void** hashTableToArray(hashTable* table){
+    void** result = calloc(table->count, sizeof(void*));
+    int n = 0;
+    forHashTableItem(table){
+        result[n] = item->value;
+        n++;
+    }
+    return result;
 }

@@ -123,6 +123,9 @@ Returns a new reference to a material hash table.
 */
 hashTable* getMaterials(char* filename);
 
+//Creates a clone of a material struct in memory
+struct material* cloneMaterial(const struct material* input);
+
 /*
 Converts a cubeFace to the dynamic obj face.
 Allocates necessary for face vertices.

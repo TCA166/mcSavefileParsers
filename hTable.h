@@ -12,15 +12,10 @@ typedef struct hashTable{
     int count; //how many elements we have in the array
 } hashTable;
 
-//Debug macro that prints out all keys in the hash table in stderr
-#define debugHashKeyPrint(table) \
-    for(int i = 0; i < table->count; i++){ \
-        struct hTableItem* item = table->items[i]; \
-        while(item != NULL){ \
-            fprintf(stderr, "%d:%s\n", i, item->key); \
-            item = item->next; \
-        } \
-    }
+//Macro wrapper for two for loops that provides a struct hTableItem* item variable for your use
+#define forHashTableItem(table) \
+    for(int tableIndex=0; tableIndex < table->size; tableIndex++)\
+    for(struct hTableItem* item = table->items[tableIndex]; item != NULL; item=item->next)
 
 //Initializes a hash table with a given size preallocated and set to NULL
 hashTable* initHashTable(size_t size);
@@ -33,3 +28,6 @@ int insertHashItem(hashTable* table, const char* key, const void* value);
 
 //Retrieves the value from the hashTable. Be sure to cast the returned pointer
 void* getVal(hashTable* table, const char* key);
+
+//Returns an array of all value pointers in the hash table
+void** hashTableToArray(hashTable* table);
