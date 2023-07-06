@@ -8,13 +8,6 @@
 #include "errorDefs.h"
 #include "regionParser.h"
 
-int digits(int i){
-    if(i == 0){
-        return 1;
-    }
-    return floor(log10(abs(i))) + 1;
-}
-
 //Program for extracting specific chunks from all region files
 int main(int argc, char** argv){
     if(argc < 3){
@@ -23,16 +16,8 @@ int main(int argc, char** argv){
     for(int i = 3; i < argc; i+=3){
         int x = atoi(argv[i - 1]);
         int z = atoi(argv[i]);
-        char* filename = malloc(strlen(argv[i - 2]) + digits(x) + digits(z) + 9);
-        sprintf(filename, "%s/r.%d.%d.mca", argv[i - 2], getRegion(x), getRegion(z));
-        FILE* regionFile = fopen(filename, "rb");
-        if(regionFile == NULL){
-            fileError(filename, "located");
-        }
-        free(filename);
-        chunk ourChunk = getChunk(x, z, regionFile);
-        fclose(regionFile);
-        filename = malloc(8 + digits(x) + digits(z));
+        chunk ourChunk = extractChunk(argv[i - 2], x, z);
+        char* filename = malloc(8 + 10 + 10);
         sprintf(filename, "./%d.%d.nbt", x, z);
         FILE* outFile = fopen(filename, "wb");
         free(filename);

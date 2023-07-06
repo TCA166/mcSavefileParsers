@@ -39,13 +39,13 @@
         break;
 
 #define argCountError() \
-        fprintf(stderr, "No arguments were provided"); \
+        fprintf(stderr, "Invalid number of arguments was provided\n."); \
         errno = EINVAL; \
         perror("Arg count error."); \
         exit(EXIT_FAILURE);
 
 #define dirError(dirname) \
-        fprintf(stderr, "Directory %s couldn't be opened", dirname); \
+        fprintf(stderr, "Directory %s couldn't be opened.\n", dirname); \
         errno = ENOENT; \
         perror("Dir error."); \
         exit(EXIT_FAILURE);
@@ -55,3 +55,9 @@
 
 #define vertexWarning(objName) \
         fprintf(stderr, "A possible vertex-face mismatch in object %s\n", objName);
+
+#define argValError(arg) \
+        fprintf(stderr, "Invalid" arg "argument value.\n"); \
+        errno = EINVAL; \
+        perror("Arg val error"); \
+        exit(EXIT_FAILURE); 

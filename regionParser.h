@@ -42,3 +42,6 @@ int getChunkData(chunk* thisChunk, FILE* regionFile);
 /*Extracts all the chunks in regionFile.
 Returns a dynamic array of chunks with 1024 chunks.*/
 chunk* getChunks(FILE* regionFile);
+
+//Wrapper for chunkExtractor
+chunk extractChunk(char* regionDirPath, int x, int z);

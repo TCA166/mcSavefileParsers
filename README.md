@@ -54,7 +54,7 @@ In order for the special obj file to get interpreted properly the vertex coordin
 
 ### Limitations
 
-Unfortunately there are still some limitations to the generator. Most notably entities are ignored. So everything which is not internally in Minecraft a block will not be in the end result. Also for now the generator doesn't fully support blocks that have different faces. That will come in the future.
+Unfortunately there are still some limitations to the generator. Most notably entities are ignored. So everything which is not internally in Minecraft a block will not be in the end result.
 
 ## Asset extractors
 

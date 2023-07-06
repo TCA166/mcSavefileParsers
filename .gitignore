@@ -7,6 +7,7 @@
 chunkExtractor
 modelGenerator
 regionFileReader
+radiusGenerator
 !0.0.nbt
 *.log
 mtlGen

@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 
+#include <math.h>
 #include <zlib.h>
 
 #include "regionParser.h"
@@ -145,4 +147,15 @@ chunk getChunk(int x, int z, FILE* regionFile){
         perror("Decompression failed.");
     }
     return result;
+}
+
+chunk extractChunk(char* regionDirPath, int x, int z){
+    char* filename = malloc(strlen(regionDirPath) + 10 + 10 + 9);
+    sprintf(filename, "%s/r.%d.%d.mca", regionDirPath, getRegion(x), getRegion(z));
+    FILE* regionFile = fopen(filename, "rb");
+    if(regionFile == NULL){
+        fileError(filename, "located");
+    }
+    free(filename);
+    return getChunk(x, z, regionFile);
 }
