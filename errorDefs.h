@@ -57,7 +57,7 @@
         fprintf(stderr, "A possible vertex-face mismatch in object %s\n", objName);
 
 #define argValError(arg) \
-        fprintf(stderr, "Invalid" arg "argument value.\n"); \
+        fprintf(stderr, "Invalid " arg " argument value.\n"); \
         errno = EINVAL; \
         perror("Arg val error"); \
         exit(EXIT_FAILURE); 

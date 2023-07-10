@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -7,10 +9,12 @@
 #include "errorDefs.h"
 #include "generator.h"
 #include "regionParser.h"
-//I'm gonna need to do some 
+
+//I'm gonna need to do some macro chicanery to get this working on Windows
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <sys/mman.h>
 
 int main(int argc, char** argv){
     //very similar to modelGenerator
@@ -86,6 +90,7 @@ int main(int argc, char** argv){
     }
     //and now the big thing
     int numChildren = ((xCenter + radius) - (xCenter - radius)) * ((zCenter + radius) - (zCenter - radius));
+    pid_t* childrenPids = calloc(numChildren, sizeof(pid_t));
     int** fd = calloc(numChildren, sizeof(int[2]));
     int counter = 0;
     pid_t child_pid, wpid;
@@ -97,23 +102,29 @@ int main(int argc, char** argv){
                 //child process code
                 chunk ourChunk = extractChunk(regionDirPath, x, z);
                 model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side);
-                //well now we have to pipe the model to the parent and that's gonna be a mess
-                for(int mx = 0; mx < partModel.x; mx++){
-                    for(int my = 0; my < partModel.y; my++){
-                        for(int mz = 0; mz < partModel.z; mz++){
-                            
-                        }
-                    }
+                //ok so now the idea is to use mmap to create a shared buffer, and then pipe the pointer to that buffer
+                int protection = PROT_READ | PROT_WRITE;
+                int visibility = MAP_SHARED | MAP_ANONYMOUS;
+                size_t size = getTotalModelSize(&partModel);
+                void* buffer = mmap(NULL, size, protection, visibility, -1, 0);
+                if(write(fd[counter][1], &buffer, sizeof(void *)) != sizeof(void*)){
+                    return EXIT_FAILURE;
                 }
-                write(fd[counter][1], &partModel, sizeof(model));
-                exit(EXIT_SUCCESS);
+                return EXIT_SUCCESS;
+            }
+            else{
+                childrenPids[counter] = child_pid;
             }
             counter++;
         }
     }
     //parent process code
     while((wpid = wait(&status)) > 0){
-
+        if(WIFEXITED(status)){
+            fprintf(stderr, "%d %d\n", wpid, WEXITSTATUS(status));
+        }
+        
     }
-    exit(EXIT_SUCCESS);
+    
+    return EXIT_SUCCESS;
 }

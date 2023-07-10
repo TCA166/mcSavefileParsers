@@ -70,18 +70,18 @@ int getChunkData(chunk* thisChunk, FILE* regionFile){
     //get the byteLength
     byte bytes[4];
     if(fread(&bytes, 1, 4, regionFile) != 4){
-        fileError("region file", "parsed");
+        fileError("region file", "parsed:1");
     }
     thisChunk->byteLength = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
     //get the compression type
     if(fread(&thisChunk->compression, 1, 1, regionFile) != 1){
-        fileError("region file", "parsed");
+        fileError("region file", "parsed:2");
     }
     //Then get the data
     thisChunk->byteLength += 5;
     byte* data = malloc(thisChunk->byteLength);
     if(fread(data, 1, thisChunk->byteLength, regionFile) != thisChunk->byteLength){
-        fileError("region file", "parsed");
+        fileError("region file", "parsed:3");
     }
     //fseek(regionFile, (chunks[i].sectorCount * segmentLength) - chunks[i].byteLength, SEEK_CUR);
     //handle different compression types
@@ -157,5 +157,7 @@ chunk extractChunk(char* regionDirPath, int x, int z){
         fileError(filename, "located");
     }
     free(filename);
-    return getChunk(x, z, regionFile);
+    chunk ourChunk = getChunk(x, z, regionFile);
+    fclose(regionFile);
+    return ourChunk;
 }

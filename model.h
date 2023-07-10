@@ -55,6 +55,13 @@ struct model{
     struct object**** objects;
 };
 
+//Foreach object in a model*. Provides x,y,z and a not null struct object*
+#define foreachObject(model) \
+    for(int x = 0; x < model->x; x++) \
+    for(int y = 0; y < model->y; y++) \
+    for(int z = 0; z < model->z; z++) \
+    for(struct object* object = model->objects[x][y][z]; object != NULL;)
+
 //model with constraints, however can be culled
 struct cubeModel{
     int x;
@@ -143,3 +150,5 @@ struct object deCubeObject(struct cube* c);
 Returns a hash table with objects from a wavefront file. Returns NULL if fails.
 */
 hashTable* readWavefront(char* filename, hashTable* materials, int side);
+
+size_t getTotalModelSize(model* m);

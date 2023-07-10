@@ -40,8 +40,8 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
         nbtTypeError(node->type, 10);
     }
     //Debug message   
-    const struct list_head* head = &node->payload.tag_compound->entry;
-    printf("NBT file has %zu tags\n", list_length(head));
+    //const struct list_head* head = &node->payload.tag_compound->entry;
+    //printf("NBT file has %zu tags\n", list_length(head));
     //get the sections tag
     nbt_node* sectionsNode = nbt_find_by_name(node, "sections");
     if(sectionsNode == NULL){

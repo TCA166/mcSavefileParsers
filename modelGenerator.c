@@ -112,6 +112,9 @@ int main(int argc, char** argv){
     }
     model newModel = generateFromNbt(data, sz, materials, objects, yLim, upLim, downLim, b, f, side);
     size_t size = 0;
+    //chunk can hold a maximum of 98304 objects
+    //Size of newModel is int*3 + 16*384*16*2*ptr bytes max in a chunk
+    printf("Generating %dx%dx%d model\n", newModel.x, newModel.y, newModel.z);
     char* content = generateModel(&newModel, &size, materialFilename);
     freeModel(&newModel);
     printf("Model string generated\n");

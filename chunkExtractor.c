@@ -25,4 +25,5 @@ int main(int argc, char** argv){
         fclose(outFile);
         free(ourChunk.data);
     }
+    return EXIT_SUCCESS;
 }   
