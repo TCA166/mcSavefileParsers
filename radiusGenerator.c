@@ -15,9 +15,13 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <sys/mman.h>
+#include <sys/shm.h>
+#include <fcntl.h> 
 
 #define WRITE_END 1
 #define READ_END 0
+
+#define NAME_MAX 255 //SHM name max 
 
 int main(int argc, char** argv){
     //very similar to modelGenerator
@@ -121,14 +125,21 @@ int main(int argc, char** argv){
                 model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side);
                 //ok so now the idea is to use mmap to create a shared buffer, and then pipe the pointer to that buffer
                 size_t size = getTotalModelSize(&partModel);
+                //we need to create a unique identifier for the shared memory
+                char name[NAME_MAX] = "";
+                snprintf(name, NAME_MAX, "/%dX%d", x, z);
+                int oflag = O_CREAT | O_RDWR | O_EXCL; //O_EXCL will return an error in case of name collisions, O_TRUNC will instead replace the collided object
+                int shm = shm_open(name, oflag, 0600);
+                ftruncate(shm, size);
+                //now we mmap using the given fd from shm
                 int protection = PROT_READ | PROT_WRITE;
                 int visibility = MAP_SHARED | MAP_ANONYMOUS;
-                void* buffer = mmap(NULL, size, protection, visibility, -1, 0);
+                void* buffer = mmap(NULL, size, protection, visibility, shm, 0);
                 if(buffer == MAP_FAILED || buffer == NULL){
                     mmapError("chunk");
                 }
                 strcpy(buffer, "Test 1");
-                if(write(fd[counter][1], &buffer, sizeof(void *)) != sizeof(void*)){
+                if(write(fd[counter][1], name, NAME_MAX) != NAME_MAX){
                     pipeError("child", "writing");
                 }
                 close(fd[counter][WRITE_END]);
@@ -150,13 +161,15 @@ int main(int argc, char** argv){
                     break;
                 }
             }
-            void* buffer = NULL;
-            ssize_t res = read(fd[childNum][READ_END], &buffer, sizeof(void*));
+            char name[NAME_MAX] = "";
+            ssize_t res = read(fd[childNum][READ_END], name, NAME_MAX);
             if(res < 0){
                 pipeError("parent", "reading");
             }
             close(fd[childNum][READ_END]);
-            fprintf(stderr, "%s\n", (char*)buffer);
+            int shm = shm_open(name, O_RDONLY, 0400);
+            void* buffer = mmap(NULL, 100, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, shm, 0);
+            fprintf(stderr, "%s\n", buffer);
         }
     }
     
