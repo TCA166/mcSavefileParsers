@@ -77,6 +77,6 @@
         exit(EXIT_FAILURE);
 
 #define mmapError(mmap) \
-        fprintf(stderr, "Mmap " mmap " failed.\n"); \
-        perror("Pipe error"); \
+        fprintf(stderr, "mmap " mmap " failed.\n"); \
+        perror("mmap error"); \
         exit(EXIT_FAILURE);
