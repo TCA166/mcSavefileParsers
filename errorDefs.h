@@ -76,7 +76,7 @@
         perror("Pipe error"); \
         exit(EXIT_FAILURE);
 
-#define mmapError(mmap) \
-        fprintf(stderr, "mmap " mmap " failed.\n"); \
-        perror("mmap error"); \
+#define shmError(shm) \
+        fprintf(stderr, shm " failed.\n"); \
+        perror("Shared memory error"); \
         exit(EXIT_FAILURE);

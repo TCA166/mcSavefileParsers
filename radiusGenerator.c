@@ -14,14 +14,11 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <sys/mman.h>
 #include <sys/shm.h>
 #include <fcntl.h> 
 
 #define WRITE_END 1
 #define READ_END 0
-
-#define NAME_MAX 255 //SHM name max 
 
 int main(int argc, char** argv){
     //very similar to modelGenerator
@@ -96,7 +93,7 @@ int main(int argc, char** argv){
         objects = readWavefront(objFilename, materials, side);
     }
     //and now the big thing
-
+    pid_t parentId = getpid();
     //matches the counter after the double for loop has run it's course
     int numChildren = ((xCenter + radius) - (xCenter - radius) + 1) * ((zCenter + radius) - (zCenter - radius) + 1); 
     pid_t* childrenPids = calloc(numChildren, sizeof(pid_t)); //array of children pid, used to connect the counter and the pid later
@@ -123,26 +120,29 @@ int main(int argc, char** argv){
                 close(fd[counter][READ_END]);
                 chunk ourChunk = extractChunk(regionDirPath, x, z);
                 model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side);
+                free(ourChunk.data);
                 //ok so now the idea is to use mmap to create a shared buffer, and then pipe the pointer to that buffer
                 size_t size = getTotalModelSize(&partModel);
-                //we need to create a unique identifier for the shared memory
-                char name[NAME_MAX] = "";
-                snprintf(name, NAME_MAX, "/%dX%d", x, z);
-                int oflag = O_CREAT | O_RDWR | O_EXCL; //O_EXCL will return an error in case of name collisions, O_TRUNC will instead replace the collided object
-                int shm = shm_open(name, oflag, 0600);
-                ftruncate(shm, size);
-                //now we mmap using the given fd from shm
-                int protection = PROT_READ | PROT_WRITE;
-                int visibility = MAP_SHARED | MAP_ANONYMOUS;
-                void* buffer = mmap(NULL, size, protection, visibility, shm, 0);
-                if(buffer == MAP_FAILED || buffer == NULL){
-                    mmapError("chunk");
+                //we need to create a shared memory segment. We will use that segment to transfer the entire model data.
+                int shmid = shmget(parentId + counter, size, 0644 | IPC_CREAT | IPC_EXCL);
+                if(shmid < 0){
+                    shmError("shmget");
                 }
-                strcpy(buffer, "Test 1");
-                if(write(fd[counter][1], name, NAME_MAX) != NAME_MAX){
+                //now we need to mount this segment to our adress rack
+                void* shmBuffer = shmat(shmid, NULL, 0);
+                if(shmBuffer == NULL){
+                    shmError("shmat");
+                }
+                //now we can write the data we want to write
+                strcpy(shmBuffer, "Test 1");
+                //and now we pipe the size so that we can read the entire thing from the segment
+                if(write(fd[counter][1], &size, sizeof(size_t)) != sizeof(size_t)){
                     pipeError("child", "writing");
                 }
                 close(fd[counter][WRITE_END]);
+                //and at the end we detach the data
+                shmdt(shmBuffer);
+                freeModel(&partModel);
                 exit(EXIT_SUCCESS);
             }
             else{
@@ -161,15 +161,27 @@ int main(int argc, char** argv){
                     break;
                 }
             }
-            char name[NAME_MAX] = "";
-            ssize_t res = read(fd[childNum][READ_END], name, NAME_MAX);
+            size_t modelSize = -1;
+            ssize_t res = read(fd[childNum][READ_END], &modelSize, sizeof(size_t));
             if(res < 0){
                 pipeError("parent", "reading");
             }
             close(fd[childNum][READ_END]);
-            int shm = shm_open(name, O_RDONLY, 0400);
-            void* buffer = mmap(NULL, 100, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, shm, 0);
-            fprintf(stderr, "%s\n", buffer);
+            if(modelSize < 1){
+                pipeError("parent", "reading-size value invalid");
+            }
+            int shmid = shmget(parentId + childNum, modelSize, 0644);
+            if(shmid < 0){
+                shmError("parent shmget");
+            }
+            void* shmBuffer = shmat(shmid, NULL, 0);
+            if(shmBuffer == NULL){
+                shmError("parent shmat");
+            }
+            fprintf(stderr, "%s\n", shmBuffer);
+            shmdt(shmBuffer);
+            //having done what we wanted to do now we can just remove this shared segment
+            shmctl(shmid, IPC_RMID, 0);
         }
     }
     
