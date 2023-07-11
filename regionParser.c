@@ -70,6 +70,7 @@ int getChunkData(chunk* thisChunk, FILE* regionFile){
     //get the byteLength
     byte bytes[4];
     if(fread(&bytes, 1, 4, regionFile) != 4){
+        //fprintf(stderr, "%d %d %d %d", bytes[0], bytes[1], bytes[2], bytes[3]);
         fileError("region file", "parsed:1");
     }
     thisChunk->byteLength = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];

@@ -59,8 +59,7 @@ struct model{
 #define foreachObject(model) \
     for(int x = 0; x < model->x; x++) \
     for(int y = 0; y < model->y; y++) \
-    for(int z = 0; z < model->z; z++) \
-    for(struct object* object = model->objects[x][y][z]; object != NULL;)
+    for(int z = 0; z < model->z; z++) 
 
 //model with constraints, however can be culled
 struct cubeModel{
@@ -151,4 +150,5 @@ Returns a hash table with objects from a wavefront file. Returns NULL if fails.
 */
 hashTable* readWavefront(char* filename, hashTable* materials, int side);
 
+//Returns size of everything inside of a model
 size_t getTotalModelSize(model* m);

@@ -58,15 +58,18 @@ struct cubeModel initCubeModel(int x, int y, int z){
 size_t getTotalModelSize(model* m){
     size_t result = sizeof(int) * 3 + (sizeof(struct object*) * m->x * m->y * m->z);
     foreachObject(m){
-        result += sizeof(struct object) + sizeof(struct vertex) * object->vertexCount + strlen(object->type) + 1;
-        if(object->m != NULL){
-            result += sizeof(struct material) + strlen(object->m->name) + 1;
-        }
-        for(int i = 0; i < object->faceCount; i++){
-            result += sizeof(struct objFace);
-            result += sizeof(struct vertex) * object->faces[i].vertexCount;
-            if(object->faces[i].m != NULL){
-                result += sizeof(struct material) + strlen(object->faces[i].m->name) + 1;
+        struct object* object = m->objects[x][y][z];
+        if(object != NULL){
+            result += sizeof(struct object) + sizeof(struct vertex) * object->vertexCount + strlen(object->type) + 1;
+            if(object->m != NULL){
+                result += sizeof(struct material) + strlen(object->m->name) + 1;
+            }
+            for(int i = 0; i < object->faceCount; i++){
+                result += sizeof(struct objFace);
+                result += sizeof(struct vertex) * object->faces[i].vertexCount;
+                if(object->faces[i].m != NULL){
+                    result += sizeof(struct material) + strlen(object->faces[i].m->name) + 1;
+                }
             }
         }
     }

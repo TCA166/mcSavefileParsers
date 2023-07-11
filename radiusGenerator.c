@@ -16,6 +16,9 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
+#define WRITE_END 1
+#define READ_END 0
+
 int main(int argc, char** argv){
     //very similar to modelGenerator
     if(argc < 5){
@@ -89,41 +92,72 @@ int main(int argc, char** argv){
         objects = readWavefront(objFilename, materials, side);
     }
     //and now the big thing
-    int numChildren = ((xCenter + radius) - (xCenter - radius)) * ((zCenter + radius) - (zCenter - radius));
-    pid_t* childrenPids = calloc(numChildren, sizeof(pid_t));
-    int** fd = calloc(numChildren, sizeof(int[2]));
+
+    //matches the counter after the double for loop has run it's course
+    int numChildren = ((xCenter + radius) - (xCenter - radius) + 1) * ((zCenter + radius) - (zCenter - radius) + 1); 
+    pid_t* childrenPids = calloc(numChildren, sizeof(pid_t)); //array of children pid, used to connect the counter and the pid later
+    int** fd = calloc(numChildren, sizeof(int*)); //array of pipes
+    //we create all the pipes
+    for(int i = 0; i < numChildren; i++){
+        fd[i] = calloc(2, sizeof(int));
+        if(pipe(fd[i]) < 0){
+            pipeError("", "creation");
+        }
+    }
     int counter = 0;
     pid_t child_pid, wpid;
     int status = 0; //status container
     //foreach chunk in radius
     for(int x = xCenter - radius; x <= xCenter + radius; x++){
         for(int z = zCenter - radius; z <= zCenter + radius; z++){
-            if((child_pid = fork()) == 0){
-                //child process code
+            if((child_pid = fork()) > 0){//parent process
+                childrenPids[counter] = child_pid;
+                close(fd[counter][WRITE_END]);
+                counter++;
+            }
+            else if(child_pid == 0){ //child process
+                close(fd[counter][READ_END]);
                 chunk ourChunk = extractChunk(regionDirPath, x, z);
                 model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side);
                 //ok so now the idea is to use mmap to create a shared buffer, and then pipe the pointer to that buffer
+                size_t size = getTotalModelSize(&partModel);
                 int protection = PROT_READ | PROT_WRITE;
                 int visibility = MAP_SHARED | MAP_ANONYMOUS;
-                size_t size = getTotalModelSize(&partModel);
                 void* buffer = mmap(NULL, size, protection, visibility, -1, 0);
-                if(write(fd[counter][1], &buffer, sizeof(void *)) != sizeof(void*)){
-                    return EXIT_FAILURE;
+                if(buffer == MAP_FAILED || buffer == NULL){
+                    mmapError("chunk");
                 }
-                return EXIT_SUCCESS;
+                strcpy(buffer, "Test 1");
+                if(write(fd[counter][1], &buffer, sizeof(void *)) != sizeof(void*)){
+                    pipeError("child", "writing");
+                }
+                close(fd[counter][WRITE_END]);
+                exit(EXIT_SUCCESS);
             }
             else{
-                childrenPids[counter] = child_pid;
+                forkError("chunk");
             }
-            counter++;
         }
     }
     //parent process code
     while((wpid = wait(&status)) > 0){
-        if(WIFEXITED(status)){
-            fprintf(stderr, "%d %d\n", wpid, WEXITSTATUS(status));
+        //in theory we have to check the WIFEXITED
+        if(WEXITSTATUS(status) == EXIT_SUCCESS){
+            int childNum = 0;
+            for(int i = 0; i < counter; i++){
+                if(childrenPids[i] == wpid){
+                    childNum = i;
+                    break;
+                }
+            }
+            void* buffer = NULL;
+            ssize_t res = read(fd[childNum][READ_END], &buffer, sizeof(void*));
+            if(res < 0){
+                pipeError("parent", "reading");
+            }
+            close(fd[childNum][READ_END]);
+            fprintf(stderr, "%s\n", (char*)buffer);
         }
-        
     }
     
     return EXIT_SUCCESS;

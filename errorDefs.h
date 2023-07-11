@@ -1,5 +1,7 @@
 //Header file for error handling macros
 
+//Since the ERRNO macros are very unspecific and as far as I can see usually associated with errors a kernel may encounter, I have only loosely associated them with my own error convention
+
 #define nbtFileError(filename) \
         fprintf(stderr, "File %s couldn't be located.", filename); \
         errno = ENOENT; \
@@ -61,3 +63,20 @@
         errno = EINVAL; \
         perror("Arg val error"); \
         exit(EXIT_FAILURE); 
+
+#define pipeError(pipe, operation) \
+        fprintf(stderr, "Pipe " pipe " " operation " failed.\n"); \
+        errno = EPIPE; \
+        perror("Pipe error"); \
+        exit(EXIT_FAILURE); 
+
+#define forkError(fork) \
+        fprintf(stderr, "Fork " fork " failed.\n"); \
+        errno = ECHILD; \
+        perror("Pipe error"); \
+        exit(EXIT_FAILURE);
+
+#define mmapError(mmap) \
+        fprintf(stderr, "Mmap " mmap " failed.\n"); \
+        perror("Pipe error"); \
+        exit(EXIT_FAILURE);
