@@ -76,6 +76,33 @@ size_t getTotalModelSize(model* m){
     return result;
 }
 
+int copyModel(model* newModel, const model* m){
+    int i = 0;
+    newModel->x = m->x;
+    newModel->y = m->y;
+    newModel->z = m->z;
+    foreachObject(m){
+        struct object* object = m->objects[x][y][z];
+        if(object != NULL){
+            struct object* newObject = newModel->objects[x][y][z];
+            memcpy(newObject, object, sizeof(struct object));
+            memcpy(newObject->vertices, object->vertices, sizeof(struct vertex) * newObject->vertexCount);
+            memcpy(newObject->faces, object->faces, sizeof(struct objFace) * newObject->faceCount);
+            for(int i = 0; i < newObject->faceCount; i++){
+                memcpy(newObject->faces[i].vertices, object->faces[i].vertices, sizeof(int) * object->faces[i].vertexCount);
+            }
+            strcpy(newObject->type, object->type);
+            if(object->m != NULL){
+                newObject->m->d = object->m->d;
+                strcpy(newObject->m->name, object->m->name);
+            }
+            
+        }
+        i++;
+    }
+    return i;
+}
+
 struct vertex newVertex(int x, int y, int z){
     struct vertex new;
     new.x = x;

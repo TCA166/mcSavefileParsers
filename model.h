@@ -152,3 +152,6 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side);
 
 //Returns size of everything inside of a model
 size_t getTotalModelSize(model* m);
+
+//Does a deep copy of a model to a different pointer
+int copyModel(model* newModel, const model* m);

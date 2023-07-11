@@ -120,7 +120,6 @@ int main(int argc, char** argv){
                 close(fd[counter][READ_END]);
                 chunk ourChunk = extractChunk(regionDirPath, x, z);
                 model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side);
-                free(ourChunk.data);
                 //ok so now the idea is to use mmap to create a shared buffer, and then pipe the pointer to that buffer
                 size_t size = getTotalModelSize(&partModel);
                 //we need to create a shared memory segment. We will use that segment to transfer the entire model data.
@@ -129,12 +128,12 @@ int main(int argc, char** argv){
                     shmError("shmget");
                 }
                 //now we need to mount this segment to our adress rack
-                void* shmBuffer = shmat(shmid, NULL, 0);
+                model* shmBuffer = (model*)shmat(shmid, NULL, 0);
                 if(shmBuffer == NULL){
                     shmError("shmat");
                 }
                 //now we can write the data we want to write
-                strcpy(shmBuffer, "Test 1");
+                copyModel(shmBuffer, &partModel); //something is up with this line
                 //and now we pipe the size so that we can read the entire thing from the segment
                 if(write(fd[counter][1], &size, sizeof(size_t)) != sizeof(size_t)){
                     pipeError("child", "writing");
@@ -174,7 +173,7 @@ int main(int argc, char** argv){
             if(shmid < 0){
                 shmError("parent shmget");
             }
-            void* shmBuffer = shmat(shmid, NULL, 0);
+            model* shmBuffer = (model*)shmat(shmid, NULL, 0);
             if(shmBuffer == NULL){
                 shmError("parent shmat");
             }
