@@ -76,33 +76,6 @@ size_t getTotalModelSize(model* m){
     return result;
 }
 
-int copyModel(model* newModel, const model* m){
-    int i = 0;
-    newModel->x = m->x;
-    newModel->y = m->y;
-    newModel->z = m->z;
-    foreachObject(m){
-        struct object* object = m->objects[x][y][z];
-        if(object != NULL){
-            struct object* newObject = newModel->objects[x][y][z];
-            memcpy(newObject, object, sizeof(struct object));
-            memcpy(newObject->vertices, object->vertices, sizeof(struct vertex) * newObject->vertexCount);
-            memcpy(newObject->faces, object->faces, sizeof(struct objFace) * newObject->faceCount);
-            for(int i = 0; i < newObject->faceCount; i++){
-                memcpy(newObject->faces[i].vertices, object->faces[i].vertices, sizeof(int) * object->faces[i].vertexCount);
-            }
-            strcpy(newObject->type, object->type);
-            if(object->m != NULL){
-                newObject->m->d = object->m->d;
-                strcpy(newObject->m->name, object->m->name);
-            }
-            
-        }
-        i++;
-    }
-    return i;
-}
-
 struct vertex newVertex(int x, int y, int z){
     struct vertex new;
     new.x = x;
@@ -300,7 +273,7 @@ char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize){
     return appendTo;
 }
 
-char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
+char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset){
     char* fileContents = NULL;
     (*outSize)++;
     fileContents = malloc(*outSize);
@@ -312,7 +285,13 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
         strcat(fileContents, materialFileName);
         strcat(fileContents, "\n");
     }
-    long offset = 1; //vertex offset
+    unsigned long locOffset = 1;
+    if(offset == NULL){
+        offset = &locOffset;
+    }
+    else if(*offset < 1){
+        *offset = 1; //vertex offset
+    }
     //foreach object
     for(int x = 0; x < thisModel->x; x++){
         //detailed enough progress feedback for me
@@ -322,15 +301,15 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
             for(int z = 0; z < thisModel->z; z++){
                 struct object* thisObject = thisModel->objects[x][y][z];
                 if(thisObject != NULL && isNotEmpty(thisObject)){
-                    if(materialFileName != NULL && thisObject->m != NULL){
+                    if(thisObject->m != NULL){
                         //add the usemtl line
                         fileContents = appendMtlLine(thisObject->m->name, fileContents, outSize);
                     }
                     //object definition
-                    size_t objectLineSize = 12 + digits(x) + digits(y) + digits(z) + strlen(thisObject->type) + digits(offset);
+                    size_t objectLineSize = 12 + digits(x) + digits(y) + digits(z) + strlen(thisObject->type) + digits(*offset);
                     char* objectLine = NULL;
                     objectLine = malloc(objectLineSize);
-                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%ld\n", x, y, z, thisObject->type, offset);
+                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%ld\n", x, y, z, thisObject->type, *offset);
                     *outSize += objectLineSize;
                     fileContents = realloc(fileContents, *outSize);
                     strcat(fileContents, objectLine);
@@ -359,7 +338,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                         }
                         size_t size = 4;
                         for(int m = 0; m < face.vertexCount; m++){
-                            face.vertices[m] += offset;
+                            face.vertices[m] += *offset;
                             size += digits(face.vertices[m]) + 1;
                         }
                         char* line = malloc(size);
@@ -377,7 +356,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName){
                         strcat(fileContents, line);
                         free(line);
                     }
-                    offset += thisObject->vertexCount;
+                    *offset += thisObject->vertexCount;
                 }
                 
             }

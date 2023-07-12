@@ -115,7 +115,7 @@ int main(int argc, char** argv){
     //chunk can hold a maximum of 98304 objects
     //Size of newModel is int*3 + 16*384*16*2*ptr bytes max in a chunk
     printf("Generating %dx%dx%d model\n", newModel.x, newModel.y, newModel.z);
-    char* content = generateModel(&newModel, &size, materialFilename);
+    char* content = generateModel(&newModel, &size, materialFilename, NULL);
     freeModel(&newModel);
     printf("Model string generated\n");
     FILE* outFile = fopen(outFilename, "w");

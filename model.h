@@ -111,7 +111,7 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects);
 Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
 typeArr can be NULL if you wish to not generate a textured model.
 */
-char* generateModel(model* thisModel, size_t* outSize, char* materialFileName);
+char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset);
 
 //Frees all cube faces, cubes and the model itself.
 void freeCubeModel(struct cubeModel* m);
@@ -152,6 +152,3 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side);
 
 //Returns size of everything inside of a model
 size_t getTotalModelSize(model* m);
-
-//Does a deep copy of a model to a different pointer
-int copyModel(model* newModel, const model* m);
