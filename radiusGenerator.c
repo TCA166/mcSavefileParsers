@@ -11,13 +11,20 @@
 #include "regionParser.h"
 
 //I'm gonna need to do some macro chicanery to get this working on Windows
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <sys/mman.h>
+#include <sys/types.h> //for types in unistd
+#include <sys/wait.h> //for wait
+#include <unistd.h> //for fork
+#include <sys/mman.h> //for mmap
+#include <semaphore.h> //POSIX semaphores
+#include <fcntl.h> //(flag control) for macros like O_CREAT
 
 #define WRITE_END 1
 #define READ_END 0
+
+#define SNAME "/offsetSem"
+
+#define protection PROT_READ | PROT_WRITE
+#define visibility MAP_SHARED | MAP_ANONYMOUS
 
 int main(int argc, char** argv){
     //very similar to modelGenerator
@@ -92,8 +99,6 @@ int main(int argc, char** argv){
         objects = readWavefront(objFilename, materials, side);
     }
     //Ok so we are going to store the current vertex offset in a shared buffer between processes
-    int protection = PROT_READ | PROT_WRITE;
-    int visibility = MAP_SHARED | MAP_ANONYMOUS;
     unsigned long* offset = (unsigned long*)mmap(NULL, sizeof(unsigned long), protection, visibility, -1, 0);
     if(offset != MAP_FAILED){
         *offset = 1; //current vertex offset
@@ -101,10 +106,14 @@ int main(int argc, char** argv){
     else{
         shmError("offset mmap");
     }
+    sem_t *sem = sem_open(SNAME, O_CREAT, 0644, 3);
     //and now the big thing
 
     //matches the counter after the double for loop has run it's course
     int numChildren = ((xCenter + radius) - (xCenter - radius) + 1) * ((zCenter + radius) - (zCenter - radius) + 1); 
+    //shared array that will contain the assembly order of the finished model
+    short* order = (short*)mmap(NULL, sizeof(short) * numChildren, protection, visibility, -1, 0); 
+    int* index = (int*)mmap(NULL, sizeof(int), protection, visibility, -1, 0);
     pid_t* childrenPids = calloc(numChildren, sizeof(pid_t)); //array of children pid, used to connect the counter and the pid later
     int** fd = calloc(numChildren, sizeof(int*)); //array of pipes
     //we create all the pipes
@@ -130,14 +139,27 @@ int main(int argc, char** argv){
                 chunk ourChunk = extractChunk(regionDirPath, x, z);
                 model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side);
                 //ok so the idea with the shared memory segment failed due to the inability of deep copying simply the model into such a segment (pointers will be invalid)
+                sem_wait(sem); /*CRITICAL SECTION*/
+                unsigned long localOffset = *offset;
+                int diff = 0;
+                //ok so we need to now calculate by how much we want to increase the offset
+                foreachObject((&partModel)){
+                    struct object* object = partModel.objects[x][y][z];
+                    diff += object->vertexCount;
+                }
+                *offset += diff;
+                order[*index] = counter;
+                sem_post(sem); /*END OF*/
+                close(STDOUT_FILENO); //we close STDOUT to suppress output of generateModel
                 size_t size = 0;
-                char* modelStr = generateModel(&partModel, &size, NULL, offset);
+                char* modelStr = generateModel(&partModel, &size, NULL, &localOffset);
                 if(write(fd[counter][WRITE_END], &size, sizeof(size_t)) != sizeof(size_t)){
                     pipeError("child", "writing size");
                 }
-                if(write(fd[counter][WRITE_END], modelStr, size) != size){
+                if(write(fd[counter][WRITE_END], modelStr, size) != size){ //all children just hang on this line. No clue as to why
                     pipeError("child", "writing modelStr");
                 }
+                fprintf(stderr, "test");
                 close(fd[counter][WRITE_END]);
                 freeModel(&partModel);
                 free(modelStr);
@@ -149,8 +171,7 @@ int main(int argc, char** argv){
         }
     }
     size_t currentSize = 1;
-    char* result = malloc(currentSize);
-    result[0] = '\0';
+    char** parts = calloc(numChildren, sizeof(char*));
     //parent process code
     while((wpid = wait(&status)) > 0){
         //in theory we have to check the WIFEXITED
@@ -170,18 +191,30 @@ int main(int argc, char** argv){
             if(size < 1){
                 pipeError("parent", "reading-size value invalid");
             }
-            result = realloc(result, currentSize + size);
-            res = read(fd[childNum][READ_END], result + currentSize, size);
+            parts[childNum] = malloc(size);
+            res = read(fd[childNum][READ_END], parts[childNum], size);
             if(res < size){
                 pipeError("parent", "reading 2");
             }
             close(fd[childNum][READ_END]);
+            currentSize += size;
         }
     }
+    printf("Model parts generated\n");
     free(childrenPids);
     free(fd);
     munmap(offset, sizeof(unsigned long));
+    char* result = malloc(currentSize);
+    result[0] = '\0';
+    for(int i = 0; i < *index; i++){
+        strcat(result, parts[order[i]]);
+        free(parts[order[i]]);
+    }
+    free(parts);
+    munmap(index, sizeof(int));
+    munmap(order, sizeof(short) * numChildren);
     FILE* outFile = fopen(outFilename, "w");
     fwrite(result, currentSize, 1, outFile);
+    fclose(outFile);
     return EXIT_SUCCESS;
 }

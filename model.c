@@ -59,17 +59,15 @@ size_t getTotalModelSize(model* m){
     size_t result = sizeof(int) * 3 + (sizeof(struct object*) * m->x * m->y * m->z);
     foreachObject(m){
         struct object* object = m->objects[x][y][z];
-        if(object != NULL){
-            result += sizeof(struct object) + sizeof(struct vertex) * object->vertexCount + strlen(object->type) + 1;
-            if(object->m != NULL){
-                result += sizeof(struct material) + strlen(object->m->name) + 1;
-            }
-            for(int i = 0; i < object->faceCount; i++){
-                result += sizeof(struct objFace);
-                result += sizeof(struct vertex) * object->faces[i].vertexCount;
-                if(object->faces[i].m != NULL){
-                    result += sizeof(struct material) + strlen(object->faces[i].m->name) + 1;
-                }
+        result += sizeof(struct object) + sizeof(struct vertex) * object->vertexCount + strlen(object->type) + 1;
+        if(object->m != NULL){
+            result += sizeof(struct material) + strlen(object->m->name) + 1;
+        }
+        for(int i = 0; i < object->faceCount; i++){
+            result += sizeof(struct objFace);
+            result += sizeof(struct vertex) * object->faces[i].vertexCount;
+            if(object->faces[i].m != NULL){
+                result += sizeof(struct material) + strlen(object->faces[i].m->name) + 1;
             }
         }
     }
@@ -266,7 +264,7 @@ char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize){
     size_t mtlLineSize = 9 + strlen(mtlName);
     char* mtlLine = malloc(mtlLineSize);
     snprintf(mtlLine, mtlLineSize, "usemtl %s\n", mtlName);
-    *outSize += mtlLineSize;
+    *outSize += mtlLineSize - 1;
     appendTo = realloc(appendTo, *outSize);
     strcat(appendTo, mtlLine);
     free(mtlLine);
@@ -310,7 +308,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                     char* objectLine = NULL;
                     objectLine = malloc(objectLineSize);
                     snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%ld\n", x, y, z, thisObject->type, *offset);
-                    *outSize += objectLineSize;
+                    *outSize += objectLineSize - 1;
                     fileContents = realloc(fileContents, *outSize);
                     strcat(fileContents, objectLine);
                     free(objectLine);
@@ -325,7 +323,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                         char* vertexLine = NULL;
                         vertexLine = malloc(size);
                         snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.x, v.y , v.z);
-                        *outSize += size;
+                        *outSize += size  - 1;
                         fileContents = realloc(fileContents, *outSize);
                         strcat(fileContents, vertexLine);
                         free(vertexLine);
@@ -351,7 +349,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                             lineOff += len;
                         }
                         strcat(line, "\n");
-                        *outSize += size;
+                        *outSize += size - 1;
                         fileContents = realloc(fileContents, *outSize);
                         strcat(fileContents, line);
                         free(line);

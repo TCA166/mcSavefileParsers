@@ -59,7 +59,8 @@ struct model{
 #define foreachObject(model) \
     for(int x = 0; x < model->x; x++) \
     for(int y = 0; y < model->y; y++) \
-    for(int z = 0; z < model->z; z++) 
+    for(int z = 0; z < model->z; z++) \
+    if(model->objects[x][y][z] != NULL)
 
 //model with constraints, however can be culled
 struct cubeModel{
