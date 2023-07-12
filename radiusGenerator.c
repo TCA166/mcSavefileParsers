@@ -17,6 +17,7 @@
 #include <sys/mman.h> //for mmap
 #include <semaphore.h> //POSIX semaphores
 #include <fcntl.h> //(flag control) for macros like O_CREAT
+#include <sys/shm.h>
 
 #define WRITE_END 1
 #define READ_END 0
@@ -98,6 +99,16 @@ int main(int argc, char** argv){
     if(objFilename != NULL){
         objects = readWavefront(objFilename, materials, side);
     }
+
+    /*HOW THIS WORKS
+    Foreach chunk in the given radius we create a separate process.
+    This process does what modelGenerator would do with some differences. 
+    Most notably it reads a shared variable called offset between processes that informs it of at which vertex offset it should generate.
+    This variable is protected by a semaphor and is logged so that the complete model can be pieced together in the right order from chunks.
+    After generating the model the child process creates a shared memory segment, outputs the model part into it and then pipes the size of the segment to parent.
+    Then parent recieves all the pieces and puts together the final model
+    */
+
     //Ok so we are going to store the current vertex offset in a shared buffer between processes
     unsigned long* offset = (unsigned long*)mmap(NULL, sizeof(unsigned long), protection, visibility, -1, 0);
     if(offset != MAP_FAILED){
@@ -108,7 +119,7 @@ int main(int argc, char** argv){
     }
     sem_t *sem = sem_open(SNAME, O_CREAT, 0644, 3);
     //and now the big thing
-
+    pid_t parentId = getpid();
     //matches the counter after the double for loop has run it's course
     int numChildren = ((xCenter + radius) - (xCenter - radius) + 1) * ((zCenter + radius) - (zCenter - radius) + 1); 
     //shared array that will contain the assembly order of the finished model
@@ -138,7 +149,6 @@ int main(int argc, char** argv){
                 close(fd[counter][READ_END]);
                 chunk ourChunk = extractChunk(regionDirPath, x, z);
                 model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side);
-                //ok so the idea with the shared memory segment failed due to the inability of deep copying simply the model into such a segment (pointers will be invalid)
                 sem_wait(sem); /*CRITICAL SECTION*/
                 unsigned long localOffset = *offset;
                 int diff = 0;
@@ -153,13 +163,23 @@ int main(int argc, char** argv){
                 close(STDOUT_FILENO); //we close STDOUT to suppress output of generateModel
                 size_t size = 0;
                 char* modelStr = generateModel(&partModel, &size, NULL, &localOffset);
+                //Ok so we have the string, now we have to transfer it over.
+                //Unfortunately pipes have an upper limit. One that can be easily reached with our strings
+                //So we are creating a shared memory buffer for that now :) We have gone full circle
+                int shmid = shmget(parentId + counter, size, 0644 | IPC_CREAT | IPC_EXCL);
+                if(shmid < 0){
+                    shmError("shmget");
+                }
+                char* shmBuffer = (char*)shmat(shmid, NULL, 0);
+                if(shmBuffer == NULL){
+                    shmError("shmat");
+                }
+                //Ok so we created the shared buffer now we can write to it
+                strcpy(shmBuffer, modelStr);
+                //And then we pipe over the size so that the other side can prepare itself for reading
                 if(write(fd[counter][WRITE_END], &size, sizeof(size_t)) != sizeof(size_t)){
                     pipeError("child", "writing size");
                 }
-                if(write(fd[counter][WRITE_END], modelStr, size) != size){ //all children just hang on this line. No clue as to why
-                    pipeError("child", "writing modelStr");
-                }
-                fprintf(stderr, "test");
                 close(fd[counter][WRITE_END]);
                 freeModel(&partModel);
                 free(modelStr);
@@ -192,11 +212,19 @@ int main(int argc, char** argv){
                 pipeError("parent", "reading-size value invalid");
             }
             parts[childNum] = malloc(size);
-            res = read(fd[childNum][READ_END], parts[childNum], size);
-            if(res < size){
-                pipeError("parent", "reading 2");
-            }
             close(fd[childNum][READ_END]);
+            int shmid = shmget(parentId + childNum, size, 0644);
+            if(shmid < 0){
+                shmError("parent shmget");
+            }
+            char* shmBuffer = (char*)shmat(shmid, NULL, 0);
+            if(shmBuffer == NULL){
+                shmError("parent shmat");
+            }
+            strcpy(parts[childNum], shmBuffer);
+            shmdt(shmBuffer);
+            //having done what we wanted to do now we can just remove this shared segment
+            shmctl(shmid, IPC_RMID, 0);
             currentSize += size;
         }
     }
