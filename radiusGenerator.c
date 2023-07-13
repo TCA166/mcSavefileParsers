@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdbool.h>
+#include <signal.h>
 
 #include "errorDefs.h"
 #include "generator.h"
@@ -148,7 +149,8 @@ int main(int argc, char** argv){
             else if(child_pid == 0){ //child process
                 close(fd[counter][READ_END]);
                 chunk ourChunk = extractChunk(regionDirPath, x, z);
-                model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side);
+                close(STDOUT_FILENO); //we close STDOUT to suppress output of generateModel
+                model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side, ourChunk.x, ourChunk.z);
                 sem_wait(sem); /*CRITICAL SECTION*/
                 unsigned long localOffset = *offset;
                 int diff = 0;
@@ -159,8 +161,8 @@ int main(int argc, char** argv){
                 }
                 *offset += diff;
                 order[*index] = counter;
+                (*index)++;
                 sem_post(sem); /*END OF*/
-                close(STDOUT_FILENO); //we close STDOUT to suppress output of generateModel
                 size_t size = 0;
                 char* modelStr = generateModel(&partModel, &size, NULL, &localOffset);
                 //Ok so we have the string, now we have to transfer it over.
@@ -190,10 +192,14 @@ int main(int argc, char** argv){
             }
         }
     }
+    int progress = 0;
     size_t currentSize = 1;
     char** parts = calloc(numChildren, sizeof(char*));
     //parent process code
     while((wpid = wait(&status)) > 0){
+        progress++;
+        fprintf(stdout, "%.2f%% done\r", ((float)progress / (float)numChildren) * 100);
+        fflush(stdout);
         //in theory we have to check the WIFEXITED
         if(WEXITSTATUS(status) == EXIT_SUCCESS){
             int childNum = 0;
@@ -234,6 +240,9 @@ int main(int argc, char** argv){
     munmap(offset, sizeof(unsigned long));
     char* result = malloc(currentSize);
     result[0] = '\0';
+    if(materialFilename != NULL){
+        appendMtlLine(materialFilename, result, &currentSize);
+    }
     for(int i = 0; i < *index; i++){
         strcat(result, parts[order[i]]);
         free(parts[order[i]]);

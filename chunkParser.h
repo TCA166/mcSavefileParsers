@@ -6,7 +6,7 @@ struct section{
     //we ignore the biomes because we don't need that data
 
     unsigned long* blockData; //raw nbt file block data
-    int blockDataLen;
+    int blockDataLen; //the length of blockData in bytes
     char** blockPalette;
     int paletteLen;
 };

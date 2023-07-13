@@ -7,7 +7,9 @@
 struct cube cubeFromBlock(struct block block, const int side, struct material* material);
 
 //Isolated from the main code to maybe in the future enable for a multithreaded version that can do multiple chunks
-struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, int side, bool matCheck);
+struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, int side, bool matCheck, int xOff, int zOff);
+
+//Generally speaking i could just pass a whole chunk object from regionParser here, but I like the design of having that be completely separate
 
 //Generates a model object from binary nbt data
-model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, hashTable* objects, bool yLim, int upLim, int downLim, bool b, bool f, int side);
+model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, hashTable* objects, bool yLim, int upLim, int downLim, bool b, bool f, int side, int chunkX, int chunkZ);

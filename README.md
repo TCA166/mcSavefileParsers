@@ -1,10 +1,11 @@
 # mcSavefileParsers
 
-Multiple programs for Minecraft savefile data extraction and 3D model generation based on savefiles.  
+Multiple programs for Minecraft [savefile data extraction](#chunkextractor) and [3D model generation](#radiusgenerator) based on savefiles.  
 
 ## Getting started
 
-In order to get started either download the parts of the precompiled release that apply to your system or compile the source code yourself. For that compile.sh script was created and for crosscompilation for Windows winCompile.sh was created.
+In order to get started either download the parts of the precompiled release that apply to your system or compile the source code yourself.
+For that compile.sh script was created and for crosscompilation for Windows winCompile.sh was created.
 
 ## regionFileReader
 
@@ -29,7 +30,7 @@ Takes in a chunk nbt file, a material file defining the look of blocks, an objec
 Ideally the nbt file will be extracted using one of the tools above.
 
 ```Bash
-modelGenerator <path to nbt file> <args>
+modelGenerator <path to nbt file> ...
 ```
 
 The program accepts the following additional arguments:
@@ -52,9 +53,17 @@ So in order to handle non cube blocks the generator needs an obj file defining m
 If that file isn't provided the generator will simply assume everything is a cube.
 In order for the special obj file to get interpreted properly the vertex coordinates in each object must be relative to the center of the object.
 
-### Limitations
+## radiusGenerator
 
-Unfortunately there are still some limitations to the generator. Most notably entities are ignored. So everything which is not internally in Minecraft a block will not be in the end result.
+A multiprocessed version of modelGenerator that can generate models same as modelGenerator, but with multiple chunks at the same time.
+This is the program you are going to want to use to generate your model.
+You provide coordinates of a chunk that will act as a center for your model, a radius in which surrounding chunks will be added to the model and the radiusGenerator will create a large model for you.
+The argument interface is very similar to modelGenerator and all rules about assets and limitations from modelGenerator apply here.
+That being said here is how you use radiusGenerator:
+
+```Bash
+radiusGenerator <path to region directory> <x> <z> <radius> ...
+```
 
 ## Asset extractors
 
@@ -67,7 +76,7 @@ As such I have developed scripts in python for generating files in correct forma
 A script for generating complete and valid mtl files for modelGenerator
 
 ```Bash
-python3 mtlGen.py <path to /assets/minecraft/textures/block directory of a resource pack> <args>
+python3 mtlGen.py <path to /assets/minecraft/textures/block directory of a resource pack> ...
 ```
 
 The script accepts the following additional arguments:
@@ -93,7 +102,7 @@ Distribute the result at your own risk.
 Batch script combining objGen.py and mtlGen.py in case you don't want to figure out how to use the two scripts
 
 ```Bash
-./quickGen <path to /assets/minecraft directory of a resource pack>
+./quickGen.sh <path to /assets/minecraft directory of a resource pack>
 ```
 
 ### Minecraft default assets
@@ -108,8 +117,8 @@ For parsing of the nbt files I have chosen to use the [cNBT](https://github.com/
 
 ## API
 
-Most of the code has been organized into three "libraries".
-regionParser handles nbt extraction from region files, chunkParser extracts data from chunk nbts, hTable is an implementation of a hash table and finally model handles generating models from chunk data.
+Most of the code has been organized into four "libraries".
+regionParser handles nbt extraction from region files, chunkParser extracts data from chunk nbts, hTable is an implementation of a hash table, model handles generating 3d models in the mtl format and finally generator ties together chunkParser and model.
 Feel free to use these as libraries in your projects just make sure to read the license before you do so.
 The documentation for functions in these libraries should be mainly in header files, and I will gladly expand it should there be a need so just let me know.
 

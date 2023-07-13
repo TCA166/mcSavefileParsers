@@ -22,7 +22,11 @@ int digits(int i){
         return 1;
     }
     double x = (double)abs(i);
-    return (int)floor(log10(x)) + 1;
+    int result = (int)floor(log10(x)) + 1;
+    if(i < 0){
+        result++;
+    }
+    return result;
 }
 
 model initModel(int x, int y, int z){

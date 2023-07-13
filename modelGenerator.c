@@ -110,7 +110,7 @@ int main(int argc, char** argv){
     if(fclose(nbtFile) == EOF){
         fileError(argv[1], "closed");
     }
-    model newModel = generateFromNbt(data, sz, materials, objects, yLim, upLim, downLim, b, f, side);
+    model newModel = generateFromNbt(data, sz, materials, objects, yLim, upLim, downLim, b, f, side, 0, 0);
     size_t size = 0;
     //chunk can hold a maximum of 98304 objects
     //Size of newModel is int*3 + 16*384*16*2*ptr bytes max in a chunk

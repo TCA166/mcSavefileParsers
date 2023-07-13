@@ -9,7 +9,7 @@
 #include "errorDefs.h"
 #include "generator.h"
 
-model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, hashTable* objects, bool yLim, int upLim, int downLim, bool b, bool f, int side){
+model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, hashTable* objects, bool yLim, int upLim, int downLim, bool b, bool f, int side, int chunkX, int chunkZ){
     //Array of sections in this chunk
     struct section sections[maxSections] = {0};
     int n = getSections(data, dataSize, sections);
@@ -20,7 +20,7 @@ model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, 
     Also also the resulting API and code would be less open and more goal centric, which is something I don't really want. Hey if I create code for handling obj file in C why not make it reusable?
     */
     //now we have to decrypt the data in sections
-    struct cubeModel cubeModel = createCubeModel(sections, n, materials, yLim, upLim, downLim, side, objects == NULL);
+    struct cubeModel cubeModel = createCubeModel(sections, n, materials, yLim, upLim, downLim, side, objects == NULL, chunkX * 16, chunkZ * 16);
     /*
     Here we transfer the used materials to an array to save memory since we aren't going to be looking up stuff anymore
     The alternative would be to free the entirety of materials now but have copies stored in objects. That probably would be worse
@@ -71,7 +71,7 @@ model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, 
     return newModel;
 }
 
-struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, int side, bool matCheck){
+struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, int side, bool matCheck, int xOff, int zOff){
     struct cubeModel cubeModel = initCubeModel(16,16 * sectionLen, 16);
     for(int i = 0; i < sectionLen; i++){
         //create the block state array
@@ -85,6 +85,8 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashT
                     if((newBlock.y > upLim || newBlock.y < downLim) && yLim){
                         newBlock.type = mcAir;
                     }
+                    newBlock.x += xOff;
+                    newBlock.z += zOff;
                     struct material* m = NULL;
                     if(materials != NULL){
                         char* nameEnd = strchr(newBlock.type, ':');
