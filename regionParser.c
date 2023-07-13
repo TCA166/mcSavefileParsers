@@ -43,7 +43,7 @@ chunk* getChunks(FILE* regionFile){
     //first there is a 4096 byte long section of 1024 4 bit fields. Each field is made up of 3 big endian encoded int24s and a single int8
     for(int i = 0; i < chunkN; i++){
         chunk newChunk;
-        handleFirstSegment(&newChunk, regionFile, NULL);
+        handleFirstSegment(&newChunk, regionFile, "region file");
         chunks[i] = newChunk;
     }
     //Then there's an equally long section made up of 1024 int32 timestamps
@@ -62,7 +62,7 @@ chunk* getChunks(FILE* regionFile){
             Two: Sometimes the header data about a chunk would be straight up wrong? chunkLen would be greater than the suggested cap, or fill less than 1000 bytes but have allocated three segments
             All of this chicanery made me simply give up and opt for this clearly more stable and safer option
             */
-            int res = getChunkData(&chunks[i], regionFile, NULL);
+            int res = getChunkData(&chunks[i], regionFile, "region file");
             if(res < 0){
                 fprintf(stderr, "Inflate returned %d ", res);
                 perror("Decompression failed.");
