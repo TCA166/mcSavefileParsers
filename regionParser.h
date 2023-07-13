@@ -34,10 +34,10 @@ struct chunk{
 typedef struct chunk chunk;
 
 //Returns a chunk based on coordinates
-chunk getChunk(int x, int z, FILE* regionFile);
+chunk getChunk(int x, int z, FILE* regionFile, char* regionFileName);
 
 //Extracts payload data about thisChunk from regionFile and appends that data to thisChunk
-int getChunkData(chunk* thisChunk, FILE* regionFile);
+int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName);
 
 /*Extracts all the chunks in regionFile.
 Returns a dynamic array of chunks with 1024 chunks.*/

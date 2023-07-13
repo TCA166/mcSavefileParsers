@@ -11,22 +11,34 @@
 #include "generator.h"
 #include "regionParser.h"
 
-//I'm gonna need to do some macro chicanery to get this working on Windows
-#include <sys/types.h> //for types in unistd
-#include <sys/wait.h> //for wait
-#include <unistd.h> //for fork
-#include <sys/mman.h> //for mmap
-#include <semaphore.h> //POSIX semaphores
-#include <fcntl.h> //(flag control) for macros like O_CREAT
-#include <sys/shm.h>
+//Hopefully these macros will eventually help with OS porting
+#define sharedMalloc(size) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0)
+#define sharedFree(ptr, size) munmap(ptr, size);
+
+#ifdef __unix__
+    //All of these are POSIX compliant according to this https://pubs.opengroup.org/onlinepubs/9699919799/idx/head.html
+    #include <sys/types.h> //for types in unistd
+    #include <sys/wait.h> //for wait
+    #include <sys/mman.h> //for mmap
+    #include <semaphore.h> //POSIX semaphores
+    #include <fcntl.h> //(flag control) for macros like O_CREAT
+    #include <sys/shm.h>
+    #include <unistd.h> //for fork
+#elif defined(_WIN32) //Not working yet, i'm afraid it's gonna take much more than just a compatibility macro to get this working 
+    #error "Not supported on windows just yet"
+    //We are on windows 32bit or 64 bit
+    #include <sys/types.h> //for types in unistd
+    #include <semaphore.h> //POSIX semaphores
+    #include <fcntl.h> //(flag control) for macros like O_CREAT
+    #include <windows.h> 
+#else
+    #error "Not being compiled on Windows 32/64 bit or POSIX compliant system"
+#endif
 
 #define WRITE_END 1
 #define READ_END 0
 
 #define SNAME "/offsetSem"
-
-#define protection PROT_READ | PROT_WRITE
-#define visibility MAP_SHARED | MAP_ANONYMOUS
 
 int main(int argc, char** argv){
     //very similar to modelGenerator
@@ -111,7 +123,7 @@ int main(int argc, char** argv){
     */
 
     //Ok so we are going to store the current vertex offset in a shared buffer between processes
-    unsigned long* offset = (unsigned long*)mmap(NULL, sizeof(unsigned long), protection, visibility, -1, 0);
+    unsigned long* offset = (unsigned long*)sharedMalloc(sizeof(unsigned long));
     if(offset != MAP_FAILED){
         *offset = 1; //current vertex offset
     }
@@ -124,8 +136,8 @@ int main(int argc, char** argv){
     //matches the counter after the double for loop has run it's course
     int numChildren = ((xCenter + radius) - (xCenter - radius) + 1) * ((zCenter + radius) - (zCenter - radius) + 1); 
     //shared array that will contain the assembly order of the finished model
-    short* order = (short*)mmap(NULL, sizeof(short) * numChildren, protection, visibility, -1, 0); 
-    int* index = (int*)mmap(NULL, sizeof(int), protection, visibility, -1, 0);
+    short* order = (short*)sharedMalloc(sizeof(short) * numChildren); 
+    int* index = (int*)sharedMalloc(sizeof(int));
     pid_t* childrenPids = calloc(numChildren, sizeof(pid_t)); //array of children pid, used to connect the counter and the pid later
     int** fd = calloc(numChildren, sizeof(int*)); //array of pipes
     //we create all the pipes
@@ -237,7 +249,7 @@ int main(int argc, char** argv){
     printf("Model parts generated\n");
     free(childrenPids);
     free(fd);
-    munmap(offset, sizeof(unsigned long));
+    sharedFree(offset, sizeof(unsigned long));
     char* result = malloc(currentSize);
     result[0] = '\0';
     if(materialFilename != NULL){
@@ -248,8 +260,8 @@ int main(int argc, char** argv){
         free(parts[order[i]]);
     }
     free(parts);
-    munmap(index, sizeof(int));
-    munmap(order, sizeof(short) * numChildren);
+    sharedFree(index, sizeof(int));
+    sharedFree(order, sizeof(short) * numChildren);
     FILE* outFile = fopen(outFilename, "w");
     fwrite(result, currentSize, 1, outFile);
     fclose(outFile);

@@ -9,11 +9,21 @@
 #include "regionParser.h"
 #include "errorDefs.h"
 
-int handleFirstSegment(chunk* output, FILE* regionFile){
+#define localizedFileError(pos, fileName, action) \
+    fprintf(stderr, "At %lu ", pos); \
+    fileError(fileName, action);
+
+int handleFirstSegment(chunk* output, FILE* regionFile, char* regionFileName){
     //so the numbers are stored as big endian AND as int24
     byte bytes[3];
     size_t s1 = fread(&bytes, 1, 3, regionFile);
     output->offset = (bytes[0] << 16) + (bytes[1] << 8) + bytes[2];
+    long pos = ftell(regionFile);
+    fseek(regionFile, 0L, SEEK_END);
+    if(output->offset > ftell(regionFile)){
+        localizedFileError(pos, regionFileName, "parsed: offset too large");
+    }
+    fseek(regionFile, 0L, SEEK_SET);
     //Luckily reading a single byte is simpler
     size_t s2 = fread(&output->sectorCount, 1, 1, regionFile);
     return (s1 + s2 == 4) - 1;
@@ -33,7 +43,7 @@ chunk* getChunks(FILE* regionFile){
     //first there is a 4096 byte long section of 1024 4 bit fields. Each field is made up of 3 big endian encoded int24s and a single int8
     for(int i = 0; i < chunkN; i++){
         chunk newChunk;
-        handleFirstSegment(&newChunk, regionFile);
+        handleFirstSegment(&newChunk, regionFile, NULL);
         chunks[i] = newChunk;
     }
     //Then there's an equally long section made up of 1024 int32 timestamps
@@ -52,7 +62,7 @@ chunk* getChunks(FILE* regionFile){
             Two: Sometimes the header data about a chunk would be straight up wrong? chunkLen would be greater than the suggested cap, or fill less than 1000 bytes but have allocated three segments
             All of this chicanery made me simply give up and opt for this clearly more stable and safer option
             */
-            int res = getChunkData(&chunks[i], regionFile);
+            int res = getChunkData(&chunks[i], regionFile, NULL);
             if(res < 0){
                 fprintf(stderr, "Inflate returned %d ", res);
                 perror("Decompression failed.");
@@ -62,27 +72,26 @@ chunk* getChunks(FILE* regionFile){
     return chunks;
 }
 
-int getChunkData(chunk* thisChunk, FILE* regionFile){
+int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName){
     //find the corresponding section
     if(fseek(regionFile, segmentLength * thisChunk->offset, SEEK_SET) != 0){
-        fileError("region file", "seek");
+        fileError(regionFileName, "seek");
     } 
     //get the byteLength
     byte bytes[4];
     if(fread(&bytes, 1, 4, regionFile) != 4){
-        //fprintf(stderr, "%d %d %d %d", bytes[0], bytes[1], bytes[2], bytes[3]);
-        fileError("region file", "parsed:1");
+        localizedFileError((unsigned long int)(segmentLength * thisChunk->offset), regionFileName, "parsed:1");
     }
     thisChunk->byteLength = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
     //get the compression type
     if(fread(&thisChunk->compression, 1, 1, regionFile) != 1){
-        fileError("region file", "parsed:2");
+        fileError(regionFileName, "parsed:2");
     }
     //Then get the data
     thisChunk->byteLength += 5;
     byte* data = malloc(thisChunk->byteLength);
     if(fread(data, 1, thisChunk->byteLength, regionFile) != thisChunk->byteLength){
-        fileError("region file", "parsed:3");
+        fileError(regionFileName, "parsed:3");
     }
     //fseek(regionFile, (chunks[i].sectorCount * segmentLength) - chunks[i].byteLength, SEEK_CUR);
     //handle different compression types
@@ -123,14 +132,14 @@ int getChunkData(chunk* thisChunk, FILE* regionFile){
     return 0;
 }
 
-chunk getChunk(int x, int z, FILE* regionFile){
+chunk getChunk(int x, int z, FILE* regionFile, char* regionFileName){
     chunk result;
     result.x = x;
     result.z = z;
     if(fseek(regionFile, 4 * coordsToOffset(x, z), SEEK_SET) != 0){
         fileError("region file", "seek");
     }
-    if(handleFirstSegment(&result, regionFile) != 0){
+    if(handleFirstSegment(&result, regionFile, regionFileName) != 0){
         parsingError("region file", "first segment");
     }
     if(fseek(regionFile, (4 * coordsToOffset(x, z)) + segmentLength, SEEK_SET) != 0){
@@ -142,7 +151,7 @@ chunk getChunk(int x, int z, FILE* regionFile){
     if(result.offset == 0){
         return result;
     }
-    int res = getChunkData(&result, regionFile);
+    int res = getChunkData(&result, regionFile, regionFileName);
     if(res < 0){
         fprintf(stderr, "Inflate returned %d ", res);
         perror("Decompression failed.");
@@ -157,8 +166,8 @@ chunk extractChunk(char* regionDirPath, int x, int z){
     if(regionFile == NULL){
         fileError(filename, "located");
     }
+    chunk ourChunk = getChunk(x, z, regionFile, filename);
     free(filename);
-    chunk ourChunk = getChunk(x, z, regionFile);
     fclose(regionFile);
     return ourChunk;
 }

@@ -12,7 +12,10 @@
         "type_traits": "c",
         "random": "c",
         "string.h": "c",
-        "compare": "c"
+        "compare": "c",
+        "unistd.h": "c",
+        "types.h": "c",
+        "semaphore.h": "c"
     },
     "cSpell.words": [
         "blockstates",
