@@ -22,5 +22,40 @@
         "mtllib",
         "resourcepack",
         "usemtl"
+    ],
+    "makefile.buildLog": "build.log",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/tca/mcSavefileParsers",
+            "binaryPath": "/home/tca/mcSavefileParsers/radiusGenerator",
+            "binaryArgs": [
+                "./region",
+                "0",
+                "0",
+                "2"
+            ]
+        },
+        {
+            "cwd": "/home/tca/mcSavefileParsers",
+            "binaryPath": "/home/tca/mcSavefileParsers/modelGenerator",
+            "binaryArgs": [
+                "./0.0.nbt",
+                "-m",
+                "out.mtl",
+                "-b",
+                "-o",
+                "obj.obj"
+            ]
+        },
+        {
+            "cwd": "/home/tca/mcSavefileParsers",
+            "binaryPath": "/home/tca/mcSavefileParsers/regionFileReader",
+            "binaryArgs": ["./region/r.0.0.mca", "./test"]
+        },
+        {
+            "cwd": "/home/tca/mcSavefileParsers",
+            "binaryPath": "/home/tca/mcSavefileParsers/chunkExtractor",
+            "binaryArgs": ["./region", "0", "0"]
+        }
     ]
 }
