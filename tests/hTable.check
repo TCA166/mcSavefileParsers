@@ -1,19 +1,54 @@
 #include "../hTable.h"
 #include <stdio.h>
+#include <stdlib.h>
 
-#test hashTest
+#test insertTest
     hashTable* testTable = initHashTable(2000);
-    for(int i=1; i<255; i++){
+    //Inserts the pointer to the same value for plenty of keys in the hash table
+    for(int i=32; i<127; i++){
         char key[2] = " \0";
         key[0] = i;
         insertHashItem(testTable, key, &i);
         int* val = (int*)getVal(testTable, key);
-        fail_unless(*val == i, "Couldn't get the value back");
+        fail_unless(*val == i, "Couldn't get the value back right after insertion");
     }
-    for(int i=1; i<255; i++){
+    //Tries getting the values back, should get multiple 127 every time
+    for(int i=32; i<127; i++){
         char key[2] = " \0";
         key[0] = i;
         int* val = (int*)getVal(testTable, key);
-        fprintf(stderr, "%d %d %s|\n", *val, i, key);
-        fail_unless(*val == i, "Couldn't get the value back");
+        fail_unless(*val == 127, "Got the wrong value back");
     }
+    freeHashTable(testTable);
+
+#test updateTest
+    hashTable* testTable = initHashTable(2000);
+    //Tries updating the hashTable with matching keys
+    for(int i=32; i<127; i++){
+        char key[2] = " \0";
+        key[0] = i;
+        int oldSize = insertHashItem(testTable, key, &i);
+        int newSize = insertHashItem(testTable, key, &i);
+        //If the returned values don't match something was inserted
+        fail_unless(oldSize == newSize, "Sizes differ");
+    }
+    freeHashTable(testTable);
+
+#test readingTest
+    hashTable* testTable = initHashTable(2000);
+    //Inserts the pointer to the same value for plenty of keys in the hash table
+    for(int i=32; i<127; i++){
+        char key[2] = " \0";
+        key[0] = i;
+        int* val = malloc(sizeof(int));
+        *val = i;
+        insertHashItem(testTable, key, val);
+    }
+    //Tries getting the values back, should get multiple 127 every time
+    for(int i=32; i<127; i++){
+        char key[2] = " \0";
+        key[0] = i;
+        int* val = (int*)getVal(testTable, key);
+        fail_unless(*val == i, "Got the wrong value back");
+    }
+    freeHashTable(testTable);

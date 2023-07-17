@@ -62,36 +62,36 @@ void freeHashTable(hashTable* table){
 
 int insertHashItem(hashTable* table, const char* key, const void* value){
     int index = getIndex(key, table);
-    /*
-    if(index > table->size){
-        int oldSize = table->size;
-        table->size = index;
-        //re-calloc
-        table->items = realloc(table->items, index * sizeof(struct hTableItem*));
-        for(int i = oldSize; i < table->size; i++){
-            table->items[i] = NULL;
-        }
-    }*/
     struct hTableItem* currentItem = table->items[index]; //currently stored item
     struct hTableItem* newItem = initHashItem(key, value);
-    table->count++;
-    if(currentItem == NULL){
+    if(currentItem == NULL){ //if the item is NULL we insert it
         table->items[index] = newItem;
+        table->count++;
     }
-    else{
+    else if(strcmp(key, currentItem->key) == 0){ //if it isn't we try updating it
+        currentItem->value = (void*)value;
+        freeHashItem(newItem);
+    }
+    else{ //else we navigate the linked list
         struct hTableItem* nextItem = currentItem->next;
-        while(nextItem != NULL){
-            if(strcmp(key, currentItem->key) == 0){
+        while(nextItem != NULL){ //as long as the next item isn't NULL
+            if(strcmp(key, currentItem->key) == 0){ //we try updating
                 currentItem->value = (void*)value;
                 freeHashItem(newItem);
                 return table->count;
             }
-            else{
+            else{ //or move forward
                 currentItem = nextItem;
                 nextItem = nextItem->next;
             }
         }
-        currentItem->next = newItem;    
+        if(strcmp(key, currentItem->key) == 0){ //one last try at updating
+            currentItem->value = (void*)value;
+            freeHashItem(newItem);
+            return table->count;
+        }
+        currentItem->next = newItem;
+        table->count++;  
     }
     
     return table->count;
