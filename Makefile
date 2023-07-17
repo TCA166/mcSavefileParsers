@@ -73,3 +73,7 @@ clean:
 	rm -f cNBT/*.o
 	rm -f *.ow
 	rm -f cNBT/*.ow
+
+check:
+#so far this is kinda barren. In future I will use check to do proper tests
+	./modelGenerator ./0.0.nbt
