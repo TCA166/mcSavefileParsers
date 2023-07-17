@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo apt-get install make
+sudo apt-get install make check
 #for linux compile
 sudo apt-get install gcc binutils zlib1g-dev zlib1g
 #for windows crosscompile

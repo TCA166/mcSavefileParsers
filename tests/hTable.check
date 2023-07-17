@@ -1,0 +1,19 @@
+#include "../hTable.h"
+#include <stdio.h>
+
+#test hashTest
+    hashTable* testTable = initHashTable(2000);
+    for(int i=1; i<255; i++){
+        char key[2] = " \0";
+        key[0] = i;
+        insertHashItem(testTable, key, &i);
+        int* val = (int*)getVal(testTable, key);
+        fail_unless(*val == i, "Couldn't get the value back");
+    }
+    for(int i=1; i<255; i++){
+        char key[2] = " \0";
+        key[0] = i;
+        int* val = (int*)getVal(testTable, key);
+        fprintf(stderr, "%d %d %s|\n", *val, i, key);
+        fail_unless(*val == i, "Couldn't get the value back");
+    }
