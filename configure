@@ -1,0 +1,6 @@
+#!/bin/bash
+sudo apt-get install make
+#for linux compile
+sudo apt-get install gcc binutils zlib1g-dev zlib1g
+#for windows crosscompile
+#sudo apt-get install mingw-w64-common mingw-w64-x86-64-dev binutils-mingw-w64-x86-64 libz-mingw-w64-dev

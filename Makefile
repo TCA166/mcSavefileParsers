@@ -68,9 +68,6 @@ modelGenerator.exe: generator.ow model.ow chunkParser.ow hTable.ow cNBT.ow
 
 windows: modelGenerator.exe chunkExtractor.exe regionFileReader.exe
 
-winBuildPrerequisites:
-	sudo apt-get install mingw-w64-common mingw-w64-x86-64-dev binutils-mingw-w64-x86-64 libz-mingw-w64-dev
-
 clean:
 	rm -f *.o
 	rm -f cNBT/*.o
