@@ -65,6 +65,9 @@ That being said here is how you use radiusGenerator:
 radiusGenerator <path to region directory> <x> <z> <radius> ...
 ```
 
+As of right now the radiusGenerator is available only on POSIX compliant systems due to syscall differences.
+For all of you Windows fans feel free to use modelGenerator
+
 ## Asset extractors
 
 Model generator needs to have minecraft assets provided to it to function to it's fullest potential.

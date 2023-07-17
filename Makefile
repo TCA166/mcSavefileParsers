@@ -1,4 +1,6 @@
 
+all: radiusGenerator modelGenerator chunkExtractor regionFileReader
+
 cNBT.o: 
 	gcc cNBT/buffer.c -o cNBT/buffer.o -c $(FLAGS)
 	gcc cNBT/nbt_parsing.c -o cNBT/nbt_parsing.o -c $(FLAGS)
@@ -32,8 +34,6 @@ modelGenerator: model.o generator.o hTable.o chunkParser.o cNBT.o
 
 radiusGenerator: model.o generator.o hTable.o chunkParser.o regionParser.o cNBT.o
 	gcc radiusGenerator.c generator.o model.o regionParser.o hTable.o chunkParser.o cNBT.o -lz -lm -o radiusGenerator $(FLAGS)
-
-all: radiusGenerator modelGenerator chunkExtractor regionFileReader
 
 cNBT.ow:
 	x86_64-w64-mingw32-gcc-win32 cNBT/buffer.c -o cNBT/buffer.ow -c $(FLAGS)
