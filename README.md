@@ -5,7 +5,7 @@ Multiple programs for Minecraft [savefile data extraction](#chunkextractor) and 
 ## Getting started
 
 In order to get started either download the parts of the precompiled release that apply to your system or compile the source code yourself.
-For that compile.sh script was created and for crosscompilation for Windows winCompile.sh was created.
+In order to compile use make, which is configured to allow for separate compilation of each utility, or complete compilation using the 'all' target ('windows' for cross-compilation).
 
 ## regionFileReader
 
