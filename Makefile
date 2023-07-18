@@ -79,4 +79,6 @@ check: hTable.o
 	checkmk tests/hTable.check > tests/hTableCheck.c
 	gcc tests/hTableCheck.c hTable.o -lcheck -lm -lsubunit -Wall -o tests/hTableCheck
 	./tests/hTableCheck
-	./modelGenerator ./0.0.nbt
+	#unit tests run, now just run the programs
+	./chunkExtractor ./tests 0 0
+	./modelGenerator ./tests/0.0.nbt

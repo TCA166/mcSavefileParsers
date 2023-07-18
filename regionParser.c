@@ -50,7 +50,9 @@ chunk* getChunks(FILE* regionFile){
     }
     //Then there's an equally long section made up of 1024 int32 timestamps
     for(int i = 0; i < chunkN; i++){
-        handleSecondSegment(&chunks[i], regionFile);
+        if(handleSecondSegment(&chunks[i], regionFile) != 0){
+            parsingError("region file", "second segment");
+        }
     }
     //Then there's encoded chunk data in n*4096 byte long chunks
     //Each of these chunks is made up of a single int32 field that contains the length of the preceding compressed data
