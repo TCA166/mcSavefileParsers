@@ -50,12 +50,12 @@
         {
             "cwd": "/home/tca/mcSavefileParsers",
             "binaryPath": "/home/tca/mcSavefileParsers/regionFileReader",
-            "binaryArgs": ["./region/r.0.0.mca", "./test"]
+            "binaryArgs": ["region/r.-1.-5.mca", "./test"]
         },
         {
             "cwd": "/home/tca/mcSavefileParsers",
             "binaryPath": "/home/tca/mcSavefileParsers/chunkExtractor",
-            "binaryArgs": ["./region", "0", "0"]
+            "binaryArgs": ["region", "0", "0"]
         }
     ]
 }

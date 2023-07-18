@@ -19,14 +19,14 @@ int handleFirstSegment(chunk* output, FILE* regionFile, char* regionFileName){
     size_t s1 = fread(&bytes, 1, 3, regionFile);
     output->offset = (bytes[0] << 16) + (bytes[1] << 8) + bytes[2];
     long pos = ftell(regionFile);
-    fseek(regionFile, 0L, SEEK_END);
+    fseek(regionFile, 0, SEEK_END);
     if(output->offset > ftell(regionFile)){
         localizedFileError(pos, regionFileName, "parsed: offset too large");
     }
-    fseek(regionFile, 0L, SEEK_SET);
+    fseek(regionFile, pos, SEEK_SET);
     //Luckily reading a single byte is simpler
     size_t s2 = fread(&output->sectorCount, 1, 1, regionFile);
-    return (s1 + s2 == 4) - 1;
+    return (s1 + s2 == 4) - 1 && !(output->offset == 0 && output->sectorCount == 0);
 }
 
 int handleSecondSegment(chunk* output, FILE* regionFile){
@@ -43,7 +43,9 @@ chunk* getChunks(FILE* regionFile){
     //first there is a 4096 byte long section of 1024 4 bit fields. Each field is made up of 3 big endian encoded int24s and a single int8
     for(int i = 0; i < chunkN; i++){
         chunk newChunk;
-        handleFirstSegment(&newChunk, regionFile, "region file");
+        if(handleFirstSegment(&newChunk, regionFile, "region file") != 0){
+            parsingError("region file", "first segment");
+        }
         chunks[i] = newChunk;
     }
     //Then there's an equally long section made up of 1024 int32 timestamps
@@ -133,16 +135,17 @@ int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName){
 }
 
 chunk getChunk(int x, int z, FILE* regionFile, char* regionFileName){
+    int offset = coordsToOffset(x, z);
     chunk result;
     result.x = x;
     result.z = z;
-    if(fseek(regionFile, 4 * coordsToOffset(x, z), SEEK_SET) != 0){
+    if(fseek(regionFile, offset, SEEK_SET) != 0){
         fileError("region file", "seek");
     }
     if(handleFirstSegment(&result, regionFile, regionFileName) != 0){
         parsingError("region file", "first segment");
     }
-    if(fseek(regionFile, (4 * coordsToOffset(x, z)) + segmentLength, SEEK_SET) != 0){
+    if(fseek(regionFile, offset + segmentLength, SEEK_SET) != 0){
         fileError("region file", "seek");
     }
     if(handleSecondSegment(&result, regionFile) != 0){
