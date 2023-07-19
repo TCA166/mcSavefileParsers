@@ -3,6 +3,20 @@
 
 #include "../regionParser.h"
 
+#define getTestRegion \
+    FILE* testFile = fopen("r.0.0.mca", "rb"); \
+    if(testFile == NULL) testFile = fopen("tests/r.0.0.mca", "rb");
+
 #suite regionParserTests
 
-FILE* testRegionFile = fopen("r.0.0.mca", "rb");
+#test getValidChunkTest
+    getTestRegion
+    chunk mockChunk = getChunk(0, 0, testFile, NULL);
+    ck_assert_msg(mockChunk.byteLength > 0, "byteLength was less than 0");
+    fclose(testFile);
+
+#test getInvalidChunkTest
+    getTestRegion
+    chunk mockChunk = getChunk(31, 31, testFile, NULL);
+    ck_assert_msg(mockChunk.offset == 0 && mockChunk.sectorCount == 0, "Offset and sector count wasn't 0");
+    fclose(testFile);

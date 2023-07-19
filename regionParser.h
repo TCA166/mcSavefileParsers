@@ -11,10 +11,6 @@
 #define Zlib 2
 #define Uncompressed 3
 
-#define getRegion(coord) coord>>5
-
-#define coordsToOffset(x, z) 4 * ((x & 31) + (z & 31) * 32)
-
 //Unsigned char
 typedef unsigned char byte;
 
@@ -33,15 +29,23 @@ struct chunk{
 //struct chunk
 typedef struct chunk chunk;
 
-//Returns a chunk based on coordinates
+/*
+Returns a chunk based on coordinates.
+In case of a non critical parsing error (I/O errors will still halt execution immediately) the function will return a non complete object.
+So if byteLength is 0 then it couldn't read the bytes section of the region file etc... 
+*/
 chunk getChunk(int x, int z, FILE* regionFile, char* regionFileName);
 
-//Extracts payload data about thisChunk from regionFile and appends that data to thisChunk
-int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName);
-
-/*Extracts all the chunks in regionFile.
-Returns a dynamic array of chunks with 1024 chunks.*/
+/*
+Wrapper for regionFileReader
+Extracts all the chunks in regionFile.
+Returns a dynamic array of chunks with 1024 chunks.
+High-er level function that does error handling on it's own.
+*/
 chunk* getChunks(FILE* regionFile);
 
-//Wrapper for chunkExtractor
+/*
+Wrapper for chunkExtractor
+High-er level function that does error handling on it's own
+*/
 chunk extractChunk(char* regionDirPath, int x, int z);

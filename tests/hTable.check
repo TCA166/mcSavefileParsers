@@ -12,14 +12,14 @@
         key[0] = i;
         insertHashItem(testTable, key, &i);
         int* val = (int*)getVal(testTable, key);
-        fail_unless(*val == i, "Couldn't get the value back right after insertion");
+        ck_assert_msg(*val == i, "Couldn't get the value back right after insertion");
     }
     //Tries getting the values back, should get multiple 127 every time
     for(int i=32; i<127; i++){
         char key[2] = " \0";
         key[0] = i;
         int* val = (int*)getVal(testTable, key);
-        fail_unless(*val == 127, "Got the wrong value back");
+        ck_assert_msg(*val == 127, "Got the wrong value back");
     }
     freeHashTable(testTable);
 
@@ -32,7 +32,7 @@
         int oldSize = insertHashItem(testTable, key, &i);
         int newSize = insertHashItem(testTable, key, &i);
         //If the returned values don't match something was inserted
-        fail_unless(oldSize == newSize, "Sizes differ");
+        ck_assert_msg(oldSize == newSize, "Sizes differ");
     }
     freeHashTable(testTable);
 
@@ -51,7 +51,7 @@
         char key[2] = " \0";
         key[0] = i;
         int* val = (int*)getVal(testTable, key);
-        fail_unless(*val == i, "Got the wrong value back");
+        ck_assert_msg(*val == i, "Got the wrong value back");
     }
     freeHashTable(testTable);
 
@@ -68,11 +68,11 @@
     }
     int** array = (int**)hashTableToArray(testTable);
     for(int i = 0; i < count; i++){
-        fail_unless(array[i] != NULL, "Value in array was NULL");
+        ck_assert_msg(array[i] != NULL, "Value in array was NULL");
         int val = *array[i];
         char key[2] = " \0";
         key[0] = val;
         int* oldI = getVal(testTable, key);
-        fail_unless(*oldI == val, "Val != i");
+        ck_assert_msg(*oldI == val, "Val != i");
     }
     freeHashTable(testTable);

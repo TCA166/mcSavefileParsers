@@ -80,3 +80,7 @@
         fprintf(stderr, shm " failed.\n"); \
         perror("Shared memory error"); \
         exit(EXIT_FAILURE);
+
+#define localizedFileError(pos, fileName, action) \
+    fprintf(stderr, "At %lu ", pos); \
+    fileError(fileName, action);

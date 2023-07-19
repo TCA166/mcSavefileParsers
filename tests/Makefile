@@ -9,7 +9,7 @@ regionParserCheck.c: regionParser.check
 	checkmk regionParser.check > regionParserCheck.c
 
 regionParserCheck: regionParserCheck.c ../regionParser.o
-	gcc regionParserCheck.c ../regionParser.o -lcheck -lm -lsubunit -o regionParserCheck
+	gcc regionParserCheck.c ../regionParser.o -lcheck -lm -lz -lsubunit -o regionParserCheck
 
 clean:
 	rm -f *.c

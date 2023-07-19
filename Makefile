@@ -74,11 +74,15 @@ clean:
 	rm -f *.ow
 	rm -f cNBT/*.ow
 
-check: hTable.o
+check: hTable.o regionParser.o
 	#hTable tests
 	checkmk tests/hTable.check > tests/hTableCheck.c
 	gcc tests/hTableCheck.c hTable.o -lcheck -lm -lsubunit -Wall -o tests/hTableCheck
 	./tests/hTableCheck
+	#regionParser tests
+	checkmk tests/regionParser.check > tests/regionParserCheck.c
+	gcc tests/regionParserCheck.c regionParser.o -lcheck -lm -lz -lsubunit -o tests/regionParserCheck
+	./tests/regionParserCheck
 	#unit tests run, now just run the programs
 	./chunkExtractor ./tests 0 0
 	./modelGenerator ./tests/0.0.nbt
