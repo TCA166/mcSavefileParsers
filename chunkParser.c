@@ -9,6 +9,10 @@
 #include "errorDefs.h"
 #include "chunkParser.h"
 
+#define createMask(startBit, X) (((long)1 << X) - 1) << startBit
+
+#define statesFormula(x, y, z) (y*16*16) + (z*16) + x
+
 char* getProperty(const char* property, nbt_node* tree){
     char* result = NULL;
     nbt_node* colorNode = nbt_find_by_name(tree, property);

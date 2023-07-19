@@ -54,6 +54,7 @@ int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName){
     if(fread(&thisChunk->compression, 1, 1, regionFile) != 1){
         fileError(regionFileName, "parsed:2");
     }
+    //fseek(regionFile, 2, SEEK_CUR);
     //Then get the data
     thisChunk->byteLength += 5;
     byte* data = malloc(thisChunk->byteLength);

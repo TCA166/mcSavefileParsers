@@ -21,10 +21,6 @@ struct block{
 
 #define maxSections 24
 
-#define createMask(startBit, X) (((long)1 << X) - 1) << startBit
-
-#define statesFormula(x, y, z) (y*16*16) + (z*16) + x
-
 #define mcAir "minecraft:air"
 #define minY -64
 
