@@ -11,8 +11,6 @@
 
 #define getRegion(coord) coord>>5
 
-#define coordsToOffset(x, z) 4 * ((x & 31) + (z & 31) * 32)
-
 int handleFirstSegment(chunk* output, FILE* regionFile, char* regionFileName){
     //so the numbers are stored as big endian AND as int24
     byte bytes[3];
@@ -108,13 +106,21 @@ chunk* getChunks(FILE* regionFile){
     for(int i = 0; i < chunkN; i++){
         chunk newChunk;
         if(handleFirstSegment(&newChunk, regionFile, "region file") != 0){
-            parsingError("region file", "first segment");
+            if(chunkIsNull(newChunk)){
+                newChunk.byteLength = 0;
+                newChunk.data = NULL;
+                newChunk.sectorCount = 0;
+                newChunk.timestamp = 0;
+            }
+            else{
+                parsingError("region file", "first segment");
+            }
         }
         chunks[i] = newChunk;
     }
     //Then there's an equally long section made up of 1024 int32 timestamps
     for(int i = 0; i < chunkN; i++){
-        if(handleSecondSegment(&chunks[i], regionFile) != 0){
+        if(handleSecondSegment(&chunks[i], regionFile) != 0 && !chunkIsNull(chunks[i])){
             parsingError("region file", "second segment");
         }
     }
@@ -122,11 +128,11 @@ chunk* getChunks(FILE* regionFile){
     //Each of these chunks is made up of a single int32 field that contains the length of the preceding compressed data
     //foreach chunk we have extracted so far
     for(int i = 0; i < chunkN; i++){
-        if(chunks[i].offset != 0){ //if the chunk isn't NULL
+        if(!chunkIsNull(chunks[i])){ //if the chunk isn't NULL
             /*
             At one point i did in fact attempt to move this function to linear file parsing instead of the jumping thing we have now
             Two major issues.
-            One: less stability. A single error that may be caused by corrupted data throws the entire algorythm off which is exactly what happened during testing
+            One: less stability. A single error that may be caused by corrupted data throws the entire algorithm off which is exactly what happened during testing
             Two: Sometimes the header data about a chunk would be straight up wrong? chunkLen would be greater than the suggested cap, or fill less than 1000 bytes but have allocated three segments
             All of this chicanery made me simply give up and opt for this clearly more stable and safer option
             */
@@ -177,7 +183,7 @@ chunk extractChunk(char* regionDirPath, int x, int z){
     }
     chunk ourChunk = getChunk(x, z, regionFile, filename);
     //I could use errno here, or rework getChunk so that it returns an errno value, but I like it this way better
-    if(!ourChunk.offset && !ourChunk.sectorCount){
+    if(chunkIsNull(ourChunk)){
         parsingError(filename, "parsing of the first segment; chunk isn't saved")
     }
     else if(ourChunk.offset == -1){

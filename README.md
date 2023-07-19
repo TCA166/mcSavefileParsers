@@ -135,14 +135,14 @@ These may prove to be useful should you want to parse Minecraft save files or ge
 Feel free to use these as libraries in your projects just make sure to read the license before you do so.
 The documentation for functions in these libraries should be mainly in header files, and I will gladly expand it should there be a need so just let me know.
 
-- regionParser
+- regionParser  
     This library provides three functions for parsing region files.
     You can either extract an entire chunk from the given region file, or extract all of them at once.
-- chunkParser
+- chunkParser  
     This library utilizes the cNBT library to extract information about blocks from Minecraft NBTs
-- model
+- model  
     This library is capable of generating wavefront 3D models
-- generator
+- generator  
     This library utilizes chunkParser and model to provide a simple interface with which you can quickly generate a 3D model from a Minecraft save file
 
 ## License

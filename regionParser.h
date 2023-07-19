@@ -11,6 +11,13 @@
 #define Zlib 2
 #define Uncompressed 3
 
+//If the chunk offset is 0 and sector count is 0 then the chunk is considered not generated and empty so basically NULL
+#define chunkIsNull(chunk) (chunk.offset == 0 && chunk.sectorCount == 0)
+
+#define coordsToIndex(x, z) ((x & 31) + (z & 31) * 32)
+
+#define coordsToOffset(x, z) 4 * coordsToIndex(x, z)
+
 //Unsigned char
 typedef unsigned char byte;
 

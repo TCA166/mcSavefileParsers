@@ -3,6 +3,8 @@
 
 #include "../regionParser.h"
 
+
+//SHA256 of testRegion: c2105d33e5ecae63139f2f2b24abbff229b1f4c52c777cef707fc85f5a745694
 #define getTestRegion \
     FILE* testFile = fopen("r.0.0.mca", "rb"); \
     if(testFile == NULL) testFile = fopen("tests/r.0.0.mca", "rb");
@@ -12,12 +14,42 @@
 #test getValidChunkTest
     getTestRegion
     chunk mockChunk = getChunk(0, 0, testFile, NULL);
-    ck_assert_msg(mockChunk.offset != 0 && mockChunk.sectorCount != 0, "Offset and sector count was 0");
+    ck_assert_msg(!chunkIsNull(mockChunk), "Offset and sector count was 0");
     ck_assert_msg(mockChunk.byteLength > 0, "byteLength was less than 0");
     fclose(testFile);
 
 #test getInvalidChunkTest
     getTestRegion
     chunk mockChunk = getChunk(31, 31, testFile, NULL);
-    ck_assert_msg(mockChunk.offset == 0 && mockChunk.sectorCount == 0, "Offset and sector count wasn't 0");
+    ck_assert_msg(chunkIsNull(mockChunk), "Offset and sector count wasn't 0");
+    fclose(testFile);
+
+#test getAllChunksTest
+    getTestRegion
+    chunk* mockChunks = getChunks(testFile);
+    chunk hopefullyNullChunk = mockChunks[coordsToIndex(4, 15)];
+    ck_assert_msg(chunkIsNull(hopefullyNullChunk), "Chunk that should be NULL actually wasn't");
+    chunk hopefullyChunk = mockChunks[coordsToIndex(0, 0)];
+    ck_assert_msg(!chunkIsNull(hopefullyChunk), "Chunk that shouldn't be NULL actually is");
+    //We check if any chunk has had it's data extracted
+    short b = 0;
+    for(int i = 0; i < chunkN; i++){
+        if(mockChunks[i].byteLength > 0){
+            b = !b;
+        }
+    }
+    ck_assert_msg(b, "All chunks are data free");
+    fclose(testFile);
+
+#test equal
+    getTestRegion
+    chunk* mockChunks = getChunks(testFile);
+    chunk hopefullyChunk = mockChunks[coordsToIndex(1, 1)];
+    chunk ourChunk = getChunk(1, 1, testFile, NULL);
+    ck_assert_msg(hopefullyChunk.offset == ourChunk.offset, "0,0 Chunks have different offset");
+    ck_assert_msg(hopefullyChunk.sectorCount == ourChunk.sectorCount, "0,0 Chunks have different sectorCounts");
+    ck_assert_msg(hopefullyChunk.timestamp == ourChunk.timestamp, "0,0 Chunks have different timestamp");
+    ck_assert_msg(hopefullyChunk.byteLength == ourChunk.byteLength, "0,0 Chunks have different byteLength");
+    ck_assert_msg(hopefullyChunk.compression == ourChunk.compression, "0,0 Chunks have different compression");
+    ck_assert_msg(memcmp(hopefullyChunk.data, ourChunk.data, hopefullyChunk.byteLength) == 0, "0,0 Chunks have different data");
     fclose(testFile);
