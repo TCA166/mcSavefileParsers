@@ -55,7 +55,7 @@ In order for the special obj file to get interpreted properly the vertex coordin
 
 ## radiusGenerator
 
-A multiprocessed version of modelGenerator that can generate models same as modelGenerator, but with multiple chunks at the same time.
+A version of modelGenerator using multiprocessing that can generate models same as modelGenerator, but with multiple chunks at the same time.
 This is the program you are going to want to use to generate your model.
 You provide coordinates of a chunk that will act as a center for your model, a radius in which surrounding chunks will be added to the model and the radiusGenerator will create a large model for you.
 The argument interface is very similar to modelGenerator and all rules about assets and limitations from modelGenerator apply here.
@@ -65,8 +65,9 @@ That being said here is how you use radiusGenerator:
 radiusGenerator <path to region directory> <x> <z> <radius> ...
 ```
 
-As of right now the radiusGenerator is available only on POSIX compliant systems due to syscall differences.
-For all of you Windows fans feel free to use modelGenerator
+As of right now there isn't a version of radiusGenerator available on "vanilla" Windows.
+This is due to syscall differences.
+If you wish to use radiusGenerator on Windows you can compile it under Cygwin on Windows to emulate POSIX behavior.
 
 ## Asset extractors
 

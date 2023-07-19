@@ -8,8 +8,10 @@ chunkExtractor
 modelGenerator
 regionFileReader
 radiusGenerator
-!0.0.nbt
+!tests/0.0.nbt
+!tests/r.0.0.mca
 *.log
+*.mca
 mtlGen
 /block
 !out.mtl
@@ -17,4 +19,3 @@ mtlGen
 *.ow
 *.txt
 *Check*
-regions

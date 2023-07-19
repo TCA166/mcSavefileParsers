@@ -29,7 +29,7 @@ int handleFirstSegment(chunk* output, FILE* regionFile, char* regionFileName){
     //Luckily reading a single byte is simpler
     size_t s2 = fread(&output->sectorCount, 1, 1, regionFile);
     //0 if everything is fine
-    return (s1 + s2 == 4) - 1 || !(output->offset == 0 && output->sectorCount == 0);
+    return (s1 + s2 == 4) - 1 || (output->offset == 0 && output->sectorCount == 0);
 }
 
 int handleSecondSegment(chunk* output, FILE* regionFile){
@@ -182,7 +182,7 @@ chunk extractChunk(char* regionDirPath, int x, int z){
     else if(ourChunk.offset == -1){
         parsingError(filename, "parsing of the first segment; chunk offset is corrupted and larger than filesize")
     }
-    else if(ourChunk.timestamp < 1){
+    else if(ourChunk.timestamp < 0){
         parsingError(filename, "parsing of the second segment")
     }
     free(filename);

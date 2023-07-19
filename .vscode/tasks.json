@@ -29,7 +29,7 @@
             "command": "make",
             "args": [
                 "all",
-                "FLAGS='-g -Wall -Wpedantic'"
+                "CFLAGS='-g -Wall -Wpedantic'"
             ],
             "options": {
                 "cwd": "${fileDirname}"

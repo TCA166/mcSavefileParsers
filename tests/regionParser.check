@@ -12,6 +12,7 @@
 #test getValidChunkTest
     getTestRegion
     chunk mockChunk = getChunk(0, 0, testFile, NULL);
+    ck_assert_msg(mockChunk.offset != 0 && mockChunk.sectorCount != 0, "Offset and sector count was 0");
     ck_assert_msg(mockChunk.byteLength > 0, "byteLength was less than 0");
     fclose(testFile);
 

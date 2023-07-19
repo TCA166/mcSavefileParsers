@@ -15,7 +15,7 @@
 #define sharedMalloc(size) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0)
 #define sharedFree(ptr, size) munmap(ptr, size);
 
-#ifdef __unix__
+#if defined(__unix__)
     //All of these are POSIX compliant according to this https://pubs.opengroup.org/onlinepubs/9699919799/idx/head.html
     #include <sys/types.h> //for types in unistd
     #include <sys/wait.h> //for wait
@@ -56,7 +56,7 @@ int main(int argc, char** argv){
     int xCenter = atoi(argv[2]); //the x chunk coordinate that will be the start of our radius
     int zCenter = atoi(argv[3]);
     int radius = atoi(argv[4]); 
-    if(radius < 1){
+    if(radius < 0){
         argValError("radius");
     }
     for(int i = 5; i < argc; i++){
@@ -125,7 +125,7 @@ int main(int argc, char** argv){
     //Ok so we are going to store the current vertex offset in a shared buffer between processes
     unsigned long* offset = (unsigned long*)sharedMalloc(sizeof(unsigned long));
     if(offset != MAP_FAILED){
-        *offset = 1; //current vertex offset
+        *offset = 0; //current vertex offset
     }
     else{
         shmError("offset mmap");
