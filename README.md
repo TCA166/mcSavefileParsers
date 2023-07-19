@@ -1,13 +1,18 @@
 # mcSavefileParsers
 
-Multiple programs for Minecraft [savefile data extraction](#chunkextractor) and [3D model generation](#radiusgenerator) based on savefiles.  
+Multiple programs for Minecraft [save file data extraction](#data-extraction-utilities) and [3D model generation](#3d-model-generation) based on save files.  
 
 ## Getting started
 
 In order to get started either download the parts of the precompiled release that apply to your system or compile the source code yourself.
 In order to compile use make, which is configured to allow for separate compilation of each utility, or complete compilation using the 'all' target ('windows' for cross-compilation).
 
-## regionFileReader
+## Data extraction utilities
+
+Multiple utilities for Minecraft region file parsing.
+Either extract all [chunk NBT](https://minecraft.fandom.com/wiki/Chunk_format)s in a [region file](https://minecraft.fandom.com/wiki/Region_file_format) or just a single one.
+
+### regionFileReader
 
 This program extracts all the chunks in the given region file into nbt files that will be created in the provided directory.
 
@@ -15,7 +20,7 @@ This program extracts all the chunks in the given region file into nbt files tha
 regionFileReader <path to region file> <output directory>
 ```
 
-## chunkExtractor
+### chunkExtractor
 
 This program extracts only a single chunk with the given chunk coordinates into an nbt file.
 
@@ -23,7 +28,11 @@ This program extracts only a single chunk with the given chunk coordinates into 
 chunkExtractor <path to region directory> <x> <z>
 ```
 
-## modelGenerator
+## 3D model generation
+
+Multiple tools that can take in Minecraft related files as input and create 3D representations of your worlds
+
+### modelGenerator
 
 An open customizable chunk to 3d model converter.
 Takes in a chunk nbt file, a material file defining the look of blocks, an object file for non cube blocks and creates a 3d model based on that.
@@ -43,17 +52,17 @@ The program accepts the following additional arguments:
 - -o $filename :sets the given filename as the source special objects file
 - -out $filename :sets the given filename as the output filename
 
-### Mtl format
+#### Mtl format
 
 The generator if provided with the -m flag followed by the mtl file filepath will use the provided file as a material source and generate the obj file to support mtl materials. Blocks of minecraft:dirt will use a mtl material called dirt and so on. Feel free to create your own mtl file or use the mtl Gen to create one quickly.
 
-### Obj format
+#### Obj format
 
 So in order to handle non cube blocks the generator needs an obj file defining models for those "special" blocks.
 If that file isn't provided the generator will simply assume everything is a cube.
 In order for the special obj file to get interpreted properly the vertex coordinates in each object must be relative to the center of the object.
 
-## radiusGenerator
+### radiusGenerator
 
 A version of modelGenerator using multiprocessing that can generate models same as modelGenerator, but with multiple chunks at the same time.
 This is the program you are going to want to use to generate your model.
@@ -71,9 +80,9 @@ If you wish to use radiusGenerator on Windows you can compile it under Cygwin on
 
 ## Asset extractors
 
-Model generator needs to have minecraft assets provided to it to function to it's fullest potential.
-Naturally those aren't provided here since I want these programs to be Minecraft version independent.
-As such I have developed scripts in python for generating files in correct formats for modelGenerator
+Minecraft stores it's assets in it's own unique way.
+Due to this, and a need to provide assets for 3D model generators scripts were created.
+Naturally those assets aren't provided here since I want these programs to be Minecraft version independent (and I don't want to be sued).
 
 ### mtlGen
 
@@ -122,9 +131,19 @@ For parsing of the nbt files I have chosen to use the [cNBT](https://github.com/
 ## API
 
 Most of the code has been organized into four "libraries".
-regionParser handles nbt extraction from region files, chunkParser extracts data from chunk nbts, hTable is an implementation of a hash table, model handles generating 3d models in the mtl format and finally generator ties together chunkParser and model.
+These may prove to be useful should you want to parse Minecraft save files or generate wavefront 3D models.
 Feel free to use these as libraries in your projects just make sure to read the license before you do so.
 The documentation for functions in these libraries should be mainly in header files, and I will gladly expand it should there be a need so just let me know.
+
+- regionParser
+    This library provides three functions for parsing region files.
+    You can either extract an entire chunk from the given region file, or extract all of them at once.
+- chunkParser
+    This library utilizes the cNBT library to extract information about blocks from Minecraft NBTs
+- model
+    This library is capable of generating wavefront 3D models
+- generator
+    This library utilizes chunkParser and model to provide a simple interface with which you can quickly generate a 3D model from a Minecraft save file
 
 ## License
 
