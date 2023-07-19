@@ -125,12 +125,12 @@ int main(int argc, char** argv){
     //Ok so we are going to store the current vertex offset in a shared buffer between processes
     unsigned long* offset = (unsigned long*)sharedMalloc(sizeof(unsigned long));
     if(offset != MAP_FAILED){
-        *offset = 0; //current vertex offset
+        *offset = 1; //current vertex offset
     }
     else{
         shmError("offset mmap");
     }
-    sem_t *sem = sem_open(SNAME, O_CREAT, 0644, 3);
+    sem_t *sem = sem_open(SNAME, O_CREAT, 0644, 1);
     //and now the big thing
     pid_t parentId = getpid();
     //matches the counter after the double for loop has run it's course
@@ -169,12 +169,15 @@ int main(int argc, char** argv){
                 //ok so we need to now calculate by how much we want to increase the offset
                 foreachObject((&partModel)){
                     struct object* object = partModel.objects[x][y][z];
-                    diff += object->vertexCount;
+                    if(object->faceCount > 0){
+                        diff += object->vertexCount;
+                    }
                 }
                 *offset += diff;
                 order[*index] = counter;
                 (*index)++;
                 sem_post(sem); /*END OF*/
+                sem_close(sem);
                 size_t size = 0;
                 char* modelStr = generateModel(&partModel, &size, NULL, &localOffset);
                 //Ok so we have the string, now we have to transfer it over.
@@ -204,6 +207,7 @@ int main(int argc, char** argv){
             }
         }
     }
+    sem_unlink(SNAME);
     int progress = 0;
     size_t currentSize = 1;
     char** parts = calloc(numChildren, sizeof(char*));
