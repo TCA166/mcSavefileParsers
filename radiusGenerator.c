@@ -1,7 +1,5 @@
 #define _GNU_SOURCE
 
-//POSIX version of radiusGenerator (the true version since POSIX syscalls are superior in every way)
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -22,7 +20,7 @@
     #include <fcntl.h> //(flag control) for macros like O_CREAT
     #include <sys/shm.h>
     #include <unistd.h> //for fork
-    //Hopefully these macros will eventually help with OS porting
+    //These two macros provide a nice level of abstraction and clearly show what we want to do with this mmap
     #define sharedMalloc(size) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0)
     #define sharedFree(ptr, size) munmap(ptr, size);
 #elif defined(_WIN32)
@@ -32,8 +30,17 @@
     #include <fcntl.h> //(flag control) for macros like O_CREAT
     #include <windows.h>
 
+    //For whatever reason multiprocessing on Windows is... discouraged 
+
+    struct threadParams{
+        char* output;
+        int x;
+        int z;
+    };
+
     //Function that the threads will do
     DWORD WINAPI ThreadProc( LPVOID lpParam ){
+        struct threadParams* params = (struct threadParams*)lpParam;
         return true;
     }
 #else
@@ -279,14 +286,19 @@ int main(int argc, char** argv){
     fclose(outFile);
     #elif defined(_WIN32)
     char** modelStrs = calloc(numChildren, sizeof(char*));
-    HANDLE ghSemaphore = CreateSemaphore(NULL, 1, 1, NULL);
-    unsigned long* offset = malloc(sizeof(unsigned long));
-    *offset = 0;
     int counter = 0;
+    HANDLE* threads = calloc(numChildren, sizeof(HANDLE));
     for(int x = xCenter - radius; x <= xCenter + radius; x++){
         for(int z = zCenter - radius; z <= zCenter + radius; z++){
+            struct threadParams* inParams = malloc(sizeof(struct threadParams));
+            inParams->x = x;
+            inParams->z = z;
+            inParams->output = modelStrs[counter];
+            threads[counter] = CreateThread(NULL, 0, ThreadProc, modelStrs[counter], 0, NULL);
+            counter++;
         }
     }
+
     #endif
     return EXIT_SUCCESS;
 }
