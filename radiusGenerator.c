@@ -1,5 +1,7 @@
 #define _GNU_SOURCE
 
+//POSIX version of radiusGenerator (the true version since POSIX syscalls are superior in every way)
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -11,10 +13,6 @@
 #include "generator.h"
 #include "regionParser.h"
 
-//Hopefully these macros will eventually help with OS porting
-#define sharedMalloc(size) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0)
-#define sharedFree(ptr, size) munmap(ptr, size);
-
 #if defined(__unix__)
     //All of these are POSIX compliant according to this https://pubs.opengroup.org/onlinepubs/9699919799/idx/head.html
     #include <sys/types.h> //for types in unistd
@@ -24,15 +22,22 @@
     #include <fcntl.h> //(flag control) for macros like O_CREAT
     #include <sys/shm.h>
     #include <unistd.h> //for fork
-#elif defined(_WIN32) //Not working yet, i'm afraid it's gonna take much more than just a compatibility macro to get this working 
-    #error "Not supported on windows just yet"
+    //Hopefully these macros will eventually help with OS porting
+    #define sharedMalloc(size) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0)
+    #define sharedFree(ptr, size) munmap(ptr, size);
+#elif defined(_WIN32)
     //We are on windows 32bit or 64 bit
     #include <sys/types.h> //for types in unistd
     #include <semaphore.h> //POSIX semaphores
     #include <fcntl.h> //(flag control) for macros like O_CREAT
-    #include <windows.h> 
+    #include <windows.h>
+
+    //Function that the threads will do
+    DWORD WINAPI ThreadProc( LPVOID lpParam ){
+        return true;
+    }
 #else
-    #error "Not being compiled on Windows 32/64 bit or POSIX compliant system"
+    #error "Not being compiled on POSIX compliant system"
 #endif
 
 #define WRITE_END 1
@@ -113,6 +118,11 @@ int main(int argc, char** argv){
         objects = readWavefront(objFilename, materials, side);
     }
 
+    //matches the counter after the double for loop has run it's course
+    int numChildren = ((xCenter + radius) - (xCenter - radius) + 1) * ((zCenter + radius) - (zCenter - radius) + 1); 
+
+    //Main code is platform dependant. As such there is this arguably cursed preprocessor insert
+    #if defined(__unix__)
     /*HOW THIS WORKS
     Foreach chunk in the given radius we create a separate process.
     This process does what modelGenerator would do with some differences. 
@@ -133,8 +143,6 @@ int main(int argc, char** argv){
     sem_t *sem = sem_open(SNAME, O_CREAT, 0644, 1);
     //and now the big thing
     pid_t parentId = getpid();
-    //matches the counter after the double for loop has run it's course
-    int numChildren = ((xCenter + radius) - (xCenter - radius) + 1) * ((zCenter + radius) - (zCenter - radius) + 1); 
     //shared array that will contain the assembly order of the finished model
     short* order = (short*)sharedMalloc(sizeof(short) * numChildren); 
     int* index = (int*)sharedMalloc(sizeof(int));
@@ -269,5 +277,16 @@ int main(int argc, char** argv){
     FILE* outFile = fopen(outFilename, "w");
     fwrite(result, currentSize, 1, outFile);
     fclose(outFile);
+    #elif defined(_WIN32)
+    char** modelStrs = calloc(numChildren, sizeof(char*));
+    HANDLE ghSemaphore = CreateSemaphore(NULL, 1, 1, NULL);
+    unsigned long* offset = malloc(sizeof(unsigned long));
+    *offset = 0;
+    int counter = 0;
+    for(int x = xCenter - radius; x <= xCenter + radius; x++){
+        for(int z = zCenter - radius; z <= zCenter + radius; z++){
+        }
+    }
+    #endif
     return EXIT_SUCCESS;
 }

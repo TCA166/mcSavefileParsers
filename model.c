@@ -17,6 +17,8 @@
 
 #define objCoordCorrect(c, coord, dist) (c->coord * c->side) + dist
 
+#define sq(a) ((a)*(a))
+
 int digits(int i){
     if(i == 0){
         return 1;
@@ -27,6 +29,14 @@ int digits(int i){
         result++;
     }
     return result;
+}
+
+double distanceBetweenVectors(struct vertex a, struct vertex b){
+    return sqrt(sq(a.x - b.x) + sq(a.y - b.y) + sq(a.z - b.z));
+}
+
+bool verticesEqual(struct vertex a, struct vertex b){
+    return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
 model initModel(int x, int y, int z){

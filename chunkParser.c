@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <string.h>
 #include <math.h>
+#include <stdbool.h>
 
 #include "./cNBT/nbt.h"
 #include "./cNBT/list.h"
@@ -235,7 +236,7 @@ struct block createBlock(int x, int y, int z, unsigned int* blockStates, struct 
     return newBlock;
 }
 
-char contains(char** arr, char* str, int arrLen){
+bool contains(char** arr, char* str, int arrLen){
     for(int i = 0; i < arrLen; i++){
         if(strcmp(arr[i], str) == 0){
             return true;
@@ -245,7 +246,7 @@ char contains(char** arr, char* str, int arrLen){
 }
 
 //this code feels wrong to write in C ngl...
-char** createGlobalPalette(struct section* sections, int len, int* outLen, char freeSectionPalettes){
+char** createGlobalPalette(struct section* sections, int len, int* outLen, bool freeSectionPalettes){
     char** globalPalette = malloc(0);
     int j = 0;
     for(int i = 0; i < len; i++){

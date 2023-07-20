@@ -155,3 +155,7 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side);
 
 //Returns size of everything inside of a model
 size_t getTotalModelSize(model* m);
+
+double distanceBetweenVectors(struct vertex a, struct vertex b);
+
+bool verticesEqual(struct vertex a, struct vertex b);

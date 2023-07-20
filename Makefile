@@ -66,7 +66,10 @@ generator.ow: generator.c
 modelGenerator.exe: generator.ow model.ow chunkParser.ow hTable.ow cNBT.ow modelGenerator.c
 	x86_64-w64-mingw32-gcc-win32 modelGenerator.c generator.ow model.ow chunkParser.ow hTable.ow cNBT.ow -o modelGenerator.exe -lm $(CFLAGS)
 
-windows: modelGenerator.exe chunkExtractor.exe regionFileReader.exe
+radiusGenerator.exe: model.ow generator.ow hTable.ow chunkParser.ow regionParser.ow cNBT.ow radiusGenerator.c
+	x86_64-w64-mingw32-gcc-win32 radiusGenerator.c generator.ow model.ow regionParser.ow hTable.ow chunkParser.ow cNBT.ow -lz -lm -o radiusGenerator.exe -static $(CFLAGS)
+
+windows: modelGenerator.exe chunkExtractor.exe regionFileReader.exe radiusGenerator.exe
 
 clean:
 	rm -f *.o
