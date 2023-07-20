@@ -1,3 +1,4 @@
+#include <stdbool.h>
 
 //16x16x16 big section of a chunk
 struct section{
