@@ -189,15 +189,18 @@ unsigned int* getBlockStates(struct section s, int* outLen){
         if(l < 4){
             l = 4;
         }
-        short count = ceilf(64/(float)l) * s.blockDataLen; //amount of indices in each long
-        states = malloc(count * sizeof(unsigned int));
+        short numPerLong = (short)(64/l);
+        states = malloc(numPerLong * s.blockDataLen * sizeof(unsigned int));
         //foreach long
         for(int a=0; a < s.blockDataLen; a++){
             unsigned long comp = s.blockData[a];
-            //foreach set of l bits
-            for(short b = 0; b < 64; b+=l){
-                unsigned long mask = createMask(b, l);
-                states[m] = (unsigned int)((mask & comp) >> b);
+            for(short b = 0; b < numPerLong; b++){
+                if(m >= 4096){
+                    break;
+                }
+                short bits = b * l;
+                unsigned long mask = createMask(bits, l);
+                states[m] = (unsigned int)((mask & comp) >> bits);
                 m++;
             }
         }

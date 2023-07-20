@@ -9,6 +9,7 @@ modelGenerator
 regionFileReader
 radiusGenerator
 !tests/0.0.nbt
+!tests/0.1.nbt
 !tests/r.0.0.mca
 *.log
 *.mca

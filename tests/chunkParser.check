@@ -1,0 +1,72 @@
+#include "../chunkParser.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define getTestChunk FILE* testChunk = fopen("0.1.nbt", "rb"); if(testChunk == NULL) testChunk = fopen("tests/0.0.nbt", "rb");
+
+#suite chunkParserTests
+
+#test getSectionsTest
+    getTestChunk
+    fseek(testChunk, 0L, SEEK_END);
+    long sz = ftell(testChunk);
+    fseek(testChunk, 0, SEEK_SET);
+    unsigned char* data = calloc(sz, 1);
+    fread(data, sz, 1, testChunk);
+    fclose(testChunk);
+    struct section sections[maxSections];
+    int numSections = getSections(data, sz, sections);
+    ck_assert_msg(numSections > 0, "No sections were extracted");
+    for(int i = 0; i < numSections; i++){
+        ck_assert_msg(sections[i].y >= minY / 16, "Y was lower than the expected value");
+        ck_assert_msg(sections[i].paletteLen > 0, "Palette was empty");
+        ck_assert_msg(sections[i].paletteLen == 1 || sections[i].blockDataLen > 0, "Invalid block data len");
+        //here we check the palette property order
+        const char propertyOrder[12][20] = {"color", "east", "facing", "half", "north", "open", "part", "shape", "snowy", "south", "west"};
+        for(int n = 0; n < sections[i].paletteLen; n++){
+            int index = -1;
+            char* properties = strchr(sections[i].blockPalette[n], ';');
+            char* token = strtok(sections[i].blockPalette[n], ",");
+            while(token != NULL){
+                for(int j = 0; j < 12; j++){
+                    if(strcmp(propertyOrder[j], token) == 0){
+                        ck_assert_msg(j > index, "Incorrect property order in palette");
+                        index = j;
+                    }
+                }
+                token = strtok(NULL, ",");
+            }
+        }
+    }
+
+#test statesTest
+    getTestChunk
+    fseek(testChunk, 0L, SEEK_END);
+    long sz = ftell(testChunk);
+    fseek(testChunk, 0, SEEK_SET);
+    unsigned char* data = calloc(sz, 1);
+    fread(data, sz, 1, testChunk);
+    fclose(testChunk);
+    struct section sections[maxSections];
+    int numSections = getSections(data, sz, sections);
+    for(int i = 0; i < numSections; i++){
+        int sz = 0;
+        unsigned int* blockStates = getBlockStates(sections[i], &sz);
+        ck_assert_msg(sz > 0 || sections[i].paletteLen == 1, "No block states were extracted");
+        if(!(sz == 0 && sections[i].paletteLen == 1)){
+            ck_assert_msg(sz == 16*16*16, "Invalid sz");
+            for(int n = 0; n < sz; n++){
+                ck_assert_msg(blockStates[n] < sections[i].paletteLen, "Block state larger than palette");
+            }
+            for(int n = 0; n < sections[i].paletteLen; n++){
+                char present = 0;
+                for(int j = 0; j < sz; j++){
+                    if(blockStates[j] == n){
+                        present = 1;
+                    }
+                }
+                ck_assert_msg(present, "Palette item wasn't used");
+            }
+        }
+    }

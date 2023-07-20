@@ -11,3 +11,4 @@ Since I use files in some tests here are the sha256 hashes for the files:
 
 - 8583b9137dc65f5e04e36f19dd247d1159d519617028b4a3f4b3ddf02ecd8627  r.0.0.mca
 - e9be2818875684b5e0802b49dcfc0ef27a4c1966d179a262bc1b8a5a1a8e780a  0.0.nbt
+- a68a2fe51ce931828ed7e620263b8c25d23b4bc8e8089cfd3eaaf16a9870b9f9  0.1.nbt

@@ -11,5 +11,11 @@ regionParserCheck.c: regionParser.check
 regionParserCheck: regionParserCheck.c ../regionParser.o
 	gcc regionParserCheck.c ../regionParser.o -lcheck -lm -lz -lsubunit -o regionParserCheck
 
+chunkParserCheck.c: chunkParser.check
+	checkmk chunkParser.check > chunkParserCheck.c
+
+chunkParserCheck: chunkParserCheck.c ../chunkParser.o ../cNBT.o
+	gcc chunkParserCheck.c ../chunkParser.o ../cNBT.o -lcheck -lm -lsubunit -o chunkParserCheck
+
 clean:
 	rm -f *.c
