@@ -83,7 +83,7 @@
             localOffset = *(params->offset);
             localIndex = *(params->index);
             *(params->offset) += diff;
-            *(params->index)++;
+            *(params->index) += 1;
         )
         size_t sz = 0;
         char* modelStr = generateModel(&m, &sz, NULL, &localOffset);
@@ -332,14 +332,16 @@ int main(int argc, char** argv){
     sharedFree(index, sizeof(int));
     sharedFree(order, sizeof(short) * numChildren);
     #elif defined(_WIN32)
+    //Windows code: multithreaded version of the unix code
     ghSemaphore = CreateSemaphore(NULL, 1, 1, NULL);
     unsigned long* offset = malloc(sizeof(unsigned long));
-    *offset = 0;
+    *offset = 1;
     unsigned int* index = malloc(sizeof(unsigned int));
     *index = 0;
     char** modelStrs = calloc(numChildren, sizeof(char*));
     int counter = 0;
     int stdout_copy = dup(STDOUT_FILENO);
+    printf("Starting model parts generation...\n");
     close(STDOUT_FILENO);
     HANDLE* threads = calloc(numChildren, sizeof(HANDLE));
     for(int x = xCenter - radius; x <= xCenter + radius; x++){

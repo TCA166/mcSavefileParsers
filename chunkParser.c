@@ -10,7 +10,9 @@
 #include "errorDefs.h"
 #include "chunkParser.h"
 
-#define createMask(startBit, X) ((((long)1) << X) - 1) << startBit
+#include <inttypes.h>
+
+#define createMask(startBit, X) ((((uint64_t)1) << X) - 1) << startBit
 
 #define statesFormula(x, y, z) (y*16*16) + (z*16) + x
 
@@ -75,8 +77,8 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
         //get the individual block data
         nbt_node* blockData = nbt_find_by_name(blockNode, "data");
         if(blockData != NULL){
-            newSection.blockData = malloc(blockData->payload.tag_long_array.length * sizeof(long));
-            memcpy(newSection.blockData, blockData->payload.tag_long_array.data, blockData->payload.tag_long_array.length * sizeof(long));
+            newSection.blockData = malloc(blockData->payload.tag_long_array.length * sizeof(int64_t));
+            memcpy(newSection.blockData, blockData->payload.tag_long_array.data, blockData->payload.tag_long_array.length * sizeof(int64_t));
             newSection.blockDataLen = blockData->payload.tag_long_array.length;
         }
         else{ //it can be null in which case the entire sector is full of palette[0]
@@ -195,14 +197,14 @@ unsigned int* getBlockStates(struct section s, int* outLen){
         states = malloc(numPerLong * s.blockDataLen * sizeof(unsigned int));
         //foreach long
         for(int a=0; a < s.blockDataLen; a++){
-            unsigned long comp = s.blockData[a];
+            uint64_t comp = s.blockData[a];
             for(short b = 0; b < numPerLong; b++){
                 if(m >= 4096){
                     break;
                 }
                 short bits = b * l;
-                unsigned long mask = createMask(bits, l);
-                states[m] = (unsigned int)((mask & comp) >> bits);
+                uint64_t mask = createMask(bits, l);
+                states[m] = (uint64_t)((mask & comp) >> bits);
                 //fprintf(stderr, "%ld&%ld=%ld, >>%d=%d\n", mask, comp, (mask & comp), bits, states[m]);
                 m++;
             }

@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <inttypes.h>
 
 //16x16x16 big section of a chunk
 struct section{
@@ -6,7 +7,7 @@ struct section{
 
     //we ignore the biomes because we don't need that data
 
-    unsigned long* blockData; //raw nbt file block data
+    uint64_t* blockData; //raw nbt file block data
     int blockDataLen; //the length of blockData in bytes
     char** blockPalette;
     int paletteLen;

@@ -104,6 +104,3 @@ check: hTable.o regionParser.o chunkParser.o cNBT.o
 	checkmk tests/chunkParser.check > tests/chunkParserCheck.c
 	gcc tests/chunkParserCheck.c chunkParser.o cNBT.o -lcheck -lm $(SUBUNIT) -o tests/chunkParserCheck
 	./tests/chunkParserCheck
-	#unit tests run, now just run the programs
-	./chunkExtractor ./tests 0 0
-	./modelGenerator ./tests/0.0.nbt -b -out 0.0.obj
