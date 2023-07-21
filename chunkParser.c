@@ -10,7 +10,7 @@
 #include "errorDefs.h"
 #include "chunkParser.h"
 
-#define createMask(startBit, X) (((long)1 << X) - 1) << startBit
+#define createMask(startBit, X) ((((long)1) << X) - 1) << startBit
 
 #define statesFormula(x, y, z) (y*16*16) + (z*16) + x
 
@@ -191,6 +191,7 @@ unsigned int* getBlockStates(struct section s, int* outLen){
             l = 4;
         }
         short numPerLong = (short)(64/l);
+        //fprintf(stderr, "%d %d\n", l, numPerLong);
         states = malloc(numPerLong * s.blockDataLen * sizeof(unsigned int));
         //foreach long
         for(int a=0; a < s.blockDataLen; a++){
@@ -202,6 +203,7 @@ unsigned int* getBlockStates(struct section s, int* outLen){
                 short bits = b * l;
                 unsigned long mask = createMask(bits, l);
                 states[m] = (unsigned int)((mask & comp) >> bits);
+                //fprintf(stderr, "%ld&%ld=%ld, >>%d=%d\n", mask, comp, (mask & comp), bits, states[m]);
                 m++;
             }
         }
