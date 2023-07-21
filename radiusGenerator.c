@@ -101,8 +101,6 @@
 #define WRITE_END 1
 #define READ_END 0
 
-#define SNAME "/offsetSem"
-
 int main(int argc, char** argv){
     //very similar to modelGenerator
     if(argc < 5){
@@ -198,7 +196,14 @@ int main(int argc, char** argv){
     else{
         shmError("offset mmap");
     }
-    sem_t *sem = sem_open(SNAME, O_CREAT, 0644, 1);
+    //Unnamed shared semaphore
+    sem_t *sem = sharedMalloc(sizeof(sem_t));
+    if(sem == MAP_FAILED){
+        shmError("semaphore map");
+    }
+    if(sem_init(sem, 1, 1) < 0){
+        semaphoreError("main", "be initialized");
+    }
     //and now the big thing
     pid_t parentId = getpid();
     //shared array that will contain the assembly order of the finished model
@@ -266,7 +271,8 @@ int main(int argc, char** argv){
             }
         }
     }
-    sem_unlink(SNAME);
+    sem_destroy(sem);
+    sharedFree(sem, sizeof(sem_t));
     int progress = 0;
     size_t currentSize = 1;
     char** parts = calloc(numChildren, sizeof(char*));

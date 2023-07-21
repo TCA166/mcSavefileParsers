@@ -76,7 +76,7 @@ radiusGenerator <path to region directory> <x> <z> <radius> ...
 
 As of right now there isn't a version of radiusGenerator available on "vanilla" Windows.
 This is due to syscall differences.
-If you wish to use radiusGenerator on Windows you can compile it under Cygwin on Windows to emulate POSIX behavior.
+If you wish to use radiusGenerator on Windows you can compile it under [Cygwin](https://www.cygwin.com/) and then run it inside their environment or run the precompiled release with [Cygnal](https://www.kylheku.com/cygnal/) provided dll.
 
 ## Asset extractors
 
@@ -89,7 +89,7 @@ Naturally those assets aren't provided here since I want these programs to be Mi
 A script for generating complete and valid mtl files for modelGenerator
 
 ```Bash
-python3 mtlGen.py <path to /assets/minecraft/textures/block directory of a resource pack> ...
+mtlGen.py <path to /assets/minecraft/textures/block directory of a resource pack> ...
 ```
 
 The script accepts the following additional arguments:
@@ -105,7 +105,7 @@ Distribute the result at your own risk.
 A script for generating a complete obj file containing special object definition for modelGenerator
 
 ```Bash
-python3 objGen.py <path to /assets/minecraft directory of a resource pack>
+objGen.py <path to /assets/minecraft directory of a resource pack>
 ```
 
 Distribute the result at your own risk.
@@ -126,7 +126,8 @@ Inside you will find default Minecraft textures and models.
 
 ## cNBT
 
-For parsing of the nbt files I have chosen to use the [cNBT](https://github.com/chmod222/cNBT/tree/master) library. These files are located in the appropriately named folder and need to be compiled using the script next to them to make the modelGenerator compile properly.
+For parsing of the nbt files I have chosen to use the [cNBT](https://github.com/chmod222/cNBT/tree/master) library.
+These are compiled automatically using make, and then linked together into cNBT.o.
 
 ## API
 

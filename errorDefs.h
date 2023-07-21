@@ -81,5 +81,10 @@
         exit(EXIT_FAILURE);
 
 #define localizedFileError(pos, fileName, action) \
-    fprintf(stderr, "At %lu ", pos); \
-    fileError(fileName, action);
+        fprintf(stderr, "At %lu ", pos); \
+        fileError(fileName, action);
+
+#define semaphoreError(sem, action) \
+        fprintf(stderr, "Semaphore " sem " couldn't " action); \
+        perror("Semaphore error"); \
+        exit(EXIT_FAILURE);
