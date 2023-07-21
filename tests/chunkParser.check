@@ -3,18 +3,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define getTestChunk FILE* testChunk = fopen("0.1.nbt", "rb"); if(testChunk == NULL) testChunk = fopen("tests/0.0.nbt", "rb");
+#define getTestChunk \
+    FILE* testChunk = fopen("0.1.nbt", "rb"); \
+    if(testChunk == NULL){ \
+        testChunk = fopen("tests/0.1.nbt", "rb"); \
+    } \
+    fseek(testChunk, 0L, SEEK_END); \
+    long sz = ftell(testChunk); \
+    fseek(testChunk, 0, SEEK_SET); \
+    unsigned char* data = calloc(sz, 1); \
+    fread(data, sz, 1, testChunk); \
+    fclose(testChunk); 
+
 
 #suite chunkParserTests
 
 #test getSectionsTest
     getTestChunk
-    fseek(testChunk, 0L, SEEK_END);
-    long sz = ftell(testChunk);
-    fseek(testChunk, 0, SEEK_SET);
-    unsigned char* data = calloc(sz, 1);
-    fread(data, sz, 1, testChunk);
-    fclose(testChunk);
     struct section sections[maxSections];
     int numSections = getSections(data, sz, sections);
     ck_assert_msg(numSections > 0, "No sections were extracted");
@@ -42,12 +47,6 @@
 
 #test statesTest
     getTestChunk
-    fseek(testChunk, 0L, SEEK_END);
-    long sz = ftell(testChunk);
-    fseek(testChunk, 0, SEEK_SET);
-    unsigned char* data = calloc(sz, 1);
-    fread(data, sz, 1, testChunk);
-    fclose(testChunk);
     struct section sections[maxSections];
     int numSections = getSections(data, sz, sections);
     for(int i = 0; i < numSections; i++){
@@ -70,3 +69,29 @@
             }
         }
     }
+
+#test dataTest
+    getTestChunk
+    struct section sections[maxSections];
+    int numSections = getSections(data, sz, sections);
+    struct section first = sections[0];
+    ck_assert_msg(first.y == -4, "Wrong section");
+    for(int i = 0; i < 16; i++){
+        ck_assert_msg(first.blockData[i] == 0, "0 section isn't 0");
+    }
+    ck_assert_msg(first.blockData[16] == 9007199254806784, "Long 17");
+    ck_assert_msg(first.blockData[17] == 562949953421328, "Long 18");
+    ck_assert_msg(first.blockData[18] == 37387707089152, "Long 19");
+    ck_assert_msg(first.blockData[19] == 144115188075921409, "Long 20");
+    for(int i = 16 + 64; i < 16 + 64 + 18; i++){
+        ck_assert_msg(first.blockData[i] == 2459565876494606882, "Later longs");
+    }
+    struct section third = sections[2];
+    ck_assert_msg(third.y == -2, "Wrong section");
+    for(int i = 0; i < 8; i++){
+        ck_assert_msg(third.blockData[i] == 0, "First 8 longs aren't 0");
+    }
+    ck_assert_msg(third.blockData[8] == 33554432, "Long 9");
+    ck_assert_msg(third.blockData[11] == 2, "Long 12");
+    ck_assert_msg(third.blockData[334] == 0, "Long 334");
+    ck_assert_msg(third.blockData[341] == 98304, "Long 342");

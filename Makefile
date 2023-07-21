@@ -1,4 +1,15 @@
 
+ZLIB := -lz
+
+#we want to check what enviroment are we compiling under
+UNAME := $(shell uname)
+ifneq (,$(findstring CYGWIN,$(UNAME))) 
+    ZLIB = -Wl,-Bstatic -lz -Wl,-Bdynamic
+endif
+ifneq (,$(findstring MSYS,$(UNAME))) 
+    ZLIB = -Wl,-Bstatic -lz -Wl,-Bdynamic
+endif
+
 all: radiusGenerator modelGenerator chunkExtractor regionFileReader
 
 cNBT.o: 
@@ -21,10 +32,10 @@ model.o: model.c
 	gcc model.c -o model.o -c $(CFLAGS)
 
 regionFileReader: regionParser.o regionFileReader.c
-	gcc regionFileReader.c regionParser.o -o regionFileReader -lz -lm $(CFLAGS)
+	gcc regionFileReader.c regionParser.o -o regionFileReader $(ZLIB) -lm $(CFLAGS)
 
 chunkExtractor: regionParser.o chunkExtractor.c
-	gcc chunkExtractor.c regionParser.o -o chunkExtractor -lz -lm $(CFLAGS)
+	gcc chunkExtractor.c regionParser.o -o chunkExtractor $(ZLIB) -lm $(CFLAGS)
 
 generator.o: generator.c
 	gcc generator.c -o generator.o -c $(CFLAGS)
@@ -33,7 +44,7 @@ modelGenerator: model.o generator.o hTable.o chunkParser.o cNBT.o modelGenerator
 	gcc modelGenerator.c generator.o model.o hTable.o chunkParser.o cNBT.o -o modelGenerator -lm $(CFLAGS)
 
 radiusGenerator: model.o generator.o hTable.o chunkParser.o regionParser.o cNBT.o radiusGenerator.c
-	gcc radiusGenerator.c generator.o model.o regionParser.o hTable.o chunkParser.o cNBT.o -lz -lm -o radiusGenerator $(CFLAGS)
+	gcc radiusGenerator.c generator.o model.o regionParser.o hTable.o chunkParser.o cNBT.o $(ZLIB) -lm -o radiusGenerator $(CFLAGS)
 
 cNBT.ow:
 	x86_64-w64-mingw32-gcc-win32 cNBT/buffer.c -o cNBT/buffer.ow -c $(CFLAGS)
@@ -55,10 +66,10 @@ model.ow: model.c
 	x86_64-w64-mingw32-gcc-win32 model.c -o model.ow -c $(CFLAGS)
 
 regionFileReader.exe: regionParser.ow regionFileReader.c
-	x86_64-w64-mingw32-gcc-win32 regionFileReader.c regionParser.ow -o regionFileReader.exe -lz -static $(CFLAGS)
+	x86_64-w64-mingw32-gcc-win32 regionFileReader.c regionParser.ow -o regionFileReader.exe Wl,-Bstatic -lz -Wl,-Bdynamic $(CFLAGS)
 
 chunkExtractor.exe: regionParser.ow chunkExtractor.c
-	x86_64-w64-mingw32-gcc-win32 chunkExtractor.c regionParser.ow -o chunkExtractor.exe -lz -lm -static $(CFLAGS)
+	x86_64-w64-mingw32-gcc-win32 chunkExtractor.c regionParser.ow -o chunkExtractor.exe Wl,-Bstatic -lz -Wl,-Bdynamic $(CFLAGS)
 
 generator.ow: generator.c
 	x86_64-w64-mingw32-gcc-win32 generator.c -o generator.ow -c $(CFLAGS)
@@ -67,7 +78,7 @@ modelGenerator.exe: generator.ow model.ow chunkParser.ow hTable.ow cNBT.ow model
 	x86_64-w64-mingw32-gcc-win32 modelGenerator.c generator.ow model.ow chunkParser.ow hTable.ow cNBT.ow -o modelGenerator.exe -lm $(CFLAGS)
 
 radiusGenerator.exe: model.ow generator.ow hTable.ow chunkParser.ow regionParser.ow cNBT.ow radiusGenerator.c
-	x86_64-w64-mingw32-gcc-win32 radiusGenerator.c generator.ow model.ow regionParser.ow hTable.ow chunkParser.ow cNBT.ow -lz -lm -o radiusGenerator.exe -static $(CFLAGS)
+	x86_64-w64-mingw32-gcc-win32 radiusGenerator.c generator.ow model.ow regionParser.ow hTable.ow chunkParser.ow cNBT.ow Wl,-Bstatic -lz -Wl,-Bdynamic -lm -o radiusGenerator.exe $(CFLAGS)
 
 windows: modelGenerator.exe chunkExtractor.exe regionFileReader.exe radiusGenerator.exe
 
@@ -84,7 +95,7 @@ check: hTable.o regionParser.o chunkParser.o cNBT.o
 	./tests/hTableCheck
 	#regionParser tests
 	checkmk tests/regionParser.check > tests/regionParserCheck.c
-	gcc tests/regionParserCheck.c regionParser.o -lcheck -lm -lz -lsubunit -o tests/regionParserCheck
+	gcc tests/regionParserCheck.c regionParser.o -lcheck -lm $(ZLIB) -lsubunit -o tests/regionParserCheck
 	./tests/regionParserCheck
 	#chunkParser tests
 	checkmk tests/chunkParser.check > tests/chunkParserCheck.c
