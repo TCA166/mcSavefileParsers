@@ -13,7 +13,11 @@ ifneq (,$(findstring MSYS,$(UNAME)))
 	SUBUNIT = 
 endif
 
+all: CFLAGS := -O3
 all: radiusGenerator modelGenerator chunkExtractor regionFileReader
+
+debug: CFLAGS := -Wall -Werror -Wpedantic
+debug: radiusGenerator modelGenerator chunkExtractor regionFileReader
 
 cNBT.o: 
 	gcc cNBT/buffer.c -o cNBT/buffer.o -c $(CFLAGS)
@@ -69,10 +73,10 @@ model.ow: model.c
 	x86_64-w64-mingw32-gcc-win32 model.c -o model.ow -c $(CFLAGS)
 
 regionFileReader.exe: regionParser.ow regionFileReader.c
-	x86_64-w64-mingw32-gcc-win32 regionFileReader.c regionParser.ow -o regionFileReader.exe Wl,-Bstatic -lz -Wl,-Bdynamic $(CFLAGS)
+	x86_64-w64-mingw32-gcc-win32 regionFileReader.c regionParser.ow -o regionFileReader.exe -lz -static $(CFLAGS)
 
 chunkExtractor.exe: regionParser.ow chunkExtractor.c
-	x86_64-w64-mingw32-gcc-win32 chunkExtractor.c regionParser.ow -o chunkExtractor.exe Wl,-Bstatic -lz -Wl,-Bdynamic $(CFLAGS)
+	x86_64-w64-mingw32-gcc-win32 chunkExtractor.c regionParser.ow -o chunkExtractor.exe -lz -static $(CFLAGS)
 
 generator.ow: generator.c
 	x86_64-w64-mingw32-gcc-win32 generator.c -o generator.ow -c $(CFLAGS)
@@ -81,7 +85,7 @@ modelGenerator.exe: generator.ow model.ow chunkParser.ow hTable.ow cNBT.ow model
 	x86_64-w64-mingw32-gcc-win32 modelGenerator.c generator.ow model.ow chunkParser.ow hTable.ow cNBT.ow -o modelGenerator.exe -lm $(CFLAGS)
 
 radiusGenerator.exe: model.ow generator.ow hTable.ow chunkParser.ow regionParser.ow cNBT.ow radiusGenerator.c
-	x86_64-w64-mingw32-gcc-win32 radiusGenerator.c generator.ow model.ow regionParser.ow hTable.ow chunkParser.ow cNBT.ow Wl,-Bstatic -lz -Wl,-Bdynamic -lm -o radiusGenerator.exe $(CFLAGS)
+	x86_64-w64-mingw32-gcc-win32 radiusGenerator.c generator.ow model.ow regionParser.ow hTable.ow chunkParser.ow cNBT.ow -lm -static -lz -o radiusGenerator.exe $(CFLAGS)
 
 windows: modelGenerator.exe chunkExtractor.exe regionFileReader.exe radiusGenerator.exe
 

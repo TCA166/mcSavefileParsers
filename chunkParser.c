@@ -55,7 +55,7 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
         nbtTagError("sections");
     }
     struct nbt_list* sectionsList = sectionsNode->payload.tag_list;
-    struct list_head* pos = &sectionsList->entry;
+    struct list_head* pos;
     int n = 0;
     //foreach section
     list_for_each(pos, &sectionsList->entry){ 
@@ -77,7 +77,7 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
         //get the individual block data
         nbt_node* blockData = nbt_find_by_name(blockNode, "data");
         if(blockData != NULL){
-            newSection.blockData = malloc(blockData->payload.tag_long_array.length * sizeof(int64_t));
+            newSection.blockData = (uint64_t*)malloc(blockData->payload.tag_long_array.length * sizeof(uint64_t));
             memcpy(newSection.blockData, blockData->payload.tag_long_array.data, blockData->payload.tag_long_array.length * sizeof(int64_t));
             newSection.blockDataLen = blockData->payload.tag_long_array.length;
         }
@@ -93,7 +93,7 @@ int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
         //const struct list_head* paletteHead = &palette->payload.tag_list->entry;
         char** blockPalette = malloc(1 * sizeof(char*));
         int i = 0;
-        struct list_head* paletteCur = &palette->payload.tag_list->entry;
+        struct list_head* paletteCur;
         //foreach element in palette
         list_for_each(paletteCur, &palette->payload.tag_list->entry){
             //get the list entry
@@ -252,7 +252,7 @@ bool contains(char** arr, char* str, int arrLen){
 
 //this code feels wrong to write in C ngl...
 char** createGlobalPalette(struct section* sections, int len, int* outLen, bool freeSectionPalettes){
-    char** globalPalette = malloc(0);
+    char** globalPalette = NULL;
     int j = 0;
     for(int i = 0; i < len; i++){
         for(int n = 0; n < sections[i].paletteLen; n++){

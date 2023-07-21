@@ -3,14 +3,12 @@
 
 //16x16x16 big section of a chunk
 struct section{
-    short y;
-
     //we ignore the biomes because we don't need that data
-
     uint64_t* blockData; //raw nbt file block data
-    int blockDataLen; //the length of blockData in bytes
     char** blockPalette;
+    int blockDataLen; //the length of blockData in bytes
     int paletteLen;
+    short y;
 };
 
 //A block structure with it's own coordinates and a string containing it's type

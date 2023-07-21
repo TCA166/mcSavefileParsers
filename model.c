@@ -201,7 +201,7 @@ struct object deCubeObject(struct cube* c){
     result.y = objCoordCorrect(c, y, dist);
     result.z = objCoordCorrect(c, z, dist);
     result.faceCount = 0;
-    result.faces = malloc(0);
+    result.faces = NULL;
     for(int i = 0; i < 6; i++){
         if(c->faces[i] != NULL){
             result.faces = realloc(result.faces, (result.faceCount + 1) * sizeof(struct objFace));
@@ -436,6 +436,8 @@ hashTable* getMaterials(char* filename){
     hashTable* result = initHashTable(objCount);
     char* token = strtok(bytes, "\n");
     struct material newMaterial;
+    newMaterial.name = NULL;
+    newMaterial.d = 0;
     while(token != NULL){ //foreach line
         int len = strlen(token);
         if(len > 7){
@@ -497,6 +499,8 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
     newObject.x = -1;
     newObject.y = -1;
     newObject.z = -1;
+    newObject.vertexCount = 0;
+    newObject.faceCount = 0;
     struct material* nextM = NULL;
     while(token != NULL){
         switch(token[0]){
@@ -520,10 +524,10 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 //this should 'reset' the newObject
                 newObject.faceCount = 0;
                 //free(newObject.faces);
-                newObject.faces = malloc(0);
+                newObject.faces = NULL;
                 newObject.vertexCount = 0;
                 //free(newObject.vertices);
-                newObject.vertices = malloc(0);
+                newObject.vertices = NULL;
                 if(nextM != NULL){
                     newObject.m = nextM;
                     nextM = NULL;
@@ -552,7 +556,7 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 newObject.vertexCount++;
                 break;
             case 'f':;
-                int* vertices = malloc(0);
+                int* vertices = NULL;
                 char* num = calloc(1, 1);
                 num[0] = '\0';
                 int n = 0;

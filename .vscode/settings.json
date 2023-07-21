@@ -58,5 +58,9 @@
             "binaryArgs": ["region", "0", "0"]
         }
     ],
-    "C_Cpp.default.compilerPath": "C:\\msys64\\mingw64\\bin\\gcc.exe"
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+    "C_Cpp.codeAnalysis.clangTidy.checks.disabled": [
+        "clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling",
+        "clang-analyzer-security.insecureAPI.strcpy"
+    ]
 }

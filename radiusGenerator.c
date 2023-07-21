@@ -386,5 +386,6 @@ int main(int argc, char** argv){
     FILE* outFile = fopen(outFilename, "w");
     fwrite(result, currentSize, 1, outFile);
     fclose(outFile);
+    free(result);
     return EXIT_SUCCESS;
 }
