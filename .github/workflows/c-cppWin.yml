@@ -13,6 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - uses: msys2/setup-msys2@v2
     - name: configure
       run: pacman -S mingw-w64-i686-zlib
     - name: make
