@@ -76,7 +76,14 @@ radiusGenerator <path to region directory> <x> <z> <radius> ...
 
 As of right now there isn't a version of radiusGenerator available on "vanilla" Windows.
 This is due to syscall differences.
-If you wish to use radiusGenerator on Windows you can compile it under [Cygwin](https://www.cygwin.com/) and then run it inside their environment or run the precompiled release with [Cygnal](https://www.kylheku.com/cygnal/) provided dll.
+If you wish to use radiusGenerator on Windows you can compile it under [Cygwin](https://www.cygwin.com/) or transplant the precompiled release into your Cygwin installation.
+However due to POSIX shared memory management differing too greatly from Windows the cygserver needs to be running.
+In order to do that install the correct package, then run:
+
+```Bash
+cygserver-config
+net start cygserver
+```
 
 ## Asset extractors
 

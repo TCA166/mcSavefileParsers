@@ -1,4 +1,6 @@
 
+SUBUNIT := -lsubunit
+
 ZLIB := -lz
 
 #we want to check what enviroment are we compiling under
@@ -8,6 +10,7 @@ ifneq (,$(findstring CYGWIN,$(UNAME)))
 endif
 ifneq (,$(findstring MSYS,$(UNAME))) 
     ZLIB = -Wl,-Bstatic -lz -Wl,-Bdynamic
+	SUBUNIT = 
 endif
 
 all: radiusGenerator modelGenerator chunkExtractor regionFileReader
@@ -91,15 +94,15 @@ clean:
 check: hTable.o regionParser.o chunkParser.o cNBT.o
 	#hTable tests
 	checkmk tests/hTable.check > tests/hTableCheck.c
-	gcc tests/hTableCheck.c hTable.o -lcheck -lm -lsubunit -Wall -o tests/hTableCheck
+	gcc tests/hTableCheck.c hTable.o -lcheck -lm $(SUBUNIT) -Wall -o tests/hTableCheck
 	./tests/hTableCheck
 	#regionParser tests
 	checkmk tests/regionParser.check > tests/regionParserCheck.c
-	gcc tests/regionParserCheck.c regionParser.o -lcheck -lm $(ZLIB) -lsubunit -o tests/regionParserCheck
+	gcc tests/regionParserCheck.c regionParser.o -lcheck -lm $(ZLIB) $(SUBUNIT) -o tests/regionParserCheck
 	./tests/regionParserCheck
 	#chunkParser tests
 	checkmk tests/chunkParser.check > tests/chunkParserCheck.c
-	gcc tests/chunkParserCheck.c chunkParser.o cNBT.o -lcheck -lm -lsubunit -o tests/chunkParserCheck
+	gcc tests/chunkParserCheck.c chunkParser.o cNBT.o -lcheck -lm $(SUBUNIT) -o tests/chunkParserCheck
 	./tests/chunkParserCheck
 	#unit tests run, now just run the programs
 	./chunkExtractor ./tests 0 0
