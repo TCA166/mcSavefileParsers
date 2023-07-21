@@ -32,16 +32,57 @@
 
     //For whatever reason multiprocessing on Windows is... discouraged 
 
+    HANDLE ghSemaphore;
+
+    //struct for passing parameters to a thread. I tell you windows approach to multiprocessing and threading is superior
     struct threadParams{
-        char* output;
+        char** output;
         int x;
         int z;
+        char* regionDirPath;
+        hashTable* materials;
+        hashTable* objects;
+        bool yLim;
+        int upLim;
+        int downLim;
+        int side;
+        unsigned long* offset;
+        unsigned int* index;
     };
 
     //Function that the threads will do
     DWORD WINAPI ThreadProc( LPVOID lpParam ){
         struct threadParams* params = (struct threadParams*)lpParam;
-        return true;
+        chunk ourChunk = extractChunk(params->regionDirPath, params->x, params->z);
+        model m = generateFromNbt(ourChunk.data, ourChunk.byteLength, params->materials, params->objects, params->yLim, params->upLim, params->downLim, true, false, params->side, params->x, params->z);
+        unsigned long diff = getTotalVertexCount(m);
+        unsigned long localOffset = 0;
+        unsigned int localIndex = 0;
+        //Windows way of doing a semaphore check. Superior I tell you
+        bool cont = true;
+        while(cont){
+            DWORD dwWaitResult = WaitForSingleObject(ghSemaphore, 0);
+            switch(dwWaitResult){
+                case WAIT_OBJECT_0:;
+                    cont = false;
+                    localOffset = *(params->offset);
+                    localIndex = *(params->index);
+                    *(params->offset) += diff;
+                    *(params->index)++;
+                    ReleaseSemaphore(ghSemaphore, 1, NULL);
+                    break;
+                case WAIT_TIMEOUT:;
+                    break;
+            }
+        }
+        size_t sz = 0;
+        char* modelStr = generateModel(&m, &sz, NULL, &localOffset);
+        freeModel(&m);
+        params->output = calloc(sz, 1);
+        strcpy(params->output[localIndex], modelStr);
+        free(modelStr);
+        free(params);
+        return EXIT_SUCCESS;
     }
 #else
     #error "Not being compiled on POSIX compliant system"
@@ -178,16 +219,9 @@ int main(int argc, char** argv){
                 chunk ourChunk = extractChunk(regionDirPath, x, z);
                 close(STDOUT_FILENO); //we close STDOUT to suppress output of generateModel
                 model partModel = generateFromNbt(ourChunk.data, ourChunk.byteLength, materials, objects, yLim, upLim, downLim, true, false, side, ourChunk.x, ourChunk.z);
+                unsigned long diff = getTotalVertexCount(partModel);
                 sem_wait(sem); /*CRITICAL SECTION*/
                 unsigned long localOffset = *offset;
-                int diff = 0;
-                //ok so we need to now calculate by how much we want to increase the offset
-                foreachObject((&partModel)){
-                    struct object* object = partModel.objects[x][y][z];
-                    if(object->faceCount > 0){
-                        diff += object->vertexCount;
-                    }
-                }
                 *offset += diff;
                 order[*index] = counter;
                 (*index)++;
@@ -281,10 +315,12 @@ int main(int argc, char** argv){
     free(parts);
     sharedFree(index, sizeof(int));
     sharedFree(order, sizeof(short) * numChildren);
-    FILE* outFile = fopen(outFilename, "w");
-    fwrite(result, currentSize, 1, outFile);
-    fclose(outFile);
     #elif defined(_WIN32)
+    ghSemaphore = CreateSemaphore(NULL, 1, 1, NULL);
+    unsigned long* offset = malloc(sizeof(unsigned long));
+    *offset = 0;
+    unsigned int* index = malloc(sizeof(unsigned int));
+    *index = 0;
     char** modelStrs = calloc(numChildren, sizeof(char*));
     int counter = 0;
     HANDLE* threads = calloc(numChildren, sizeof(HANDLE));
@@ -293,12 +329,38 @@ int main(int argc, char** argv){
             struct threadParams* inParams = malloc(sizeof(struct threadParams));
             inParams->x = x;
             inParams->z = z;
-            inParams->output = modelStrs[counter];
-            threads[counter] = CreateThread(NULL, 0, ThreadProc, modelStrs[counter], 0, NULL);
+            inParams->regionDirPath = regionDirPath;
+            inParams->output = modelStrs;
+            inParams->downLim = downLim;
+            inParams->materials = materials;
+            inParams->objects = objects;
+            inParams->offset = offset;
+            inParams->index = index;
+            inParams->side = side;
+            inParams->upLim = upLim;
+            inParams->yLim = yLim;
+            threads[counter] = CreateThread(NULL, 0, ThreadProc, inParams, 0, NULL);
             counter++;
         }
     }
-
+    WaitForMultipleObjects(numChildren, threads, TRUE, INFINITE);
+    size_t currentSize = 1;
+    char* result = malloc(currentSize);
+    result[0] = '\0';
+    if(materialFilename != NULL){
+        appendMtlLine(materialFilename, result, &currentSize);
+    }
+    for(int i = 0; i < numChildren; i++){
+        CloseHandle(threads[i]);
+        currentSize += strlen(modelStrs[i]) + 1;
+        result = realloc(result, currentSize);
+        strcat(result, modelStrs[i]);
+        free(modelStrs[i]);
+    }
+    CloseHandle(ghSemaphore);
     #endif
+    FILE* outFile = fopen(outFilename, "w");
+    fwrite(result, currentSize, 1, outFile);
+    fclose(outFile);
     return EXIT_SUCCESS;
 }

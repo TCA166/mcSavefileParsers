@@ -159,3 +159,5 @@ size_t getTotalModelSize(model* m);
 double distanceBetweenVectors(struct vertex a, struct vertex b);
 
 bool verticesEqual(struct vertex a, struct vertex b);
+
+unsigned long getTotalVertexCount(model m);

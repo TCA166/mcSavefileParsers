@@ -616,3 +616,14 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
     }
     return result;
 }
+
+unsigned long getTotalVertexCount(model m){
+    unsigned long diff = 0;
+    foreachObject((&m)){
+        struct object* object = m.objects[x][y][z];
+        if(object->faceCount > 0){
+            diff += object->vertexCount;
+        }
+    }
+    return diff;
+}

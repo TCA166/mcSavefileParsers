@@ -57,5 +57,6 @@
             "binaryPath": "/home/tca/mcSavefileParsers/chunkExtractor",
             "binaryArgs": ["region", "0", "0"]
         }
-    ]
+    ],
+    "C_Cpp.default.compilerPath": "C:\\msys64\\mingw64\\bin\\gcc.exe"
 }
