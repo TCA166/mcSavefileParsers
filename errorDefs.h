@@ -34,7 +34,6 @@
 
 #define statesError(state, paletteLen, block) \
         fprintf(stderr, "%d >= %d:states error\n", state, paletteLen); \
-        block.type = NULL;
 
 #define argError(argName, argCount) \
         fprintf(stderr, "Incorrect number of arguments." argName " requires " argCount " arguments to follow."); \

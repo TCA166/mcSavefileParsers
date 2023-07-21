@@ -30,6 +30,23 @@
     #include <fcntl.h> //(flag control) for macros like O_CREAT
     #include <windows.h>
 
+    #define semAction(action) \
+        { \
+            bool cont = true; \
+            while(cont){ \
+                DWORD dwWaitResult = WaitForSingleObject(ghSemaphore, 0); \
+                switch(dwWaitResult){ \
+                    case WAIT_OBJECT_0:; \
+                        cont = false; \
+                        action \
+                        ReleaseSemaphore(ghSemaphore, 1, NULL); \
+                        break; \
+                    case WAIT_TIMEOUT:; \
+                        break; \
+                } \
+            } \
+        }
+
     //For whatever reason multiprocessing on Windows is... discouraged 
 
     HANDLE ghSemaphore;
@@ -53,32 +70,25 @@
     //Function that the threads will do
     DWORD WINAPI ThreadProc( LPVOID lpParam ){
         struct threadParams* params = (struct threadParams*)lpParam;
-        chunk ourChunk = extractChunk(params->regionDirPath, params->x, params->z);
+        chunk ourChunk;
+        semAction(
+            ourChunk = extractChunk(params->regionDirPath, params->x, params->z);
+        )
         model m = generateFromNbt(ourChunk.data, ourChunk.byteLength, params->materials, params->objects, params->yLim, params->upLim, params->downLim, true, false, params->side, params->x, params->z);
         unsigned long diff = getTotalVertexCount(m);
         unsigned long localOffset = 0;
         unsigned int localIndex = 0;
         //Windows way of doing a semaphore check. Superior I tell you
-        bool cont = true;
-        while(cont){
-            DWORD dwWaitResult = WaitForSingleObject(ghSemaphore, 0);
-            switch(dwWaitResult){
-                case WAIT_OBJECT_0:;
-                    cont = false;
-                    localOffset = *(params->offset);
-                    localIndex = *(params->index);
-                    *(params->offset) += diff;
-                    *(params->index)++;
-                    ReleaseSemaphore(ghSemaphore, 1, NULL);
-                    break;
-                case WAIT_TIMEOUT:;
-                    break;
-            }
-        }
+        semAction(
+            localOffset = *(params->offset);
+            localIndex = *(params->index);
+            *(params->offset) += diff;
+            *(params->index)++;
+        )
         size_t sz = 0;
         char* modelStr = generateModel(&m, &sz, NULL, &localOffset);
         freeModel(&m);
-        params->output = calloc(sz, 1);
+        params->output[localIndex] = calloc(sz, 1);
         strcpy(params->output[localIndex], modelStr);
         free(modelStr);
         free(params);
@@ -323,6 +333,8 @@ int main(int argc, char** argv){
     *index = 0;
     char** modelStrs = calloc(numChildren, sizeof(char*));
     int counter = 0;
+    int stdout_copy = dup(STDOUT_FILENO);
+    close(STDOUT_FILENO);
     HANDLE* threads = calloc(numChildren, sizeof(HANDLE));
     for(int x = xCenter - radius; x <= xCenter + radius; x++){
         for(int z = zCenter - radius; z <= zCenter + radius; z++){
@@ -344,6 +356,10 @@ int main(int argc, char** argv){
         }
     }
     WaitForMultipleObjects(numChildren, threads, TRUE, INFINITE);
+    dup2(stdout_copy, STDOUT_FILENO);
+    close(stdout_copy);
+    printf("Threads finished\n");
+    fflush(stdout);
     size_t currentSize = 1;
     char* result = malloc(currentSize);
     result[0] = '\0';

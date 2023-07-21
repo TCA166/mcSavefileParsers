@@ -227,6 +227,7 @@ struct block createBlock(int x, int y, int z, unsigned int* blockStates, struct 
         //paletteLen and I are fine it must be something with the data extraction process
         if(state >= parentSection.paletteLen){
             statesError(state, parentSection.paletteLen, newBlock);
+            newBlock.type = mcAir;
         }
         else{
             newBlock.type = parentSection.blockPalette[state];
