@@ -44,6 +44,8 @@ model initModel(int x, int y, int z){
     newModel.x = x;
     newModel.y = y;
     newModel.z = z;
+    newModel.materialArr = NULL;
+    newModel.materialCount = -1;
     newModel.objects = malloc(x * sizeof(struct object***));
     for(int i = 0; i < x; i++){
         newModel.objects[i] = malloc(y * sizeof(struct object**));
@@ -121,7 +123,7 @@ struct objFace deCube(struct cubeFace face){
 
 bool isPresent(char* string, hashTable* objects){
     if(objects == NULL){
-        return 0;
+        return false;
     }
     struct object* ptr = getVal(objects, string);
     return ptr != NULL;
@@ -396,6 +398,11 @@ void freeModel(model* m){
         free(m->objects[x]);
     }
     free(m->objects);
+    for(int i = 0; i < m->materialCount; i++){
+        free(m->materialArr[i]->name);
+        free(m->materialArr[i]);
+    }
+    free(m->materialArr);
 }
 
 void freeCubeModel(struct cubeModel* m){

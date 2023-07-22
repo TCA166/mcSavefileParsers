@@ -52,7 +52,7 @@
         exit(EXIT_FAILURE);
 
 #define materialWarning(type) \
-        fprintf(stderr, "Material for %s couldn't be found in the mtl file.\n", type);
+        fprintf(stdout, "Material for %s couldn't be found in the mtl file.\n", type);
 
 #define vertexWarning(objName) \
         fprintf(stderr, "A possible vertex-face mismatch in object %s\n", objName);

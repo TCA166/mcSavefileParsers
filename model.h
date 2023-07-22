@@ -47,12 +47,16 @@ struct object{
     char* type;
 };
 
+//The idea behinf the materialArr is that it's wayy more memory efficient to store materials once rather than possibly hundreds of times
+
 //model without constraints, however one that can't be culled
 struct model{
     int x;
     int y;
     int z;
     struct object**** objects;
+    struct material** materialArr; //Optional array of materials, that objects can point to
+    int materialCount; 
 };
 
 //Foreach object in a model*. Provides x,y,z and a not null struct object*
@@ -116,10 +120,10 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
 
 char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize);
 
-//Frees all cube faces, cubes and the model itself.
+//Frees all cube faces, cubes and the model itself. Doesn't free the material.
 void freeCubeModel(struct cubeModel* m);
 
-//Frees everything that can be allocated in a model m
+//Frees everything that can be allocated in a model m. This includes the materials
 void freeModel(model* m);
 
 //Creates and allocates necessary memory for a new cubeFace object
@@ -156,8 +160,11 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side);
 //Returns size of everything inside of a model
 size_t getTotalModelSize(model* m);
 
+//Returns the distance between two vectors
 double distanceBetweenVectors(struct vertex a, struct vertex b);
 
+//Returns true if two vertices are equal
 bool verticesEqual(struct vertex a, struct vertex b);
 
+//Returns the number of vertices in the model. Should be equivalent to the offset value if the model were to be generated
 unsigned long getTotalVertexCount(model m);

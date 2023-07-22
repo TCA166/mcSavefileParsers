@@ -25,7 +25,7 @@ model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, 
     Here we transfer the used materials to an array to save memory since we aren't going to be looking up stuff anymore
     The alternative would be to free the entirety of materials now but have copies stored in objects. That probably would be worse
     */
-    void** materialsArr = NULL;
+    struct material** materialsArr = NULL;
     int materialsLen = 0;
     if(materials != NULL){
         /*
@@ -34,7 +34,7 @@ model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, 
             free(mat->name);
             free(mat);
         }*/
-        materialsArr = hashTableToArray(materials);
+        materialsArr = (struct material**)hashTableToArray(materials);
         materialsLen = materials->count;
         freeHashTable(materials);
     }
@@ -43,6 +43,8 @@ model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, 
         printf("%ld model faces culled\n", count);
     }
     model newModel = cubeModelToModel(&cubeModel, objects);
+    newModel.materialArr = materialsArr;
+    newModel.materialCount = materialsLen;
     //We don't need objects, they have already been copied in cubeModelToModel so let's free that hash table
     if(objects != NULL){
         forHashTableItem(objects){
@@ -58,15 +60,6 @@ model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, 
         freeHashTable(objects);
     }
     freeCubeModel(&cubeModel);
-    //Free the compressed array of materials
-    for(int i = 0; i < materialsLen; i++){
-        struct material* m = (struct material*)materialsArr[i];
-        if(m != NULL){
-            free(m->name);
-            free(m);
-        }
-    }
-    free(materialsArr);
     freeSections(sections, n);
     return newModel;
 }

@@ -23,6 +23,8 @@
     //These two macros provide a nice level of abstraction and clearly show what we want to do with this mmap
     #define sharedMalloc(size) mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0)
     #define sharedFree(ptr, size) munmap(ptr, size);
+    #define WRITE_END 1
+    #define READ_END 0
 #elif defined(_WIN32)
     //We are on windows 32bit or 64 bit
     #include <sys/types.h> //for types in unistd
@@ -97,9 +99,6 @@
 #else
     #error "Not being compiled on POSIX compliant system"
 #endif
-
-#define WRITE_END 1
-#define READ_END 0
 
 int main(int argc, char** argv){
     //very similar to modelGenerator
@@ -244,6 +243,8 @@ int main(int argc, char** argv){
                 sem_close(sem);
                 size_t size = 0;
                 char* modelStr = generateModel(&partModel, &size, NULL, &localOffset);
+                freeModel(&partModel);
+                //fprintf(stderr, "%p\n", materials);
                 //Ok so we have the string, now we have to transfer it over.
                 //Unfortunately pipes have an upper limit. One that can be easily reached with our strings
                 //So we are creating a shared memory buffer for that now :) We have gone full circle
@@ -262,7 +263,6 @@ int main(int argc, char** argv){
                     pipeError("child", "writing size");
                 }
                 close(fd[counter][WRITE_END]);
-                freeModel(&partModel);
                 free(modelStr);
                 exit(EXIT_SUCCESS);
             }
@@ -276,13 +276,14 @@ int main(int argc, char** argv){
     int progress = 0;
     size_t currentSize = 1;
     char** parts = calloc(numChildren, sizeof(char*));
+    int finished = 0;
     //parent process code
     while((wpid = wait(&status)) > 0){
         progress++;
         fprintf(stdout, "%.2f%% done\r", ((float)progress / (float)numChildren) * 100);
         fflush(stdout);
         //in theory we have to check the WIFEXITED
-        if(WEXITSTATUS(status) == EXIT_SUCCESS){
+        if(WIFEXITED(status) && WEXITSTATUS(status) == EXIT_SUCCESS){
             int childNum = 0;
             for(int i = 0; i < counter; i++){
                 if(childrenPids[i] == wpid){
@@ -314,6 +315,9 @@ int main(int argc, char** argv){
             shmctl(shmid, IPC_RMID, 0);
             currentSize += size;
         }
+        else{
+            fprintf(stderr, "Process %d failed.\n", wpid);
+        }
     }
     printf("Model parts generated\n");
     free(childrenPids);
@@ -325,7 +329,9 @@ int main(int argc, char** argv){
         appendMtlLine(materialFilename, result, &currentSize);
     }
     for(int i = 0; i < *index; i++){
-        strcat(result, parts[order[i]]);
+        if(parts[order[i]] != NULL){
+            strcat(result, parts[order[i]]);
+        }
         free(parts[order[i]]);
     }
     free(parts);
