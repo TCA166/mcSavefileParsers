@@ -182,9 +182,9 @@ int main(int argc, char** argv){
     Foreach chunk in the given radius we create a separate process.
     This process does what modelGenerator would do with some differences. 
     Most notably it reads a shared variable called offset between processes that informs it of at which vertex offset it should generate.
-    This variable is protected by a semaphor and is logged so that the complete model can be pieced together in the right order from chunks.
+    This variable is protected by a semaphore and is logged so that the complete model can be pieced together in the right order from chunks.
     After generating the model the child process creates a shared memory segment, outputs the model part into it and then pipes the size of the segment to parent.
-    Then parent recieves all the pieces and puts together the final model
+    Then parent receives all the pieces and puts together the final model
     */
 
     //Ok so we are going to store the current vertex offset in a shared buffer between processes

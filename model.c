@@ -39,20 +39,12 @@ bool verticesEqual(struct vertex a, struct vertex b){
     return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
-model initModel(int x, int y, int z){
+model initModel(int objectCount){
     model newModel;
-    newModel.x = x;
-    newModel.y = y;
-    newModel.z = z;
     newModel.materialArr = NULL;
     newModel.materialCount = -1;
-    newModel.objects = malloc(x * sizeof(struct object***));
-    for(int i = 0; i < x; i++){
-        newModel.objects[i] = malloc(y * sizeof(struct object**));
-        for(int n = 0; n < y; n++){
-            newModel.objects[i][n] = malloc(z * sizeof(struct object*));
-        }
-    }
+    newModel.objects = calloc(objectCount, sizeof(struct object*));
+    newModel.objectCount = objectCount;
     return newModel;
 }
 
@@ -69,25 +61,6 @@ struct cubeModel initCubeModel(int x, int y, int z){
         }
     }
     return newModel;
-}
-
-size_t getTotalModelSize(model* m){
-    size_t result = sizeof(int) * 3 + (sizeof(struct object*) * m->x * m->y * m->z);
-    foreachObject(m){
-        struct object* object = m->objects[x][y][z];
-        result += sizeof(struct object) + sizeof(struct vertex) * object->vertexCount + strlen(object->type) + 1;
-        if(object->m != NULL){
-            result += sizeof(struct material) + strlen(object->m->name) + 1;
-        }
-        for(int i = 0; i < object->faceCount; i++){
-            result += sizeof(struct objFace);
-            result += sizeof(struct vertex) * object->faces[i].vertexCount;
-            if(object->faces[i].m != NULL){
-                result += sizeof(struct material) + strlen(object->faces[i].m->name) + 1;
-            }
-        }
-    }
-    return result;
 }
 
 struct vertex newVertex(int x, int y, int z){
@@ -221,7 +194,8 @@ struct object deCubeObject(struct cube* c){
 }
 
 model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
-    model result = initModel(m->x, m->y, m->z);
+    model result = initModel(m->x * m->y * m->z);
+    unsigned int index = 0;
     for(int x = 0; x < m->x; x++){
         for(int y = 0; y < m->y; y++){
             for(int z = 0; z < m->z; z++){
@@ -231,10 +205,10 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
                         strippedName = m->cubes[x][y][z]->type;
                     }
                     struct object* prot = (struct object*)getVal(specialObjects, strippedName);
-                    result.objects[x][y][z] = malloc(sizeof(struct object));
+                    result.objects[index] = malloc(sizeof(struct object));
                     if(prot != NULL){
-                        memcpy(result.objects[x][y][z], prot, sizeof(struct object));
-                        struct object* newObject = result.objects[x][y][z];
+                        memcpy(result.objects[index], prot, sizeof(struct object));
+                        struct object* newObject = result.objects[index];
                         //float dist = m->cubes[x][y][z]->side/2;
                         newObject->x = m->cubes[x][y][z]->x * m->cubes[x][y][z]->side;
                         newObject->y = m->cubes[x][y][z]->y * m->cubes[x][y][z]->side; 
@@ -253,12 +227,13 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
 
                     }
                     else{
-                        *(result.objects[x][y][z]) = deCubeObject(m->cubes[x][y][z]);
+                        *(result.objects[index]) = deCubeObject(m->cubes[x][y][z]);
                     }
                 }
                 else{
-                    result.objects[x][y][z] = NULL;
+                    result.objects[index] = NULL;
                 }
+                index++;
             }
         }
     }
@@ -307,95 +282,84 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
         *offset = 1; //vertex offset
     }
     //foreach object
-    for(int x = 0; x < thisModel->x; x++){
-        //detailed enough progress feedback for me
-        fprintf(stdout, "%.2f%% done\r", ((float)x)/16 * 100); 
+    foreachObject(thisModel){
+        fprintf(stdout, "%.2f%% done\r", ((float)o)/thisModel->objectCount * 100); 
         fflush(stdout);
-        for(int y = 0; y < thisModel->y; y++){
-            for(int z = 0; z < thisModel->z; z++){
-                struct object* thisObject = thisModel->objects[x][y][z];
-                if(thisObject != NULL && isNotEmpty(thisObject)){
-                    if(thisObject->m != NULL){
-                        //add the usemtl line
-                        fileContents = appendMtlLine(thisObject->m->name, fileContents, outSize);
-                    }
-                    //object definition
-                    size_t objectLineSize = 12 + digits(x) + digits(y) + digits(z) + strlen(thisObject->type) + digits(*offset);
-                    char* objectLine = NULL;
-                    objectLine = malloc(objectLineSize);
-                    snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%ld\n", x, y, z, thisObject->type, *offset);
-                    *outSize += objectLineSize - 1;
-                    fileContents = realloc(fileContents, *outSize);
-                    strcat(fileContents, objectLine);
-                    free(objectLine);
-                    //foreach vertex
-                    for(int i = 0; i < thisObject->vertexCount; i++){
-                        struct vertex v = thisObject->vertices[i];
-                        v.x += thisObject->x;
-                        v.y += thisObject->y;
-                        v.z += thisObject->z;
-                        size_t size = 27 + digits((int)v.x) + digits((int)v.y) + digits((int)v.z);
-                        //printf("%d %d %2f\n", size, digits(v.x), v.x);
-                        char* vertexLine = NULL;
-                        vertexLine = malloc(size);
-                        snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.x, v.y , v.z);
-                        *outSize += size  - 1;
-                        fileContents = realloc(fileContents, *outSize);
-                        strcat(fileContents, vertexLine);
-                        free(vertexLine);
-                    }
-                    //foreach face
-                    for(int i = 0; i < thisObject->faceCount; i++){
-                        struct objFace face = thisObject->faces[i];
-                        if(face.m != NULL){
-                            fileContents = appendMtlLine(face.m->name, fileContents, outSize);
-                        }
-                        size_t size = 4;
-                        for(int m = 0; m < face.vertexCount; m++){
-                            face.vertices[m] += *offset;
-                            size += digits(face.vertices[m]) + 1;
-                        }
-                        char* line = malloc(size);
-                        line[0] = '\0';
-                        strcat(line, "f ");
-                        int lineOff = 2;
-                        for(int m = 0; m < face.vertexCount; m++){
-                            size_t len = digits(face.vertices[m]) + 1;
-                            snprintf(line + lineOff, len + 1, "%d ", face.vertices[m]);
-                            lineOff += len;
-                        }
-                        strcat(line, "\n");
-                        *outSize += size - 1;
-                        fileContents = realloc(fileContents, *outSize);
-                        strcat(fileContents, line);
-                        free(line);
-                    }
-                    *offset += thisObject->vertexCount;
-                }
-                
+        struct object* thisObject = thisModel->objects[o];
+        if(isNotEmpty(thisObject)){
+            if(thisObject->m != NULL){
+                //add the usemtl line
+                fileContents = appendMtlLine(thisObject->m->name, fileContents, outSize);
             }
+            int x = (int)thisObject->x;
+            int y = (int)thisObject->y;
+            int z = (int)thisObject->z;
+            //object definition
+            size_t objectLineSize = 12 + digits(thisObject->x) + digits(y) + digits(z) + strlen(thisObject->type) + digits(*offset);
+            char* objectLine = NULL;
+            objectLine = malloc(objectLineSize);
+            snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%ld\n", x, y, z, thisObject->type, *offset);
+            *outSize += objectLineSize - 1;
+            fileContents = realloc(fileContents, *outSize);
+            strcat(fileContents, objectLine);
+            free(objectLine);
+            //foreach vertex
+            for(int i = 0; i < thisObject->vertexCount; i++){
+                struct vertex v = thisObject->vertices[i];
+                v.x += thisObject->x;
+                v.y += thisObject->y;
+                v.z += thisObject->z;
+                size_t size = 27 + digits((int)v.x) + digits((int)v.y) + digits((int)v.z);
+                //printf("%d %d %2f\n", size, digits(v.x), v.x);
+                char* vertexLine = NULL;
+                vertexLine = malloc(size);
+                snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.x, v.y , v.z);
+                *outSize += size  - 1;
+                fileContents = realloc(fileContents, *outSize);
+                strcat(fileContents, vertexLine);
+                free(vertexLine);
+            }
+            //foreach face
+            for(int i = 0; i < thisObject->faceCount; i++){
+                struct objFace face = thisObject->faces[i];
+                if(face.m != NULL){
+                    fileContents = appendMtlLine(face.m->name, fileContents, outSize);
+                }
+                size_t size = 4;
+                for(int m = 0; m < face.vertexCount; m++){
+                    face.vertices[m] += *offset;
+                    size += digits(face.vertices[m]) + 1;
+                }
+                char* line = malloc(size);
+                line[0] = '\0';
+                strcat(line, "f ");
+                int lineOff = 2;
+                for(int m = 0; m < face.vertexCount; m++){
+                    size_t len = digits(face.vertices[m]) + 1;
+                    snprintf(line + lineOff, len + 1, "%d ", face.vertices[m]);
+                    lineOff += len;
+                }
+                strcat(line, "\n");
+                *outSize += size - 1;
+                fileContents = realloc(fileContents, *outSize);
+                strcat(fileContents, line);
+                free(line);
+            }
+            *offset += thisObject->vertexCount;
         }
     }
     return fileContents;
 }
 
 void freeModel(model* m){
-    for(int x = 0; x < m->x; x++){
-        for(int y = 0; y < m->y; y++){
-            for(int z = 0; z < m->z; z++){
-                if(m->objects[x][y][z] != NULL){
-                    for(int i = 0; i < m->objects[x][y][z]->faceCount; i++){
-                        free(m->objects[x][y][z]->faces[i].vertices);
-                    }
-                    free(m->objects[x][y][z]->faces);
-                    free(m->objects[x][y][z]->vertices);
-                    free(m->objects[x][y][z]->type);
-                }
-                free(m->objects[x][y][z]);
-            }
-            free(m->objects[x][y]);
+    foreachObject(m){
+        for(int i = 0; i < m->objects[o]->faceCount; i++){
+            free(m->objects[o]->faces[i].vertices);
         }
-        free(m->objects[x]);
+        free(m->objects[o]->faces);
+        free(m->objects[o]->vertices);
+        free(m->objects[o]->type);
+        free(m->objects[o]);
     }
     free(m->objects);
     for(int i = 0; i < m->materialCount; i++){
@@ -631,7 +595,7 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
 unsigned long getTotalVertexCount(model m){
     unsigned long diff = 0;
     foreachObject((&m)){
-        struct object* object = m.objects[x][y][z];
+        struct object* object = m.objects[o];
         if(object->faceCount > 0){
             diff += object->vertexCount;
         }

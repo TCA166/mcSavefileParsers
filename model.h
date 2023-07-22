@@ -47,30 +47,39 @@ struct object{
     char* type;
 };
 
-//The idea behinf the materialArr is that it's wayy more memory efficient to store materials once rather than possibly hundreds of times
+//The idea behind the materialArr is that it's way more memory efficient to store materials once rather than possibly hundreds of times
 
-//model without constraints, however one that can't be culled
+/*
+A loose array of even looser objects with an associated array of materials that objects can point to.
+*/
 struct model{
-    int x;
-    int y;
-    int z;
-    struct object**** objects;
+    struct object** objects; //Nullable array of objects
+    int objectCount; //Size of objects
     struct material** materialArr; //Optional array of materials, that objects can point to
-    int materialCount; 
+    int materialCount; //Size of materialArr
 };
 
-//Foreach object in a model*. Provides x,y,z and a not null struct object*
+//Foreach object in a model*. Provides index variable o, and assures that the object will not be null
 #define foreachObject(model) \
-    for(int x = 0; x < model->x; x++) \
-    for(int y = 0; y < model->y; y++) \
-    for(int z = 0; z < model->z; z++) \
-    if(model->objects[x][y][z] != NULL)
+    for(int o = 0; o < model->objectCount; o++) \
+    if(model->objects[o] != NULL)
 
-//model with constraints, however can be culled
+//Foreach cube in a cubeModel*. Provides x, y and z, and assures that the cube will not be null
+#define foreachCube(cubeModel) \
+    for(int x = 0; x < cubeModel->x; x++) \
+    for(int y = 0; y < cubeModel->y; y++) \
+    for(int z = 0; z < cubeModel->z; z++) \
+    if(cubeModel->cubes[x][y][z] != NULL)
+
+/*
+A strict 3D model struct that is made up of cubes in a strict 3D arrangement.
+Can be transformed into a normal loose model.
+Ideally if you plan on generating a model of something that can be represented by cubes you first generate this.
+*/
 struct cubeModel{
-    int x;
-    int y;
-    int z;
+    int x; //Max x index
+    int y; //Max y index
+    int z; //Max z index
     struct cube**** cubes; //nullable 3d array of cubes
 };
 
@@ -88,7 +97,7 @@ typedef struct model model;
 Initialises a model variable and allocates necessary memory.
 Returns a new reference that will need to be freed.
 */
-model initModel(int x, int y, int z);
+model initModel(int objectCount);
 
 /*
 Initialises a new cubeModel variable and allocates necessary memory.
@@ -156,9 +165,6 @@ struct object deCubeObject(struct cube* c);
 Returns a hash table with objects from a wavefront file. Returns NULL if fails.
 */
 hashTable* readWavefront(char* filename, hashTable* materials, int side);
-
-//Returns size of everything inside of a model
-size_t getTotalModelSize(model* m);
 
 //Returns the distance between two vectors
 double distanceBetweenVectors(struct vertex a, struct vertex b);
