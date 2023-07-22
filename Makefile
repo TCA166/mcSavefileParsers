@@ -108,3 +108,7 @@ check: hTable.o regionParser.o chunkParser.o cNBT.o
 	checkmk tests/chunkParser.check > tests/chunkParserCheck.c
 	gcc tests/chunkParserCheck.c chunkParser.o cNBT.o -lcheck -lm $(SUBUNIT) -o tests/chunkParserCheck
 	./tests/chunkParserCheck
+	#model tests
+	checkmk tests/model.check > tests/modelCheck.c
+	gcc tests/modelCheck.c model.o hTable.o -lcheck -lm $(SUBUNIT) -o tests/modelCheck
+	./tests/modelCheck

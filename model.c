@@ -11,7 +11,7 @@
 
 #define freeCubeFace(c, n) free((*c).faces[n]); (*c).faces[n] = NULL; count++;
 
-#define faceCheck(t) t!=NULL && ((*t).m == NULL || (*t).m->d == 1) && !isPresent(t->type, specialObjects)
+#define faceCheck(t) (t!=NULL && (t->m == NULL || t->m->d == 1) && !isPresent(t->type, specialObjects))
 
 #define objCount 6000
 
@@ -63,6 +63,33 @@ struct cubeModel initCubeModel(int x, int y, int z){
     return newModel;
 }
 
+struct cube createGenericCube(unsigned int side){
+    struct cube newCube;
+    float dist = side/2;
+    newCube.side = side;
+    //binary 8 to 0
+    newCube.vertices[0] = newVertex(dist, dist,  dist);
+    newCube.vertices[1] = newVertex(dist, dist, 0 - dist);
+    newCube.vertices[2] = newVertex(dist, 0 - dist, dist);
+    newCube.vertices[3] = newVertex(dist, 0 - dist, 0 - dist);
+    newCube.vertices[4] = newVertex(0 - dist, dist, dist);
+    newCube.vertices[5] = newVertex(0 - dist, dist, 0 - dist);
+    newCube.vertices[6] = newVertex(0 - dist, 0 - dist, dist);
+    newCube.vertices[7] = newVertex(0 - dist, 0 - dist, 0 - dist);
+    
+    newCube.faces[0] = newCubeFace(1, 0, 2, 3); //right +x
+    newCube.faces[1] = newCubeFace(1, 0, 4, 5); //up +y
+    newCube.faces[2] = newCubeFace(2, 0, 4, 6); //forward +z
+    newCube.faces[3] = newCubeFace(7, 3, 1, 5); //back -z
+    newCube.faces[4] = newCubeFace(7, 5, 4, 6); //left -x
+    newCube.faces[5] = newCubeFace(7, 6, 2, 3); //down -y
+
+    newCube.m = NULL;
+    newCube.type = NULL;
+
+    return newCube;
+}
+
 struct vertex newVertex(int x, int y, int z){
     struct vertex new;
     new.x = x;
@@ -95,7 +122,7 @@ struct objFace deCube(struct cubeFace face){
 }
 
 bool isPresent(char* string, hashTable* objects){
-    if(objects == NULL){
+    if(objects == NULL || string == NULL){
         return false;
     }
     struct object* ptr = getVal(objects, string);
@@ -188,8 +215,13 @@ struct object deCubeObject(struct cube* c){
     result.vertices = malloc(8 * sizeof(struct vertex));
     memcpy(result.vertices, c->vertices, 8 * sizeof(struct vertex));
     result.m = c->m;
-    result.type = malloc(strlen(c->type) + 1);
-    memcpy(result.type, c->type, strlen(c->type) + 1);
+    if(c->type != NULL){
+        result.type = malloc(strlen(c->type) + 1);
+        memcpy(result.type, c->type, strlen(c->type) + 1);
+    }
+    else{
+        result.type = NULL;
+    }
     return result;
 }
 
@@ -200,11 +232,14 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
         for(int y = 0; y < m->y; y++){
             for(int z = 0; z < m->z; z++){
                 if(m->cubes[x][y][z] != NULL){
-                    char* strippedName = strchr(m->cubes[x][y][z]->type, ':') + 1;
-                    if(strippedName == NULL){
-                        strippedName = m->cubes[x][y][z]->type;
+                    struct object* prot = NULL;
+                    if(m->cubes[x][y][z]->type != NULL){
+                        char* strippedName = strchr(m->cubes[x][y][z]->type, ':') + 1;
+                        if(strippedName == NULL){
+                            strippedName = m->cubes[x][y][z]->type;
+                        }
+                        prot = (struct object*)getVal(specialObjects, strippedName);
                     }
-                    struct object* prot = (struct object*)getVal(specialObjects, strippedName);
                     result.objects[index] = malloc(sizeof(struct object));
                     if(prot != NULL){
                         memcpy(result.objects[index], prot, sizeof(struct object));

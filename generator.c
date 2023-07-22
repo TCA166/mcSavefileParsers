@@ -111,28 +111,11 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashT
 }
 
 struct cube cubeFromBlock(struct block block, const int side, struct material* material){
-    struct cube newCube;
-    newCube.side = side;
+    struct cube newCube = createGenericCube(side);
+    
     newCube.x = block.x;
     newCube.y = block.y;
     newCube.z = block.z;
-    float dist = side/2;
-    //binary 8 to 0
-    newCube.vertices[0] = newVertex(dist, dist,  dist);
-    newCube.vertices[1] = newVertex(dist, dist, 0 - dist);
-    newCube.vertices[2] = newVertex(dist, 0 - dist, dist);
-    newCube.vertices[3] = newVertex(dist, 0 - dist, 0 - dist);
-    newCube.vertices[4] = newVertex(0 - dist, dist, dist);
-    newCube.vertices[5] = newVertex(0 - dist, dist, 0 - dist);
-    newCube.vertices[6] = newVertex(0 - dist, 0 - dist, dist);
-    newCube.vertices[7] = newVertex(0 - dist, 0 - dist, 0 - dist);
-    
-    newCube.faces[0] = newCubeFace(1, 0, 2, 3); //right +x
-    newCube.faces[1] = newCubeFace(1, 0, 4, 5); //up +y
-    newCube.faces[2] = newCubeFace(2, 0, 4, 6); //forward +z
-    newCube.faces[3] = newCubeFace(7, 3, 1, 5); //back -z
-    newCube.faces[4] = newCubeFace(7, 5, 4, 6); //left -x
-    newCube.faces[5] = newCubeFace(7, 6, 2, 3); //down -y
 
     newCube.m = material;
 

@@ -1,0 +1,67 @@
+#include "../model.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+#suite modelTests
+
+#test createCubeModel
+    struct cubeModel model = initCubeModel(3, 3, 3);
+    int i = 0;
+    dimensionalFor(3, 3, 3){
+        i++;
+        model.cubes[x][y][z] = malloc(sizeof(struct cube));
+        *(model.cubes[x][y][z]) = createGenericCube(2);
+        ck_assert_msg(model.cubes[x][y][z]->side == 2, "Wrong cube side");
+        for(int i = 0; i < 6; i++){
+            ck_assert_msg(model.cubes[x][y][z]->faces[i] != NULL, "A cube wasn't created fully");
+        }
+    }
+    ck_assert_msg(i == 27, "Not enough cubes created");
+    freeCubeModel(&model);
+
+#test cullTest
+    struct cubeModel model = initCubeModel(3, 3, 3);
+    int i = 0;
+    dimensionalFor(3, 3, 3){
+        i++;
+        model.cubes[x][y][z] = malloc(sizeof(struct cube));
+        *(model.cubes[x][y][z]) = createGenericCube(2);
+    }
+    ck_assert_msg(i == 27, "test model creation failed");
+    int culled = cullFaces(&model, false, NULL);
+    ck_assert_msg(culled == 108, "Culling");
+    for(int i = 0; i < 6; i++){
+        ck_assert_msg(model.cubes[1][1][1]->faces[i] == NULL, "Faces inside weren't culled");
+    }
+    dimensionalFor(3, 3, 3){
+        ck_assert_msg(model.cubes[x][y][z] != NULL, "Cube was lost");
+    }
+    freeCubeModel(&model);
+    
+#test deCubeObjectTest
+    struct cube c = createGenericCube(2);
+    struct object o = deCubeObject(&c);
+    ck_assert_msg(o.faceCount == 6, "Less than 6 faces");
+    for(int i = 0; i < o.faceCount; i++){
+        for(int n = 0; n < o.faces[i].vertexCount; n++){
+            ck_assert_msg(o.faces[i].vertices[n] < o.vertexCount || o.faces[i].vertices[n] > 0, "Invalid face");
+        }
+    }
+    ck_assert_msg(o.vertexCount == 8, "Less than 8 vertices");
+
+#test cubeModelToModelTest
+    struct cubeModel cModel = initCubeModel(3, 3, 3);
+    int i = 0;
+    dimensionalFor(3, 3, 3){
+        i++;
+        cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
+        *(cModel.cubes[x][y][z]) = createGenericCube(2);
+    }
+    ck_assert_msg(i == 27, "test model creation failed");
+    model preCull = cubeModelToModel(&cModel, NULL);
+    int culled = cullFaces(&cModel, false, NULL);
+    model postCull = cubeModelToModel(&cModel, NULL);
+    freeCubeModel(&cModel);
+    unsigned long preVertex = getTotalVertexCount(preCull);
+    unsigned long postVertex = getTotalVertexCount(postCull);
+    ck_assert_msg(preVertex == postVertex + 8, "Vertex counts aren't valid");

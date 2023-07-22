@@ -1,4 +1,5 @@
 #include "hTable.h"
+#include <stdbool.h>
 
 //obj file vertex
 struct vertex{
@@ -59,6 +60,11 @@ struct model{
     int materialCount; //Size of materialArr
 };
 
+#define dimensionalFor(xLim, yLim, zLim) \
+    for(int x = 0; x < xLim; x++) \
+    for(int y = 0; y < yLim; y++) \
+    for(int z = 0; z < zLim; z++)
+
 //Foreach object in a model*. Provides index variable o, and assures that the object will not be null
 #define foreachObject(model) \
     for(int o = 0; o < model->objectCount; o++) \
@@ -66,9 +72,7 @@ struct model{
 
 //Foreach cube in a cubeModel*. Provides x, y and z, and assures that the cube will not be null
 #define foreachCube(cubeModel) \
-    for(int x = 0; x < cubeModel->x; x++) \
-    for(int y = 0; y < cubeModel->y; y++) \
-    for(int z = 0; z < cubeModel->z; z++) \
+    dimensionalFor(cubeModel->x, cubeModel->y, cubeModel->z) \
     if(cubeModel->cubes[x][y][z] != NULL)
 
 /*
@@ -100,7 +104,7 @@ Returns a new reference that will need to be freed.
 model initModel(int objectCount);
 
 /*
-Initialises a new cubeModel variable and allocates necessary memory.
+Initialises a new cubeModel variable with dimensions x*y*z cubes and allocates necessary memory.
 Returns a new reference that will need to be freed.
 */
 struct cubeModel initCubeModel(int x, int y, int z);
@@ -174,3 +178,6 @@ bool verticesEqual(struct vertex a, struct vertex b);
 
 //Returns the number of vertices in the model. Should be equivalent to the offset value if the model were to be generated
 unsigned long getTotalVertexCount(model m);
+
+//Returns a generic cube object
+struct cube createGenericCube(unsigned int side);

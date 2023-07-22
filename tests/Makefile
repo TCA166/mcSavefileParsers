@@ -17,5 +17,11 @@ chunkParserCheck.c: chunkParser.check
 chunkParserCheck: chunkParserCheck.c ../chunkParser.o ../cNBT.o
 	gcc chunkParserCheck.c ../chunkParser.o ../cNBT.o -lcheck -lm -lsubunit -o chunkParserCheck
 
+modelCheck.c: model.check
+	checkmk model.check > modelCheck.c
+
+modelCheck: modelCheck.c ../model.o ../hTable.o
+	gcc modelCheck.c ../model.o ../hTable.o -lcheck -lm -lsubunit -o modelCheck -g
+
 clean:
 	rm -f *.c
