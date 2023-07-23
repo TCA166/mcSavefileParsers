@@ -126,16 +126,26 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
         i++;
         cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
         *(cModel.cubes[x][y][z]) = createGenericCube(2);
+        cModel.cubes[x][y][z]->x = x;
+        cModel.cubes[x][y][z]->y = y;
+        cModel.cubes[x][y][z]->z = z;
     }
     model nModel = cubeModelToModel(&cModel, NULL);
     freeCubeModel(&cModel);
+    unsigned long oldVertexCount = getTotalVertexCount(nModel);
     struct object nObj = modelToObject(&nModel, NULL);
     freeModel(&nModel);
-    ck_assert_msg(nObj.vertexCount > 0, "Invalid vertexCount");
+    //fprintf(stderr, "%d %ld\n", nObj.vertexCount, oldVertexCount);
+    ck_assert_msg(nObj.vertexCount > 0 && nObj.vertexCount + 152 == oldVertexCount, "Invalid vertexCount");
     ck_assert_msg(nObj.faceCount > 0, "Invalid faceCount");
     for(int i = 0; i < nObj.faceCount; i++){
         for(int n = 0; n < nObj.faces[i].vertexCount; n++){
             ck_assert_msg(nObj.faces[i].vertices[n] < nObj.vertexCount, "Invalid face");
+        }
+    }
+    for(int i = 0; i < nObj.vertexCount; i++){
+        for(int n = i + 1; n < nObj.vertexCount; n++){
+            ck_assert_msg(!verticesEqual(nObj.vertices[n], nObj.vertices[i]), "Duplicate vertex");
         }
     }
     model sModel = initModel(1);
@@ -145,4 +155,3 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
     size_t size = 0;
     char* modelStr = generateModel(&sModel, &size, NULL, &vertexCount);
     verifyModelStr(modelStr, vertexCount);
-    //fprintf(stderr, "\n%d\n%s", size, modelStr);

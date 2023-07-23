@@ -39,7 +39,7 @@ double distanceBetweenVectors(struct vertex a, struct vertex b){
 }
 
 bool verticesEqual(struct vertex a, struct vertex b){
-    return a.x == b.x && a.y == b.y && a.z == b.z;
+    return (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
 }
 
 model initModel(int objectCount){
@@ -735,15 +735,19 @@ struct object modelToObject(const model* m, const char* type){
         int* localV = calloc(thisObject->vertexCount, sizeof(int)); //local transformation of face vertex 
         result.vertices = realloc(result.vertices, (result.vertexCount + thisObject->vertexCount) * sizeof(struct vertex));
         for(int i = 0; i < thisObject->vertexCount; i++){
+            struct vertex evalV = thisObject->vertices[i];
+            evalV.x += thisObject->x;
+            evalV.y += thisObject->y;
+            evalV.z += thisObject->z;
             bool done = false; //if we found the equivalent already stored
             for(int n = 0; n < result.vertexCount; n++){
-                if(verticesEqual(thisObject->vertices[i], result.vertices[n])){
+                if(verticesEqual(evalV, result.vertices[n])){
                     done = true;
                     localV[i] = n;
                 }
             }
             if(!done){ //if we didn't find an equivalent
-                result.vertices[result.vertexCount + i] = thisObject->vertices[i];
+                result.vertices[result.vertexCount + vertexCount] = evalV;
                 localV[i] = result.vertexCount + i;
                 vertexCount++;
             }
