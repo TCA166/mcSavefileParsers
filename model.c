@@ -19,6 +19,9 @@
 
 #define sq(a) ((a)*(a))
 
+//My bodge that will take into account the different size on windows
+#define ULONG_MAX sizeof(unsigned long) * 8
+
 int digits(int i){
     if(i == 0){
         return 1;
@@ -67,6 +70,9 @@ struct cube createGenericCube(unsigned int side){
     struct cube newCube;
     float dist = side/2;
     newCube.side = side;
+    newCube.x = 0;
+    newCube.y = 0;
+    newCube.z = 0;
     //binary 8 to 0
     newCube.vertices[0] = newVertex(dist, dist,  dist);
     newCube.vertices[1] = newVertex(dist, dist, 0 - dist);
@@ -299,7 +305,7 @@ char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize){
 
 char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset){
     char* fileContents = NULL;
-    size_t locSize = 0;
+    size_t locSize = 1;
     if(outSize == NULL){
         outSize = &locSize;
     }
@@ -338,10 +344,13 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                 type = "NULL";
             }
             //object definition
-            size_t objectLineSize = 12 + digits(thisObject->x) + digits(y) + digits(z) + strlen(type) + digits(*offset);
+            size_t objectLineSize = 12 + digits(x) + digits(y) + digits(z) + strlen(type) + digits(*offset);
             char* objectLine = NULL;
             objectLine = malloc(objectLineSize);
-            snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%ld\n", x, y, z, type, *offset);
+            if(objectLine == NULL){
+                mallocError("object line", objectLineSize);
+            }
+            snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%lu\n", x, y, z, type, *offset);
             *outSize += objectLineSize - 1;
             fileContents = realloc(fileContents, *outSize);
             strcat(fileContents, objectLine);
@@ -356,6 +365,9 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                 //printf("%d %d %2f\n", size, digits(v.x), v.x);
                 char* vertexLine = NULL;
                 vertexLine = malloc(size);
+                if(vertexLine == NULL){
+                    mallocError("vertexLine", size);
+                }
                 snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.x, v.y , v.z);
                 *outSize += size  - 1;
                 fileContents = realloc(fileContents, *outSize);
@@ -374,6 +386,9 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                     size += digits(face.vertices[m]) + 1;
                 }
                 char* line = malloc(size);
+                if(line == NULL){
+                    mallocError("line", size);
+                }
                 line[0] = '\0';
                 strcat(line, "f ");
                 int lineOff = 2;
@@ -387,6 +402,9 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                 fileContents = realloc(fileContents, *outSize);
                 strcat(fileContents, line);
                 free(line);
+            }
+            if(*offset + thisObject->vertexCount > __LONG_MAX__){
+                overflowError("ULONG")
             }
             *offset += thisObject->vertexCount;
         }
@@ -484,7 +502,7 @@ hashTable* getMaterials(char* filename){
     return result;
 }
 
-hashTable* readWavefront(char* filename, hashTable* materials, int side){
+hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side){
     FILE* fp = fopen(filename, "r");
     if(fp == NULL){
         return NULL;
@@ -550,6 +568,9 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                     newObject.m = NULL;
                 }
                 char* name = strchr(token, ' ');
+                if(name == NULL){
+                    parsingError(filename, "object definition parsing; no space found")
+                }
                 name++;
                 //these two lines cause a very weird memory error
                 newObject.type = malloc(strlen(name) + 1);
@@ -559,7 +580,9 @@ hashTable* readWavefront(char* filename, hashTable* materials, int side){
                 float x;
                 float y;
                 float z;
-                sscanf(token, "v %f %f %f", &x, &y, &z);
+                if(sscanf(token, "v %f %f %f", &x, &y, &z) != 3){
+                    parsingError(filename, "vertex definition parsing")
+                }
                 if(newObject.vertices == NULL){
                     newObject.vertices = malloc(sizeof(struct vertex));
                 }

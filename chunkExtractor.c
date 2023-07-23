@@ -20,8 +20,13 @@ int main(int argc, char** argv){
         char* filename = malloc(8 + 10 + 10);
         sprintf(filename, "./%d.%d.nbt", x, z);
         FILE* outFile = fopen(filename, "wb");
+        if(outFile == NULL){
+            fileError(filename, "opened");
+        }
+        if(fwrite(ourChunk.data, ourChunk.byteLength, 1, outFile) != 1){
+            fileError(filename, "written to");
+        }
         free(filename);
-        fwrite(ourChunk.data, ourChunk.byteLength, 1, outFile);
         fclose(outFile);
         free(ourChunk.data);
     }

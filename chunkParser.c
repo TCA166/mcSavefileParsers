@@ -39,9 +39,7 @@ char* appendProperty(char* string, char* property, const char* propertyName){
 unsigned int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
     nbt_node* node = nbt_parse(nbtFileData, sz);
     if(errno != 0){
-        fprintf(stderr, "%d\n", errno);
-        perror("Error while reading the nbt file");
-        exit(EXIT_FAILURE);
+        cNBTError("the nbt file")
     }
     if(node->type != TAG_COMPOUND){
         nbtTypeError(node->type, 10);
@@ -91,8 +89,8 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, struct section* se
             nbtTagError("palette");
         }
         //const struct list_head* paletteHead = &palette->payload.tag_list->entry;
-        char** blockPalette = malloc(1 * sizeof(char*));
-        int i = 0;
+        char** blockPalette = malloc(sizeof(char*));
+        unsigned int i = 0;
         struct list_head* paletteCur;
         //foreach element in palette
         list_for_each(paletteCur, &palette->payload.tag_list->entry){
@@ -174,6 +172,9 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, struct section* se
             blockPalette = realloc(blockPalette, (i + 1) * sizeof(char*));
         }
         newSection.blockPalette = blockPalette;
+        if(i == UINT32_MAX){
+            overflowError("UINT32");
+        }
         newSection.paletteLen = i;
         sections[n] = newSection;
         n++;

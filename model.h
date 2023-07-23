@@ -168,7 +168,7 @@ struct object deCubeObject(struct cube* c);
 /*
 Returns a hash table with objects from a wavefront file. Returns NULL if fails.
 */
-hashTable* readWavefront(char* filename, hashTable* materials, int side);
+hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side);
 
 //Returns the distance between two vectors
 double distanceBetweenVectors(struct vertex a, struct vertex b);

@@ -56,6 +56,9 @@ int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName){
     //Then get the data
     thisChunk->byteLength += 5;
     byte* data = malloc(thisChunk->byteLength);
+    if(data == NULL){
+        mallocError("chunk data", (size_t)thisChunk->byteLength);
+    }
     if(fread(data, 1, thisChunk->byteLength, regionFile) != thisChunk->byteLength){
         fileError(regionFileName, "parsed:3");
     }

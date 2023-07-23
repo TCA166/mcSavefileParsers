@@ -340,6 +340,9 @@ int main(int argc, char** argv){
     #elif defined(_WIN32)
     //Windows code: multithreaded version of the unix code
     ghSemaphore = CreateSemaphore(NULL, 1, 1, NULL);
+    if(ghSemaphore == NULL){
+        semaphoreError("windows", "created");
+    }
     unsigned long* offset = malloc(sizeof(unsigned long));
     *offset = 1;
     unsigned int* index = malloc(sizeof(unsigned int));

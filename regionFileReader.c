@@ -19,7 +19,7 @@ int main(int argc, char** argv){
         char* filename = argv[i - 1];
         FILE* regionFile = fopen(filename, "rb");
         if(regionFile == NULL){ 
-            nbtFileError(argv[i - 1]);
+            fileError(argv[i - 1], "opened");
         }
         chunk* chunks = getChunks(regionFile);
         fclose(regionFile);
@@ -28,8 +28,13 @@ int main(int argc, char** argv){
                 char* filename = malloc(10 + strlen(argv[i]));
                 sprintf(filename, "%s/%d.nbt", argv[i], chunks[n].offset);
                 FILE* chunkFile = fopen(filename, "wb");
+                if(chunkFile == NULL){
+                    fileError(filename, "opened");
+                }
+                if(fwrite(chunks[n].data, chunks[n].byteLength, 1, chunkFile) != 1){
+                    fileError(filename, "written to");
+                }
                 free(filename);
-                fwrite(chunks[n].data, chunks[n].byteLength, 1, chunkFile);
                 free(chunks[n].data);
                 fclose(chunkFile);
             }   
