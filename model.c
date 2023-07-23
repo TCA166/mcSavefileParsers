@@ -272,7 +272,7 @@ struct object deCubeObject(struct cube* c){
     return result;
 }
 
-model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
+model cubeModelToModel(const struct cubeModel* m, hashTable* specialObjects){
     model result = initModel(m->x * m->y * m->z);
     unsigned int index = 0;
     for(int x = 0; x < m->x; x++){
@@ -324,12 +324,12 @@ model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects){
 
 bool isNotEmpty(struct object* c){
     if(c == NULL){
-        return 0;
+        return false;
     }
     if(c->faceCount > 0){
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
 //Simple procedure taken out of generateModel to prevent duplicate code
@@ -341,12 +341,12 @@ char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize){
     }
     *outSize += mtlLineSize - 1;
     appendTo = realloc(appendTo, *outSize);
-    strncat(appendTo, mtlLine, mtlLineSize);
+    strncat(appendTo, mtlLine, mtlLineSize - 1);
     free(mtlLine);
     return appendTo;
 }
 
-char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset){
+char* generateModel(const model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset){
     char* fileContents = NULL;
     size_t locSize = 1;
     if(outSize == NULL){
@@ -398,7 +398,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
             }
             *outSize += objectLineSize - 1;
             fileContents = realloc(fileContents, *outSize);
-            strncat(fileContents, objectLine, objectLineSize);
+            strncat(fileContents, objectLine, objectLineSize - 1);
             free(objectLine);
             //foreach vertex
             for(int i = 0; i < thisObject->vertexCount; i++){
@@ -418,7 +418,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                 }
                 *outSize += size - 1;
                 fileContents = realloc(fileContents, *outSize);
-                strncat(fileContents, vertexLine, size);
+                strncat(fileContents, vertexLine, size - 1);
                 free(vertexLine);
             }
             //foreach face
@@ -449,7 +449,7 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                 strcat(line, "\n");
                 *outSize += size - 1;
                 fileContents = realloc(fileContents, *outSize);
-                strncat(fileContents, line, size);
+                strncat(fileContents, line, size - 1);
                 free(line);
             }
             if(*offset + thisObject->vertexCount > __LONG_MAX__){
@@ -716,4 +716,59 @@ unsigned long getTotalVertexCount(model m){
         }
     }
     return diff;
+}
+
+struct object modelToObject(const model* m, const char* type){
+    struct object result;
+    result.x = 0;
+    result.y = 0;
+    result.z = 0;
+    result.faceCount = 0;
+    result.faces = NULL;
+    result.vertexCount = 0;
+    result.vertices = NULL;
+    result.m = NULL;
+    result.type = (char*)type;
+    foreachObject(m){
+        struct object* thisObject = m->objects[o];
+        int vertexCount = 0; //the amount of local vertices that was appended to the result array
+        int* localV = calloc(thisObject->vertexCount, sizeof(int)); //local transformation of face vertex 
+        result.vertices = realloc(result.vertices, (result.vertexCount + thisObject->vertexCount) * sizeof(struct vertex));
+        for(int i = 0; i < thisObject->vertexCount; i++){
+            bool done = false; //if we found the equivalent already stored
+            for(int n = 0; n < result.vertexCount; n++){
+                if(verticesEqual(thisObject->vertices[i], result.vertices[n])){
+                    done = true;
+                    localV[i] = n;
+                }
+            }
+            if(!done){ //if we didn't find an equivalent
+                result.vertices[result.vertexCount + i] = thisObject->vertices[i];
+                localV[i] = result.vertexCount + i;
+                vertexCount++;
+            }
+        }
+        result.vertexCount += vertexCount;
+        //now just append faces and apply the localV transformation
+        result.faces = realloc(result.faces, (result.faceCount + thisObject->faceCount) * sizeof(struct objFace));
+        for(int i = 0; i < thisObject->faceCount; i++){
+            result.faces[result.faceCount + i] = thisObject->faces[i];
+            bool prevMatOverlap = false;
+            if(result.faceCount > 0){
+                prevMatOverlap = result.faces[result.faceCount - 1].m == thisObject->faces[i].m;
+            }
+            if(thisObject->faces[i].m == NULL && !prevMatOverlap){
+                result.faces[result.faceCount + i].m = thisObject->faces[i].m;
+            }
+            //we also have to allocate unique memory for the vertices array of each face
+            result.faces[result.faceCount + i].vertices = calloc(result.faces[result.faceCount + i].vertexCount, sizeof(int));
+            memcpy(result.faces[result.faceCount + i].vertices, thisObject->faces[i].vertices, thisObject->faces[i].vertexCount * sizeof(int));
+            for(int n = 0; n < result.faces[result.faceCount + i].vertexCount; n++){
+                //apply the transformation for the vertex
+                result.faces[result.faceCount + i].vertices[n] = localV[result.faces[result.faceCount + i].vertices[n]];
+            }
+        }
+        result.faceCount += thisObject->faceCount;
+    }
+    return result;
 }

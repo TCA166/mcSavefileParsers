@@ -123,13 +123,13 @@ unsigned int cullFaces(struct cubeModel* thisModel, bool cullChunkBorder, hashTa
 Converts a cubeModel to a normal model, and inserts special objects if specialObjects!=NULL when types match.
 Uses initModel to create a new model reference, and also creates new object references within the new model.
 */
-model cubeModelToModel(struct cubeModel* m, hashTable* specialObjects);
+model cubeModelToModel(const struct cubeModel* m, hashTable* specialObjects);
 
 /*
 Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
 typeArr can be NULL if you wish to not generate a textured model.
 */
-char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset);
+char* generateModel(const model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset);
 
 char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize);
 
@@ -181,3 +181,10 @@ unsigned long getTotalVertexCount(model m);
 
 //Returns a generic cube object
 struct cube createGenericCube(unsigned int side);
+
+/*
+Converts a model to a single well optimized object.
+Removes overlapping vertices.
+type can be null, but shouldn't be free'd as it's assigned to the result.
+*/
+struct object modelToObject(const model* m, const char* type);

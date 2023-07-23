@@ -2,6 +2,27 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+void verifyModelStr(char* modelStr, unsigned long vertexCount){
+    char* token = strtok(modelStr, "\n");
+    while(token != NULL){
+        if(token[0] == 'f'){
+            ck_assert_msg(strlen(token) >= 5, "Face line strlen too low");
+            char* nextGap = token + 2;
+            char* prev = nextGap;
+            while((nextGap = strchr(nextGap, ' ')) != NULL){
+                *nextGap = '\0';
+                nextGap++;
+                if(prev != NULL){
+                    int index = atoi(prev);
+                    ck_assert_msg(index < vertexCount && index > 0, "invalid face vertex index");
+                }
+                prev = nextGap;
+            }   
+        }
+        token = strtok(NULL, "\n");
+    }
+}
+
 #suite modelTests
 
 #test createCubeModel
@@ -96,21 +117,32 @@
     size_t sz = 0;
     unsigned long vertexCount = 1;
     char* modelStr = generateModel(&nModel, &sz, NULL, &vertexCount);
-    char* token = strtok(modelStr, "\n");
-    while(token != NULL){
-        if(token[0] == 'f'){
-            ck_assert_msg(strlen(token) >= 5, "Face line strlen too low");
-            char* nextGap = token + 2;
-            char* prev = nextGap;
-            while((nextGap = strchr(nextGap, ' ')) != NULL){
-                *nextGap = '\0';
-                nextGap++;
-                if(prev != NULL){
-                    int index = atoi(prev);
-                    ck_assert_msg(index < vertexCount && index > 0, "invalid face vertex index");
-                }
-                prev = nextGap;
-            }   
-        }
-        token = strtok(NULL, "\n");
+    verifyModelStr(modelStr, vertexCount);
+
+#test simplifyTest
+    struct cubeModel cModel = initCubeModel(3, 3, 3);
+    int i = 0;
+    dimensionalFor(3, 3, 3){
+        i++;
+        cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
+        *(cModel.cubes[x][y][z]) = createGenericCube(2);
     }
+    model nModel = cubeModelToModel(&cModel, NULL);
+    freeCubeModel(&cModel);
+    struct object nObj = modelToObject(&nModel, NULL);
+    freeModel(&nModel);
+    ck_assert_msg(nObj.vertexCount > 0, "Invalid vertexCount");
+    ck_assert_msg(nObj.faceCount > 0, "Invalid faceCount");
+    for(int i = 0; i < nObj.faceCount; i++){
+        for(int n = 0; n < nObj.faces[i].vertexCount; n++){
+            ck_assert_msg(nObj.faces[i].vertices[n] < nObj.vertexCount, "Invalid face");
+        }
+    }
+    model sModel = initModel(1);
+    sModel.objects[0] = &nObj;
+    sModel.objectCount = 1;
+    unsigned long vertexCount = 0;
+    size_t size = 0;
+    char* modelStr = generateModel(&sModel, &size, NULL, &vertexCount);
+    verifyModelStr(modelStr, vertexCount);
+    //fprintf(stderr, "\n%d\n%s", size, modelStr);
