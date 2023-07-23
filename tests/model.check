@@ -79,8 +79,8 @@
     ck_assert_msg(vertexCount > 0, "Vertex count invalid");
     unsigned long actualCount = 1;
     free(generateModel(&nModel, NULL, NULL, &actualCount));
-    freeModel(&nModel);
     ck_assert_msg(actualCount == vertexCount + 1, "vertexCount isn't accurate");
+    freeModel(&nModel);
 
 #test generateTest
     struct cubeModel cModel = initCubeModel(3, 3, 3);
@@ -98,6 +98,7 @@
     char* token = strtok(modelStr, "\n");
     while(token != NULL){
         if(token[0] == 'f'){
+            ck_assert_msg(strlen(token) >= 5, "Face line strlen too low");
             char* nextGap = token + 2;
             char* prev = nextGap;
             while((nextGap = strchr(nextGap, ' ')) != NULL){
