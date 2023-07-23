@@ -13,7 +13,7 @@ struct cube{
     float x;
     float y;
     float z;
-    float side;
+    float side; //Cannot be lower than 0 for very obvious reasons
     struct vertex vertices[8]; //array of relative to x,y,z vertices
     struct cubeFace* faces[6]; //array of pointers so that it may be nullable
     char* type; //text representing a cube name or a broad type. Feel free to make it NULL
@@ -22,15 +22,15 @@ struct cube{
 
 //A face with only 4 vertices. V variables point to vertices in the associated cube object
 struct cubeFace{
-    int v1;
-    int v2;
-    int v3;
-    int v4;
+    unsigned int v1;
+    unsigned int v2;
+    unsigned int v3;
+    unsigned int v4;
 };
 
 //A dynamic array of vertices - an object face
 struct objFace{
-    int vertexCount;
+    unsigned int vertexCount;
     int* vertices;
     struct material* m;
 };
@@ -40,9 +40,9 @@ struct object{
     float x;
     float y;
     float z;
-    int vertexCount;
+    unsigned int vertexCount;
     struct vertex* vertices; //array of relative to x, y, z vertices
-    int faceCount;
+    unsigned int faceCount;
     struct objFace* faces; //doesn't need to be nullable
     struct material* m;
     char* type;
@@ -55,9 +55,9 @@ A loose array of even looser objects with an associated array of materials that 
 */
 struct model{
     struct object** objects; //Nullable array of objects
-    int objectCount; //Size of objects
+    unsigned int objectCount; //Size of objects
     struct material** materialArr; //Optional array of materials, that objects can point to
-    int materialCount; //Size of materialArr
+    unsigned int materialCount; //Size of materialArr
 };
 
 #define dimensionalFor(xLim, yLim, zLim) \
@@ -81,9 +81,9 @@ Can be transformed into a normal loose model.
 Ideally if you plan on generating a model of something that can be represented by cubes you first generate this.
 */
 struct cubeModel{
-    int x; //Max x index
-    int y; //Max y index
-    int z; //Max z index
+    unsigned int x; //Max x index
+    unsigned int y; //Max y index
+    unsigned int z; //Max z index
     struct cube**** cubes; //nullable 3d array of cubes
 };
 
@@ -117,7 +117,7 @@ Removes all outward or internal faces from a model.
 All cubes that are NULL or whose type is in ignoreType are considered to be outward and faces touching those cubes are not culled.
 Culled faces are free'd and set as null.
 */
-int cullFaces(struct cubeModel* thisModel, bool cullChunkBorder, hashTable* specialObjects);
+unsigned int cullFaces(struct cubeModel* thisModel, bool cullChunkBorder, hashTable* specialObjects);
 
 /*
 Converts a cubeModel to a normal model, and inserts special objects if specialObjects!=NULL when types match.
@@ -176,7 +176,7 @@ double distanceBetweenVectors(struct vertex a, struct vertex b);
 //Returns true if two vertices are equal
 bool verticesEqual(struct vertex a, struct vertex b);
 
-//Returns the number of vertices in the model. Should be equivalent to the offset value if the model were to be generated
+//Returns the number of vertices in the model. Should be equivalent to the offset value if the model were to be generated -1
 unsigned long getTotalVertexCount(model m);
 
 //Returns a generic cube object

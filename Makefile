@@ -95,7 +95,7 @@ clean:
 	rm -f *.ow
 	rm -f cNBT/*.ow
 
-check: hTable.o regionParser.o chunkParser.o cNBT.o
+check: hTable.o regionParser.o chunkParser.o cNBT.o model.o
 	#hTable tests
 	checkmk tests/hTable.check > tests/hTableCheck.c
 	gcc tests/hTableCheck.c hTable.o -lcheck -lm $(SUBUNIT) -Wall -o tests/hTableCheck
@@ -110,5 +110,5 @@ check: hTable.o regionParser.o chunkParser.o cNBT.o
 	./tests/chunkParserCheck
 	#model tests
 	checkmk tests/model.check > tests/modelCheck.c
-	gcc tests/modelCheck.c model.o hTable.o -lcheck -lm $(SUBUNIT) -o tests/modelCheck
+	gcc tests/modelCheck.c model.o hTable.o -lcheck -lm $(SUBUNIT) -o tests/modelCheck -g
 	./tests/modelCheck

@@ -57,7 +57,6 @@
         cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
         *(cModel.cubes[x][y][z]) = createGenericCube(2);
     }
-    ck_assert_msg(i == 27, "test model creation failed");
     model preCull = cubeModelToModel(&cModel, NULL);
     int culled = cullFaces(&cModel, false, NULL);
     model postCull = cubeModelToModel(&cModel, NULL);
@@ -65,3 +64,51 @@
     unsigned long preVertex = getTotalVertexCount(preCull);
     unsigned long postVertex = getTotalVertexCount(postCull);
     ck_assert_msg(preVertex == postVertex + 8, "Vertex counts aren't valid");
+
+#test vertexCountTest
+    struct cubeModel cModel = initCubeModel(3, 3, 3);
+    int i = 0;
+    dimensionalFor(3, 3, 3){
+        i++;
+        cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
+        *(cModel.cubes[x][y][z]) = createGenericCube(2);
+    }
+    model nModel = cubeModelToModel(&cModel, NULL);
+    freeCubeModel(&cModel);
+    unsigned long vertexCount = getTotalVertexCount(nModel);
+    ck_assert_msg(vertexCount > 0, "Vertex count invalid");
+    unsigned long actualCount = 1;
+    free(generateModel(&nModel, NULL, NULL, &actualCount));
+    freeModel(&nModel);
+    ck_assert_msg(actualCount == vertexCount + 1, "vertexCount isn't accurate");
+
+#test generateTest
+    struct cubeModel cModel = initCubeModel(3, 3, 3);
+    int i = 0;
+    dimensionalFor(3, 3, 3){
+        i++;
+        cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
+        *(cModel.cubes[x][y][z]) = createGenericCube(2);
+    }
+    model nModel = cubeModelToModel(&cModel, NULL);
+    freeCubeModel(&cModel);
+    size_t sz = 0;
+    unsigned long vertexCount = 1;
+    char* modelStr = generateModel(&nModel, &sz, NULL, &vertexCount);
+    char* token = strtok(modelStr, "\n");
+    while(token != NULL){
+        if(token[0] == 'f'){
+            char* nextGap = token + 2;
+            char* prev = nextGap;
+            while((nextGap = strchr(nextGap, ' ')) != NULL){
+                *nextGap = '\0';
+                nextGap++;
+                if(prev != NULL){
+                    int index = atoi(prev);
+                    ck_assert_msg(index < vertexCount && index > 0, "invalid face vertex index");
+                }
+                prev = nextGap;
+            }   
+        }
+        token = strtok(NULL, "\n");
+    }

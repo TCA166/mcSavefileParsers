@@ -42,7 +42,7 @@ bool verticesEqual(struct vertex a, struct vertex b){
 model initModel(int objectCount){
     model newModel;
     newModel.materialArr = NULL;
-    newModel.materialCount = -1;
+    newModel.materialCount = 0;
     newModel.objects = calloc(objectCount, sizeof(struct object*));
     newModel.objectCount = objectCount;
     return newModel;
@@ -129,7 +129,7 @@ bool isPresent(char* string, hashTable* objects){
     return ptr != NULL;
 }
 
-int cullFaces(struct cubeModel* thisModel, bool cullChunkBorder, hashTable* specialObjects){
+unsigned int cullFaces(struct cubeModel* thisModel, bool cullChunkBorder, hashTable* specialObjects){
     long count = 0;
     for(int x = 0; x < thisModel->x; x++){
         for(int y = 0; y < thisModel->y; y++){
@@ -299,6 +299,10 @@ char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize){
 
 char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset){
     char* fileContents = NULL;
+    size_t locSize = 0;
+    if(outSize == NULL){
+        outSize = &locSize;
+    }
     (*outSize)++;
     fileContents = malloc(*outSize);
     fileContents[0] = '\0';
@@ -329,11 +333,15 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
             int x = (int)thisObject->x;
             int y = (int)thisObject->y;
             int z = (int)thisObject->z;
+            char* type = thisObject->type;
+            if(type == NULL){
+                type = "NULL";
+            }
             //object definition
-            size_t objectLineSize = 12 + digits(thisObject->x) + digits(y) + digits(z) + strlen(thisObject->type) + digits(*offset);
+            size_t objectLineSize = 12 + digits(thisObject->x) + digits(y) + digits(z) + strlen(type) + digits(*offset);
             char* objectLine = NULL;
             objectLine = malloc(objectLineSize);
-            snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%ld\n", x, y, z, thisObject->type, *offset);
+            snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%ld\n", x, y, z, type, *offset);
             *outSize += objectLineSize - 1;
             fileContents = realloc(fileContents, *outSize);
             strcat(fileContents, objectLine);

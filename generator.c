@@ -9,7 +9,7 @@
 #include "errorDefs.h"
 #include "generator.h"
 
-model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, hashTable* objects, bool yLim, int upLim, int downLim, bool b, bool f, int side, int chunkX, int chunkZ){
+model generateFromNbt(unsigned char* data, int dataSize, hashTable* materials, hashTable* objects, bool yLim, int upLim, int downLim, bool b, bool f, unsigned int side, int chunkX, int chunkZ){
     //Array of sections in this chunk
     struct section sections[maxSections] = {0};
     int n = getSections(data, dataSize, sections);
@@ -64,7 +64,7 @@ model generateFromNbt(unsigned char* data, long dataSize, hashTable* materials, 
     return newModel;
 }
 
-struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, int side, bool matCheck, int xOff, int zOff){
+struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, unsigned int side, bool matCheck, int xOff, int zOff){
     struct cubeModel cubeModel = initCubeModel(16,16 * sectionLen, 16);
     for(int i = 0; i < sectionLen; i++){
         //create the block state array
@@ -110,7 +110,7 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashT
     return cubeModel;
 }
 
-struct cube cubeFromBlock(struct block block, const int side, struct material* material){
+struct cube cubeFromBlock(struct block block, const unsigned int side, struct material* material){
     struct cube newCube = createGenericCube(side);
     
     newCube.x = block.x;

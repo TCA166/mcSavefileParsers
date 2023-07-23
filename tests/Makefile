@@ -3,19 +3,19 @@ hTableCheck.c: hTable.check
 	checkmk hTable.check > hTableCheck.c
 
 hTableCheck: hTableCheck.c ../hTable.o
-	gcc hTableCheck.c ../hTable.o -lcheck -lm -lsubunit -o hTableCheck
+	gcc hTableCheck.c ../hTable.o -lcheck -lm -lsubunit -o hTableCheck -g
 
 regionParserCheck.c: regionParser.check
 	checkmk regionParser.check > regionParserCheck.c
 
 regionParserCheck: regionParserCheck.c ../regionParser.o
-	gcc regionParserCheck.c ../regionParser.o -lcheck -lm -lz -lsubunit -o regionParserCheck
+	gcc regionParserCheck.c ../regionParser.o -lcheck -lm -lz -lsubunit -o regionParserCheck -g
 
 chunkParserCheck.c: chunkParser.check
 	checkmk chunkParser.check > chunkParserCheck.c
 
 chunkParserCheck: chunkParserCheck.c ../chunkParser.o ../cNBT.o
-	gcc chunkParserCheck.c ../chunkParser.o ../cNBT.o -lcheck -lm -lsubunit -o chunkParserCheck
+	gcc chunkParserCheck.c ../chunkParser.o ../cNBT.o -lcheck -lm -lsubunit -o chunkParserCheck -g
 
 modelCheck.c: model.check
 	checkmk model.check > modelCheck.c

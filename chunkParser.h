@@ -6,8 +6,8 @@ struct section{
     //we ignore the biomes because we don't need that data
     uint64_t* blockData; //raw nbt file block data
     char** blockPalette;
-    int blockDataLen; //the length of blockData in bytes
-    int paletteLen;
+    unsigned int blockDataLen; //the length of blockData in bytes
+    unsigned int paletteLen;
     short y;
 };
 
@@ -28,7 +28,7 @@ struct block{
 Extracts sections from nbtFileData of size sz into sections array and returns the number of extracted sections
 blockData, blockPalette and elements of blockPalette are allocated on the heap and will need to be freed
 */
-int getSections(unsigned char* nbtFileData, long sz, struct section* sections);
+unsigned int getSections(unsigned char* nbtFileData, long sz, struct section* sections);
 
 /*
 Creates the block states array based on a section.

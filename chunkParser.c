@@ -36,7 +36,7 @@ char* appendProperty(char* string, char* property, const char* propertyName){
     return string;
 }
 
-int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
+unsigned int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
     nbt_node* node = nbt_parse(nbtFileData, sz);
     if(errno != 0){
         fprintf(stderr, "%d\n", errno);
@@ -187,24 +187,25 @@ unsigned int* getBlockStates(struct section s, int* outLen){
     //first we need to decode the franken compression scheme
     unsigned int* states = NULL;
     if(s.paletteLen > 1){
-        short l = (short)ceilf(log2f((float)s.paletteLen));//length of indices in the long
+        unsigned short l = (unsigned short)ceilf(log2f((float)s.paletteLen));//length of indices in the long
+        //I did the math and we could have a problem if l>32. However for that to happen paletteLen would have to be 3999999999, which is larger than INT_MAX, and impossible because Minecraft has 820 blocks total
         int m = 0;
         if(l < 4){
             l = 4;
         }
-        short numPerLong = (short)(64/l);
+        unsigned short numPerLong = (unsigned short)(64/l);
         //fprintf(stderr, "%d %d\n", l, numPerLong);
         states = malloc(numPerLong * s.blockDataLen * sizeof(unsigned int));
         //foreach long
         for(int a=0; a < s.blockDataLen; a++){
             uint64_t comp = s.blockData[a];
-            for(short b = 0; b < numPerLong; b++){
+            for(unsigned short b = 0; b < numPerLong; b++){
                 if(m >= 4096){
                     break;
                 }
-                short bits = b * l;
+                unsigned short bits = b * l;
                 uint64_t mask = createMask(bits, l);
-                states[m] = (uint64_t)((mask & comp) >> bits);
+                states[m] = (unsigned int)((mask & comp) >> bits);
                 //fprintf(stderr, "%ld&%ld=%ld, >>%d=%d\n", mask, comp, (mask & comp), bits, states[m]);
                 m++;
             }

@@ -28,7 +28,7 @@ struct chunk{
     unsigned int offset; //3 bytes of offset
     byte sectorCount; //1 byte indicating chunk data length
     unsigned int timestamp;
-    unsigned int byteLength;
+    int byteLength; //it actually is signed in the files
     byte compression;
     byte* data; //pointer to decompressed bytes
 };
