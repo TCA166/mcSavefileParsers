@@ -63,7 +63,8 @@
     freeCubeModel(&cModel);
     unsigned long preVertex = getTotalVertexCount(preCull);
     unsigned long postVertex = getTotalVertexCount(postCull);
-    ck_assert_msg(preVertex == postVertex + 8, "Vertex counts aren't valid");
+    //fprintf(stderr, "%d %d\n", preVertex, postVertex);
+    ck_assert_msg(preVertex == 216 && postVertex == 152, "Vertex counts aren't valid");
 
 #test vertexCountTest
     struct cubeModel cModel = initCubeModel(3, 3, 3);

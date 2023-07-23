@@ -70,6 +70,7 @@ struct cube createGenericCube(unsigned int side){
     struct cube newCube;
     float dist = side/2;
     newCube.side = side;
+    //It's important we initialise EVERY value in this struct. generateModel really doesn't like uninitialized values
     newCube.x = 0;
     newCube.y = 0;
     newCube.z = 0;
@@ -202,24 +203,64 @@ unsigned int cullFaces(struct cubeModel* thisModel, bool cullChunkBorder, hashTa
     return count;
 }
 
+//Apart from simply converting this function also removes not needed vertices
 struct object deCubeObject(struct cube* c){
     struct object result;
     float dist = c->side/2;
     result.x = objCoordCorrect(c, x, dist);
     result.y = objCoordCorrect(c, y, dist);
     result.z = objCoordCorrect(c, z, dist);
+    short vertexNeeded[8] = {-1, -1, -1, -1, -1, -1, -1, -1}; //-1 indicates not needed
+    short neededVertexCount = 0;
     result.faceCount = 0;
     result.faces = NULL;
+    //here we deCube faces, and check which vertices are needed
     for(int i = 0; i < 6; i++){
         if(c->faces[i] != NULL){
             result.faces = realloc(result.faces, (result.faceCount + 1) * sizeof(struct objFace));
             result.faces[result.faceCount] = deCube(*(c->faces[i]));
+            for(int n = 0; n < result.faces[result.faceCount].vertexCount; n++){
+                if(vertexNeeded[result.faces[result.faceCount].vertices[n]] == -1){
+                    vertexNeeded[result.faces[result.faceCount].vertices[n]] = result.faces[result.faceCount].vertices[n];
+                    neededVertexCount++;
+                }
+            }
             result.faceCount++;
         }
     }
-    result.vertexCount = 8;
-    result.vertices = malloc(8 * sizeof(struct vertex));
-    memcpy(result.vertices, c->vertices, 8 * sizeof(struct vertex));
+    result.vertexCount = neededVertexCount;
+    result.vertices = calloc(neededVertexCount, sizeof(struct vertex));
+    //If all vertices are used we can just copy stuff over 
+    if(neededVertexCount == 8){
+        memcpy(result.vertices, c->vertices, 8 * sizeof(struct vertex));
+    }
+    else if(neededVertexCount > 0){
+        //Else we need to create a transformation for face vertices indexes
+        short index = 0;
+        for(short i = 0; i < 8; i++){
+            //If the vertex is set as not needed
+            if(vertexNeeded[i] == -1){
+                //foreach following vertices
+                for(int n = i + 1; n < 8; n++){
+                    if(vertexNeeded[n] != -1){
+                        //We decrease the index of this vertices
+                        vertexNeeded[n] = vertexNeeded[n] - 1;
+                    }
+                }
+            }
+            else{
+                //And while creating the transformation we also copy the needed vertices
+                result.vertices[index] = c->vertices[i];
+                index++;
+            }
+        }
+        //Having created the transformation we can now transform the indexes in faces
+        for(int i = 0; i < result.faceCount; i++){
+            for(int n = 0; n < result.faces[i].vertexCount; n++){
+                result.faces[i].vertices[n] = vertexNeeded[result.faces[i].vertices[n]];
+            }
+        }
+    }
     result.m = c->m;
     if(c->type != NULL){
         result.type = malloc(strlen(c->type) + 1);
@@ -295,10 +336,12 @@ bool isNotEmpty(struct object* c){
 char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize){
     size_t mtlLineSize = 9 + strlen(mtlName);
     char* mtlLine = malloc(mtlLineSize);
-    snprintf(mtlLine, mtlLineSize, "usemtl %s\n", mtlName);
+    if(snprintf(mtlLine, mtlLineSize, "usemtl %s\n", mtlName) < 0){
+        stringError("snprintf")
+    }
     *outSize += mtlLineSize - 1;
     appendTo = realloc(appendTo, *outSize);
-    strcat(appendTo, mtlLine);
+    strncat(appendTo, mtlLine, mtlLineSize);
     free(mtlLine);
     return appendTo;
 }
@@ -350,10 +393,12 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
             if(objectLine == NULL){
                 mallocError("object line", objectLineSize);
             }
-            snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%lu\n", x, y, z, type, *offset);
+            if(snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%lu\n", x, y, z, type, *offset) < 0){
+                stringError("snprintf");
+            }
             *outSize += objectLineSize - 1;
             fileContents = realloc(fileContents, *outSize);
-            strcat(fileContents, objectLine);
+            strncat(fileContents, objectLine, objectLineSize);
             free(objectLine);
             //foreach vertex
             for(int i = 0; i < thisObject->vertexCount; i++){
@@ -368,10 +413,12 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                 if(vertexLine == NULL){
                     mallocError("vertexLine", size);
                 }
-                snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.x, v.y , v.z);
-                *outSize += size  - 1;
+                if(snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.x, v.y , v.z) < 0){
+                    stringError("snprintf")
+                }
+                *outSize += size - 1;
                 fileContents = realloc(fileContents, *outSize);
-                strcat(fileContents, vertexLine);
+                strncat(fileContents, vertexLine, size);
                 free(vertexLine);
             }
             //foreach face
@@ -394,13 +441,15 @@ char* generateModel(model* thisModel, size_t* outSize, char* materialFileName, u
                 int lineOff = 2;
                 for(int m = 0; m < face.vertexCount; m++){
                     size_t len = digits(face.vertices[m]) + 1;
-                    snprintf(line + lineOff, len + 1, "%d ", face.vertices[m]);
+                    if(snprintf(line + lineOff, len + 1, "%d ", face.vertices[m]) < 0){
+                        stringError("snprintf")
+                    }
                     lineOff += len;
                 }
                 strcat(line, "\n");
                 *outSize += size - 1;
                 fileContents = realloc(fileContents, *outSize);
-                strcat(fileContents, line);
+                strncat(fileContents, line, size);
                 free(line);
             }
             if(*offset + thisObject->vertexCount > __LONG_MAX__){

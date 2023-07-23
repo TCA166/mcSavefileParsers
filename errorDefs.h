@@ -118,4 +118,8 @@
         errno = EOVERFLOW; \
         perror("Overflow error"); \
         exit(EXIT_FAILURE);
-        
+
+#define stringError(function) \
+        fprintf(stderr, "Function " function " encountered a problem.\n"); \
+        perror("String function error"); \
+        exit(EXIT_FAILURE);

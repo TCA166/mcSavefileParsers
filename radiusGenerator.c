@@ -220,6 +220,8 @@ int main(int argc, char** argv){
     int counter = 0;
     pid_t child_pid, wpid;
     int status = 0; //status container
+    printf("Starting model parts generation...\n");
+    fflush(stdout);
     //foreach chunk in radius
     for(int x = xCenter - radius; x <= xCenter + radius; x++){
         for(int z = zCenter - radius; z <= zCenter + radius; z++){
@@ -277,10 +279,11 @@ int main(int argc, char** argv){
     size_t currentSize = 1;
     char** parts = calloc(numChildren, sizeof(char*));
     int finished = 0;
+    printf("0.00%% done\r");
     //parent process code
     while((wpid = wait(&status)) > 0){
         progress++;
-        fprintf(stdout, "%.2f%% done\r", ((float)progress / (float)numChildren) * 100);
+        printf("%.2f%% done\r", ((float)progress / (float)numChildren) * 100);
         fflush(stdout);
         //in theory we have to check the WIFEXITED
         if(WIFEXITED(status) && WEXITSTATUS(status) == EXIT_SUCCESS){
