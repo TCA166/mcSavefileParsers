@@ -237,21 +237,23 @@ struct object deCubeObject(struct cube* c){
     else if(neededVertexCount > 0){
         //Else we need to create a transformation for face vertices indexes
         short index = 0;
+        short vertexOff = 0;
         for(short i = 0; i < 8; i++){
             //If the vertex is set as not needed
             if(vertexNeeded[i] == -1){
-                //foreach following vertices
-                for(int n = i + 1; n < 8; n++){
-                    if(vertexNeeded[n] != -1){
-                        //We decrease the index of this vertices
-                        vertexNeeded[n] = vertexNeeded[n] - 1;
-                    }
-                }
+                vertexOff++;
             }
             else{
                 //And while creating the transformation we also copy the needed vertices
                 result.vertices[index] = c->vertices[i];
                 index++;
+            }
+        }
+        //foreach following vertices
+        for(int n = 0; n < 8; n++){
+            if(vertexNeeded[n] != -1){
+                //We decrease the index of this vertices
+                vertexNeeded[n] = vertexNeeded[n] - vertexOff;
             }
         }
         //Having created the transformation we can now transform the indexes in faces
