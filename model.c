@@ -19,8 +19,7 @@
 
 #define sq(a) ((a)*(a))
 
-//My bodge that will take into account the different size on windows
-#define ULONG_MAX sizeof(unsigned long) * 8
+#define reallocMult 1.5
 
 int digits(int i){
     if(i == 0){
@@ -334,15 +333,26 @@ bool isNotEmpty(struct object* c){
     return false;
 }
 
+//Function for allocating the buffer in increasingly large sizes. This is faster than repeatedly reallocating
+void* reallocBy(void* ptr, size_t* curSize, size_t* sizeTaken, float mult){
+    if(*sizeTaken > *curSize){
+        *curSize = *sizeTaken * mult;
+        return realloc(ptr, *sizeTaken * mult);
+    }
+    else{
+        return ptr;
+    }
+}
+
 //Simple procedure taken out of generateModel to prevent duplicate code
-char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize){
+char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize, size_t* alloc){
     size_t mtlLineSize = 9 + strlen(mtlName);
     char* mtlLine = malloc(mtlLineSize);
     if(snprintf(mtlLine, mtlLineSize, "usemtl %s\n", mtlName) < 0){
         stringError("snprintf")
     }
     *outSize += mtlLineSize - 1;
-    appendTo = realloc(appendTo, *outSize);
+    appendTo = reallocBy(appendTo, alloc, outSize, reallocMult);
     strncat(appendTo, mtlLine, mtlLineSize - 1);
     free(mtlLine);
     return appendTo;
@@ -371,6 +381,7 @@ char* generateModel(const model* thisModel, size_t* outSize, char* materialFileN
     else if(*offset < 1){
         *offset = 1; //vertex offset
     }
+    size_t alloc = *outSize; //how much memory we have allocated right now
     //foreach object
     foreachObject(thisModel){
         fprintf(stdout, "%.2f%% done\r", ((float)o)/thisModel->objectCount * 100); 
@@ -379,7 +390,7 @@ char* generateModel(const model* thisModel, size_t* outSize, char* materialFileN
         if(isNotEmpty(thisObject)){
             if(thisObject->m != NULL){
                 //add the usemtl line
-                fileContents = appendMtlLine(thisObject->m->name, fileContents, outSize);
+                fileContents = appendMtlLine(thisObject->m->name, fileContents, outSize, &alloc);
             }
             int x = (int)thisObject->x;
             int y = (int)thisObject->y;
@@ -399,7 +410,7 @@ char* generateModel(const model* thisModel, size_t* outSize, char* materialFileN
                 stringError("snprintf");
             }
             *outSize += objectLineSize - 1;
-            fileContents = realloc(fileContents, *outSize);
+            fileContents = reallocBy(fileContents, &alloc, outSize, reallocMult);
             strncat(fileContents, objectLine, objectLineSize - 1);
             free(objectLine);
             //foreach vertex
@@ -419,7 +430,7 @@ char* generateModel(const model* thisModel, size_t* outSize, char* materialFileN
                     stringError("snprintf")
                 }
                 *outSize += size - 1;
-                fileContents = realloc(fileContents, *outSize);
+                fileContents = reallocBy(fileContents, &alloc, outSize, reallocMult);
                 strncat(fileContents, vertexLine, size - 1);
                 free(vertexLine);
             }
@@ -427,7 +438,7 @@ char* generateModel(const model* thisModel, size_t* outSize, char* materialFileN
             for(int i = 0; i < thisObject->faceCount; i++){
                 struct objFace face = thisObject->faces[i];
                 if(face.m != NULL){
-                    fileContents = appendMtlLine(face.m->name, fileContents, outSize);
+                    fileContents = appendMtlLine(face.m->name, fileContents, outSize, &alloc);
                 }
                 size_t size = 4;
                 for(int m = 0; m < face.vertexCount; m++){
@@ -450,7 +461,7 @@ char* generateModel(const model* thisModel, size_t* outSize, char* materialFileN
                 }
                 strcat(line, "\n");
                 *outSize += size - 1;
-                fileContents = realloc(fileContents, *outSize);
+                fileContents = reallocBy(fileContents, &alloc, outSize, reallocMult);
                 strncat(fileContents, line, size - 1);
                 free(line);
             }
@@ -460,6 +471,7 @@ char* generateModel(const model* thisModel, size_t* outSize, char* materialFileN
             *offset += thisObject->vertexCount;
         }
     }
+    fileContents = realloc(fileContents, *outSize);
     return fileContents;
 }
 

@@ -131,8 +131,6 @@ typeArr can be NULL if you wish to not generate a textured model.
 */
 char* generateModel(const model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset);
 
-char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize);
-
 //Frees all cube faces, cubes and the model itself. Doesn't free the material.
 void freeCubeModel(struct cubeModel* m);
 

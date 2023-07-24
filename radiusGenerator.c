@@ -328,8 +328,13 @@ int main(int argc, char** argv){
     sharedFree(offset, sizeof(unsigned long));
     char* result = malloc(currentSize);
     result[0] = '\0';
+    size_t alloc = currentSize;
     if(materialFilename != NULL){
-        appendMtlLine(materialFilename, result, &currentSize);
+        currentSize += 9 + strlen(materialFilename);
+        result = realloc(result, currentSize);
+        strcat(result, "mtllib ");
+        strcat(result, materialFilename);
+        strcat(result, "\n");
     }
     for(int i = 0; i < *index; i++){
         if(parts[order[i]] != NULL){
