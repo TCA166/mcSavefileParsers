@@ -16,7 +16,7 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         update: true
-        install: zlib
+        install: zlib, zlib-devel
     - name: make
       run: make
     - name: make check
