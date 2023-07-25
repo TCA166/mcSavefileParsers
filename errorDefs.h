@@ -39,7 +39,7 @@
 //More of a warning really since it's non critical
 //When a minecraft block state is larger than the palette
 #define statesError(state, paletteLen, block) \
-        fprintf(stderr, "%d >= %d:states error\n", state, paletteLen); \
+        fprintf(stderr, "%d >= %ld:states error\n", state, paletteLen); \
 
 //When user provides an invalid amount of sub-arguments
 #define argError(argName, argCount) \

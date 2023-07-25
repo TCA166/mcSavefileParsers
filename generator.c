@@ -20,21 +20,21 @@ model generateFromNbt(unsigned char* data, int dataSize, hashTable* materials, h
     Also also the resulting API and code would be less open and more goal centric, which is something I don't really want. Hey if I create code for handling obj file in C why not make it reusable?
     */
     //now we have to decrypt the data in sections
-    struct cubeModel cubeModel = createCubeModel(sections, n, materials, yLim, upLim, downLim, side, objects == NULL, chunkX * 16, chunkZ * 16);
+    cubeModel cubeModel = createCubeModel(sections, n, materials, yLim, upLim, downLim, side, objects == NULL, chunkX * 16, chunkZ * 16);
     /*
     Here we transfer the used materials to an array to save memory since we aren't going to be looking up stuff anymore
     The alternative would be to free the entirety of materials now but have copies stored in objects. That probably would be worse
     */
-    struct material** materialsArr = NULL;
+    material** materialsArr = NULL;
     int materialsLen = 0;
     if(materials != NULL){
         /*
         forHashTableItem(materials){
-            struct material* mat = (struct material*)item->value;
+            material* mat = (material*)item->value;
             free(mat->name);
             free(mat);
         }*/
-        materialsArr = (struct material**)hashTableToArray(materials);
+        materialsArr = (material**)hashTableToArray(materials);
         materialsLen = materials->count;
         freeHashTable(materials);
     }
@@ -47,25 +47,15 @@ model generateFromNbt(unsigned char* data, int dataSize, hashTable* materials, h
     newModel.materialCount = materialsLen;
     //We don't need objects, they have already been copied in cubeModelToModel so let's free that hash table
     if(objects != NULL){
-        forHashTableItem(objects){
-            struct object* obj = (struct object*)item->value;
-            free(obj->type);
-            free(obj->vertices);
-            for(int i = 0; i < obj->faceCount; i++){
-                free(obj->faces[i].vertices);
-            }
-            free(obj->faces);
-            free(obj);
-        }
-        freeHashTable(objects);
+        freeObjectsHashTable(objects);
     }
     freeCubeModel(&cubeModel);
     freeSections(sections, n);
     return newModel;
 }
 
-struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, unsigned int side, bool matCheck, int xOff, int zOff){
-    struct cubeModel cubeModel = initCubeModel(16,16 * sectionLen, 16);
+cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, unsigned int side, bool matCheck, int xOff, int zOff){
+    cubeModel cubeModel = initCubeModel(16,16 * sectionLen, 16);
     for(int i = 0; i < sectionLen; i++){
         //create the block state array
         unsigned int* states = getBlockStates(sections[i], NULL);
@@ -80,7 +70,7 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashT
                     }
                     newBlock.x += xOff;
                     newBlock.z += zOff;
-                    struct material* m = NULL;
+                    material* m = NULL;
                     if(materials != NULL){
                         char* nameEnd = strchr(newBlock.type, ':');
                         if(nameEnd != NULL){
@@ -89,13 +79,13 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashT
                         else{
                             nameEnd = newBlock.type;
                         }
-                        m = (struct material*)getVal(materials, nameEnd);
+                        m = (material*)getVal(materials, nameEnd);
                         if(m == NULL && strcmp(newBlock.type, mcAir) != 0 && matCheck){ //material wasn't found oops
                             materialWarning(nameEnd);
                         }
                     }
                     if(strcmp(newBlock.type, mcAir) != 0){
-                        cubeModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = malloc(sizeof(struct cube));
+                        cubeModel.cubes[x][y + ((sections[i].y + 4) * 16)][z] = malloc(sizeof(cube));
                         *(cubeModel.cubes[x][y + ((sections[i].y + 4) * 16)][z]) = cubeFromBlock(newBlock, side, m);
                     }
                     else{
@@ -110,8 +100,8 @@ struct cubeModel createCubeModel(struct section* sections, int sectionLen, hashT
     return cubeModel;
 }
 
-struct cube cubeFromBlock(struct block block, const unsigned int side, struct material* material){
-    struct cube newCube = createGenericCube(side);
+cube cubeFromBlock(struct block block, const unsigned int side, material* material){
+    cube newCube = createGenericCube(side);
     
     newCube.x = block.x;
     newCube.y = block.y;
@@ -121,4 +111,18 @@ struct cube cubeFromBlock(struct block block, const unsigned int side, struct ma
 
     newCube.type = block.type;
     return newCube;
+}
+
+void freeObjectsHashTable(hashTable* objects){
+    forHashTableItem(objects){
+        object* obj = (object*)item->value;
+        free(obj->type);
+        free(obj->vertices);
+        for(int i = 0; i < obj->faceCount; i++){
+            free(obj->faces[i].vertices);
+        }
+        free(obj->faces);
+        free(obj);
+    }
+    freeHashTable(objects);
 }

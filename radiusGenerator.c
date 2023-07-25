@@ -275,10 +275,20 @@ int main(int argc, char** argv){
     }
     sem_destroy(sem);
     sharedFree(sem, sizeof(sem_t));
+    if(materials != NULL){
+        forHashTableItem(materials){
+            struct material* mat = (struct material*)item->value;
+            free(mat->name);
+            free(mat);
+        }
+        freeHashTable(materials);
+    }
+    if(objects != NULL){
+        freeObjectsHashTable(objects);
+    }
     int progress = 0;
     size_t currentSize = 1;
     char** parts = calloc(numChildren, sizeof(char*));
-    int finished = 0;
     printf("0.00%% done\r");
     //parent process code
     while((wpid = wait(&status)) > 0){
@@ -328,7 +338,6 @@ int main(int argc, char** argv){
     sharedFree(offset, sizeof(unsigned long));
     char* result = malloc(currentSize);
     result[0] = '\0';
-    size_t alloc = currentSize;
     if(materialFilename != NULL){
         currentSize += 9 + strlen(materialFilename);
         result = realloc(result, currentSize);

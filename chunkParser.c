@@ -36,7 +36,7 @@ char* appendProperty(char* string, char* property, const char* propertyName){
     return string;
 }
 
-unsigned int getSections(unsigned char* nbtFileData, long sz, struct section* sections){
+unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections){
     nbt_node* node = nbt_parse(nbtFileData, sz);
     if(errno != 0){
         cNBTError("the nbt file")
@@ -60,7 +60,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, struct section* se
         //get the element
         struct nbt_list* el = list_entry(pos, struct nbt_list, entry);
         nbt_node* compound = el->data;
-        struct section newSection; //create new object that will store this data
+        section newSection; //create new object that will store this data
         //get the Y
         nbt_node* yNode = nbt_find_by_name(compound, "Y");
         if(yNode == NULL){
@@ -184,7 +184,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, struct section* se
     return n;
 }
 
-unsigned int* getBlockStates(struct section s, int* outLen){
+unsigned int* getBlockStates(section s, int* outLen){
     //first we need to decode the franken compression scheme
     unsigned int* states = NULL;
     if(s.paletteLen > 1){
@@ -218,8 +218,8 @@ unsigned int* getBlockStates(struct section s, int* outLen){
     return states;
 }
 
-struct block createBlock(int x, int y, int z, unsigned int* blockStates, struct section parentSection){
-    struct block newBlock;
+block createBlock(int x, int y, int z, unsigned int* blockStates, section parentSection){
+    block newBlock;
     int blockPos = statesFormula(x, y, z);
     newBlock.x = x;
     newBlock.y = y + ((parentSection.y + 4) * 16);
@@ -253,7 +253,7 @@ bool contains(char** arr, char* str, int arrLen){
 }
 
 //this code feels wrong to write in C ngl...
-char** createGlobalPalette(struct section* sections, int len, int* outLen, bool freeSectionPalettes){
+char** createGlobalPalette(section* sections, int len, int* outLen, bool freeSectionPalettes){
     char** globalPalette = NULL;
     int j = 0;
     for(int i = 0; i < len; i++){
@@ -272,7 +272,7 @@ char** createGlobalPalette(struct section* sections, int len, int* outLen, bool 
     return globalPalette;
 }
 
-void freeSections(struct section* sections, int sectionLen){
+void freeSections(section* sections, int sectionLen){
     for(int i = 0; i < sectionLen; i++){
         for(int n = 0; n < sections[i].paletteLen; n++){
             free(sections[i].blockPalette[n]);

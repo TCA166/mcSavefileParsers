@@ -45,28 +45,28 @@ model initModel(int objectCount){
     model newModel;
     newModel.materialArr = NULL;
     newModel.materialCount = 0;
-    newModel.objects = calloc(objectCount, sizeof(struct object*));
+    newModel.objects = calloc(objectCount, sizeof(object*));
     newModel.objectCount = objectCount;
     return newModel;
 }
 
-struct cubeModel initCubeModel(int x, int y, int z){
-    struct cubeModel newModel;
+cubeModel initCubeModel(int x, int y, int z){
+    cubeModel newModel;
     newModel.x = x;
     newModel.y = y;
     newModel.z = z;
-    newModel.cubes = malloc(x * sizeof(struct cube***));
+    newModel.cubes = malloc(x * sizeof(cube***));
     for(int i = 0; i < x; i++){
-        newModel.cubes[i] = malloc(y * sizeof(struct cube**));
+        newModel.cubes[i] = malloc(y * sizeof(cube**));
         for(int n = 0; n < y; n++){
-            newModel.cubes[i][n] = malloc(z * sizeof(struct cube*));
+            newModel.cubes[i][n] = malloc(z * sizeof(cube*));
         }
     }
     return newModel;
 }
 
-struct cube createGenericCube(unsigned int side){
-    struct cube newCube;
+cube createGenericCube(unsigned int side){
+    cube newCube;
     float dist = side/2;
     newCube.side = side;
     //It's important we initialise EVERY value in this struct. generateModel really doesn't like uninitialized values
@@ -106,8 +106,8 @@ struct vertex newVertex(int x, int y, int z){
 
 //For whatever reason this needs to be true
 //a > b && c < d
-struct cubeFace* newCubeFace(int a, int b, int c, int d){
-    struct cubeFace* face = malloc(sizeof(struct cubeFace));
+cubeFace* newCubeFace(int a, int b, int c, int d){
+    cubeFace* face = malloc(sizeof(cubeFace));
     face->v1 = a;
     face->v2 = b;
     face->v3 = c;
@@ -115,7 +115,7 @@ struct cubeFace* newCubeFace(int a, int b, int c, int d){
     return face;
 }
 
-struct objFace deCube(struct cubeFace face){
+struct objFace deCube(cubeFace face){
     struct objFace new;
     new.vertices = malloc(sizeof(int) * 4);
     new.vertices[0] = face.v1;
@@ -131,16 +131,16 @@ bool isPresent(char* string, hashTable* objects){
     if(objects == NULL || string == NULL){
         return false;
     }
-    struct object* ptr = getVal(objects, string);
+    object* ptr = getVal(objects, string);
     return ptr != NULL;
 }
 
-unsigned int cullFaces(struct cubeModel* thisModel, bool cullChunkBorder, hashTable* specialObjects){
+unsigned int cullFaces(cubeModel* thisModel, bool cullChunkBorder, hashTable* specialObjects){
     long count = 0;
     for(int x = 0; x < thisModel->x; x++){
         for(int y = 0; y < thisModel->y; y++){
             for(int z = 0; z < thisModel->z; z++){
-                struct cube* c = thisModel->cubes[x][y][z];
+                cube* c = thisModel->cubes[x][y][z];
                 if(c != NULL){
                     //x
                     if( x + 1 >= thisModel->x){
@@ -203,8 +203,8 @@ unsigned int cullFaces(struct cubeModel* thisModel, bool cullChunkBorder, hashTa
 }
 
 //Apart from simply converting this function also removes not needed vertices
-struct object deCubeObject(struct cube* c){
-    struct object result;
+object deCubeObject(cube* c){
+    object result;
     float dist = c->side/2;
     result.x = objCoordCorrect(c, x, dist);
     result.y = objCoordCorrect(c, y, dist);
@@ -236,23 +236,21 @@ struct object deCubeObject(struct cube* c){
     else if(neededVertexCount > 0){
         //Else we need to create a transformation for face vertices indexes
         short index = 0;
-        short vertexOff = 0;
         for(short i = 0; i < 8; i++){
             //If the vertex is set as not needed
             if(vertexNeeded[i] == -1){
-                vertexOff++;
+                //foreach following vertices
+                for(int n = i + 1; n < 8; n++){
+                    if(vertexNeeded[n] != -1){
+                        //We decrease the index of this vertices
+                        vertexNeeded[n] = vertexNeeded[n] - 1;
+                    }
+                }
             }
             else{
                 //And while creating the transformation we also copy the needed vertices
                 result.vertices[index] = c->vertices[i];
                 index++;
-            }
-        }
-        //foreach following vertices
-        for(int n = 0; n < 8; n++){
-            if(vertexNeeded[n] != -1){
-                //We decrease the index of this vertices
-                vertexNeeded[n] = vertexNeeded[n] - vertexOff;
             }
         }
         //Having created the transformation we can now transform the indexes in faces
@@ -273,25 +271,25 @@ struct object deCubeObject(struct cube* c){
     return result;
 }
 
-model cubeModelToModel(const struct cubeModel* m, hashTable* specialObjects){
+model cubeModelToModel(const cubeModel* m, hashTable* specialObjects){
     model result = initModel(m->x * m->y * m->z);
     unsigned int index = 0;
     for(int x = 0; x < m->x; x++){
         for(int y = 0; y < m->y; y++){
             for(int z = 0; z < m->z; z++){
                 if(m->cubes[x][y][z] != NULL){
-                    struct object* prot = NULL;
+                    object* prot = NULL;
                     if(m->cubes[x][y][z]->type != NULL){
                         char* strippedName = strchr(m->cubes[x][y][z]->type, ':') + 1;
                         if(strippedName == NULL){
                             strippedName = m->cubes[x][y][z]->type;
                         }
-                        prot = (struct object*)getVal(specialObjects, strippedName);
+                        prot = (object*)getVal(specialObjects, strippedName);
                     }
-                    result.objects[index] = malloc(sizeof(struct object));
+                    result.objects[index] = malloc(sizeof(object));
                     if(prot != NULL){
-                        memcpy(result.objects[index], prot, sizeof(struct object));
-                        struct object* newObject = result.objects[index];
+                        memcpy(result.objects[index], prot, sizeof(object));
+                        object* newObject = result.objects[index];
                         //float dist = m->cubes[x][y][z]->side/2;
                         newObject->x = m->cubes[x][y][z]->x * m->cubes[x][y][z]->side;
                         newObject->y = m->cubes[x][y][z]->y * m->cubes[x][y][z]->side; 
@@ -323,7 +321,7 @@ model cubeModelToModel(const struct cubeModel* m, hashTable* specialObjects){
     return result;
 }
 
-bool isNotEmpty(struct object* c){
+bool isNotEmpty(object* c){
     if(c == NULL){
         return false;
     }
@@ -358,7 +356,7 @@ char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize, size_t
     return appendTo;
 }
 
-char* generateModel(const model* thisModel, size_t* outSize, char* materialFileName, unsigned long* offset){
+char* generateModel(const model* thisModel, size_t* outSize, const char* materialFileName, offset_t* offset){
     char* fileContents = NULL;
     size_t locSize = 1;
     if(outSize == NULL){
@@ -374,7 +372,7 @@ char* generateModel(const model* thisModel, size_t* outSize, char* materialFileN
         strcat(fileContents, materialFileName);
         strcat(fileContents, "\n");
     }
-    unsigned long locOffset = 1;
+    offset_t locOffset = 1;
     if(offset == NULL){
         offset = &locOffset;
     }
@@ -386,7 +384,7 @@ char* generateModel(const model* thisModel, size_t* outSize, char* materialFileN
     foreachObject(thisModel){
         fprintf(stdout, "%.2f%% done\r", ((float)o)/thisModel->objectCount * 100); 
         fflush(stdout);
-        struct object* thisObject = thisModel->objects[o];
+        object* thisObject = thisModel->objects[o];
         if(isNotEmpty(thisObject)){
             if(thisObject->m != NULL){
                 //add the usemtl line
@@ -493,7 +491,7 @@ void freeModel(model* m){
     free(m->materialArr);
 }
 
-void freeCubeModel(struct cubeModel* m){
+void freeCubeModel(cubeModel* m){
     for(int x = 0; x < m->x; x++){
         for(int y = 0; y < m->y; y++){
             for(int z = 0; z < m->z; z++){
@@ -530,7 +528,7 @@ hashTable* getMaterials(char* filename){
     bytes[sz] = '\0';
     hashTable* result = initHashTable(objCount);
     char* token = strtok(bytes, "\n");
-    struct material newMaterial;
+    material newMaterial;
     newMaterial.name = NULL;
     newMaterial.d = 0;
     while(token != NULL){ //foreach line
@@ -553,7 +551,7 @@ hashTable* getMaterials(char* filename){
                 if(f != NULL){
                     f++;
                     newMaterial.d = atof(f);
-                    struct material* ptr = malloc(sizeof(struct material));
+                    material* ptr = malloc(sizeof(material));
                     *ptr = newMaterial;
                     insertHashItem(result, newMaterial.name, ptr);
                 }
@@ -587,7 +585,7 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
     }
     hashTable* result = initHashTable(objCount); 
     char* token = strtok(bytes, "\n");
-    struct object newObject;
+    object newObject;
     newObject.type = NULL;
     newObject.vertices = NULL;
     newObject.faces = NULL;
@@ -596,21 +594,21 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
     newObject.z = -1;
     newObject.vertexCount = 0;
     newObject.faceCount = 0;
-    struct material* nextM = NULL;
+    material* nextM = NULL;
     while(token != NULL){
         switch(token[0]){
             case 'u':;
                 if(materials != NULL){
                     char* mtlName = strchr(token, ' ');
                     mtlName++;
-                    nextM = (struct material*)getVal(materials, mtlName);
+                    nextM = (material*)getVal(materials, mtlName);
                 }
                 break;
             case 'o':;
                 //something is up here with key
                 if(newObject.type != NULL){
                     if(newObject.vertexCount > 0 && newObject.faceCount > 0){
-                        struct object* ptr = malloc(sizeof(struct object));
+                        object* ptr = malloc(sizeof(object));
                         *ptr = newObject;
                         insertHashItem(result, newObject.type, ptr);
                     }
@@ -714,17 +712,17 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
     }
     free(bytes);
     if(newObject.vertexCount > 0 && newObject.faceCount > 0){
-        struct object* ptr = malloc(sizeof(struct object));
+        object* ptr = malloc(sizeof(object));
         *ptr = newObject;
         insertHashItem(result, newObject.type, ptr);
     }
     return result;
 }
 
-unsigned long getTotalVertexCount(model m){
-    unsigned long diff = 0;
+offset_t getTotalVertexCount(const model m){
+    offset_t diff = 0;
     foreachObject((&m)){
-        struct object* object = m.objects[o];
+        object* object = m.objects[o];
         if(object->faceCount > 0){
             diff += object->vertexCount;
         }
@@ -732,8 +730,8 @@ unsigned long getTotalVertexCount(model m){
     return diff;
 }
 
-struct object modelToObject(const model* m, const char* type){
-    struct object result;
+object modelToObject(const model* m, const char* type){
+    object result;
     result.x = 0;
     result.y = 0;
     result.z = 0;
@@ -744,7 +742,7 @@ struct object modelToObject(const model* m, const char* type){
     result.m = NULL;
     result.type = (char*)type;
     foreachObject(m){
-        struct object* thisObject = m->objects[o];
+        object* thisObject = m->objects[o];
         int vertexCount = 0; //the amount of local vertices that was appended to the result array
         int* localV = calloc(thisObject->vertexCount, sizeof(int)); //local transformation of face vertex 
         result.vertices = realloc(result.vertices, (result.vertexCount + thisObject->vertexCount) * sizeof(struct vertex));
@@ -787,6 +785,7 @@ struct object modelToObject(const model* m, const char* type){
             }
         }
         result.faceCount += thisObject->faceCount;
+        free(localV);
     }
     return result;
 }

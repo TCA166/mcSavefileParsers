@@ -23,5 +23,8 @@ modelCheck.c: model.check
 modelCheck: modelCheck.c ../model.o ../hTable.o
 	gcc modelCheck.c ../model.o ../hTable.o -lcheck -lm -lsubunit -o modelCheck -g
 
+benchmark: ../model.o ../hTable.o benchmark.c
+	gcc benchmark.c ../model.o ../hTable.o -lm -o benchmark
+
 clean:
 	rm -f *.c

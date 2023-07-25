@@ -22,7 +22,7 @@
 typedef unsigned char byte;
 
 //A struct representing a mc game chunk
-struct chunk{
+typedef struct chunk{
     int x; //x coordinate in chunk coordinates
     int z; //z coordinate in chunk coordinates
     unsigned int offset; //3 bytes of offset
@@ -31,10 +31,7 @@ struct chunk{
     int byteLength; //it actually is signed in the files
     byte compression;
     byte* data; //pointer to decompressed bytes
-};
-
-//struct chunk
-typedef struct chunk chunk;
+} chunk;
 
 /*
 Returns a chunk based on coordinates.
