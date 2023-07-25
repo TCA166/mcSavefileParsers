@@ -16,7 +16,7 @@ jobs:
     - uses: msys2/setup-msys2@v2
       with:
         update: true
-        install: zlib zlib-devel make
+        install: zlib zlib-devel make mingw-w64-x86_64-gcc
     - name: make
       run:  C:\Windows\system32\cmd.exe /D /S /C D:\a\_temp\setup-msys2\msys2.cmd -c "make"
     - name: make check
