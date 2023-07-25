@@ -398,7 +398,11 @@ int main(int argc, char** argv){
     char* result = malloc(currentSize);
     result[0] = '\0';
     if(materialFilename != NULL){
-        appendMtlLine(materialFilename, result, &currentSize);
+        currentSize += 9 + strlen(materialFilename);
+        result = realloc(result, currentSize);
+        strcat(result, "mtllib ");
+        strcat(result, materialFilename);
+        strcat(result, "\n");
     }
     for(int i = 0; i < numChildren; i++){
         CloseHandle(threads[i]);
