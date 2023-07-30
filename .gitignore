@@ -21,3 +21,4 @@ mtlGen
 *.txt
 *Check*
 tests/benchmark
+mtlFiles
