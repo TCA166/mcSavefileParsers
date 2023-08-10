@@ -16,7 +16,7 @@ endif
 all: CFLAGS := -O3
 all: radiusGenerator modelGenerator chunkExtractor regionFileReader
 
-debug: CFLAGS := -Wall -Werror -Wpedantic
+debug: CFLAGS := -Wall -Werror -Wpedantic -g
 debug: radiusGenerator modelGenerator chunkExtractor regionFileReader
 
 cNBT.o: 

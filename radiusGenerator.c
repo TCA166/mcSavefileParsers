@@ -296,37 +296,46 @@ int main(int argc, char** argv){
         printf("%.2f%% done\r", ((float)progress / (float)numChildren) * 100);
         fflush(stdout);
         //in theory we have to check the WIFEXITED
-        if(WIFEXITED(status) && WEXITSTATUS(status) == EXIT_SUCCESS){
-            int childNum = 0;
-            for(int i = 0; i < counter; i++){
-                if(childrenPids[i] == wpid){
-                    childNum = i;
-                    break;
+        if(WIFEXITED(status)){
+            int exitStatus = WEXITSTATUS(status);
+            if(exitStatus == EXIT_SUCCESS){
+                int childNum = 0;
+                for(int i = 0; i < counter; i++){
+                    if(childrenPids[i] == wpid){
+                        childNum = i;
+                        break;
+                    }
                 }
+                size_t size = -1;
+                ssize_t res = read(fd[childNum][READ_END], &size, sizeof(size_t));
+                if(res < 0){
+                    pipeError("parent", "reading 1");
+                }
+                if(size < 1){
+                    pipeError("parent", "reading-size value invalid");
+                }
+                parts[childNum] = malloc(size);
+                close(fd[childNum][READ_END]);
+                int shmid = shmget(parentId + childNum, size, 0644);
+                if(shmid < 0){
+                    shmError("parent shmget");
+                }
+                char* shmBuffer = (char*)shmat(shmid, NULL, 0);
+                if(shmBuffer == NULL){
+                    shmError("parent shmat");
+                }
+                strcpy(parts[childNum], shmBuffer);
+                shmdt(shmBuffer);
+                //having done what we wanted to do now we can just remove this shared segment
+                shmctl(shmid, IPC_RMID, 0);
+                currentSize += size;
             }
-            size_t size = -1;
-            ssize_t res = read(fd[childNum][READ_END], &size, sizeof(size_t));
-            if(res < 0){
-                pipeError("parent", "reading 1");
+            else{
+                fprintf(stderr, "Process %d failed with exit status:%d", wpid, exitStatus);
             }
-            if(size < 1){
-                pipeError("parent", "reading-size value invalid");
-            }
-            parts[childNum] = malloc(size);
-            close(fd[childNum][READ_END]);
-            int shmid = shmget(parentId + childNum, size, 0644);
-            if(shmid < 0){
-                shmError("parent shmget");
-            }
-            char* shmBuffer = (char*)shmat(shmid, NULL, 0);
-            if(shmBuffer == NULL){
-                shmError("parent shmat");
-            }
-            strcpy(parts[childNum], shmBuffer);
-            shmdt(shmBuffer);
-            //having done what we wanted to do now we can just remove this shared segment
-            shmctl(shmid, IPC_RMID, 0);
-            currentSize += size;
+        }
+        else if(WIFSIGNALED(status)){
+            fprintf(stderr, "Process %d failed by signal %s.\n", wpid, strsignal(WTERMSIG(status)));
         }
         else{
             fprintf(stderr, "Process %d failed.\n", wpid);

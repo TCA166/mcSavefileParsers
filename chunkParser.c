@@ -147,7 +147,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
                 propertyString = appendProperty(propertyString, north, "north");
             }
             if(open != NULL){
-                propertyString = appendProperty(propertyString, part, "open");
+                propertyString = appendProperty(propertyString, open, "open");
             }
             if(part != NULL){
                 propertyString = appendProperty(propertyString, part, "part");

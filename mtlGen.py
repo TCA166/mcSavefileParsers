@@ -67,6 +67,8 @@ if __name__ == "__main__":
                         rgb[2] = 113 / 255
                     if "top" in filename and t:
                         filename = filename.replace("_top", "", 1)
+                    if "water_still" in filename:
+                        writeMaterialSection(o, filename[:-4].replace("_still", ""), rgb, rgb[3])
                     writeMaterialSection(o, filename[:-4], rgb, rgb[3])
                 else:
                     writeMaterialSection(o, filename[:-4], (1, 1, 1), 1)
