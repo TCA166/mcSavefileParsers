@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
-#include "../model.h"
+#include "../src/lib/model.h"
 
 //Benchmark for reallocBy multiplier size. Haven't found much difference in benchmarks
 

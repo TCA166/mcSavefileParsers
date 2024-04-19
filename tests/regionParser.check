@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../regionParser.h"
+#include "../src/lib/regionParser.h"
 
 
 //SHA256 of testRegion: c2105d33e5ecae63139f2f2b24abbff229b1f4c52c777cef707fc85f5a745694

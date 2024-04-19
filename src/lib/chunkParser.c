@@ -4,8 +4,8 @@
 #include <math.h>
 #include <stdbool.h>
 
-#include "./cNBT/nbt.h"
-#include "./cNBT/list.h"
+#include "../../cNBT/nbt.h"
+#include "../../cNBT/list.h"
 
 #include "errorDefs.h"
 #include "chunkParser.h"

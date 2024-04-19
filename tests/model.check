@@ -1,4 +1,4 @@
-#include "../model.h"
+#include "../src/lib/model.h"
 #include <stdlib.h>
 #include <stdio.h>
 

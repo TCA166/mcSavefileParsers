@@ -6,8 +6,8 @@
 
 #include <math.h>
 
-#include "errorDefs.h"
-#include "generator.h"
+#include "./lib/errorDefs.h"
+#include "./lib/generator.h"
 
 int main(int argc, char** argv){
     if(argc < 2){

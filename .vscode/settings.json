@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "*.embeddedhtml": "html",
+        "*.check": "plaintext",
+        "*.m": "objective-c",
         "cmath": "c",
         "stdio.h": "c",
         "array": "c",
@@ -15,7 +17,9 @@
         "compare": "c",
         "unistd.h": "c",
         "types.h": "c",
-        "semaphore.h": "c"
+        "semaphore.h": "c",
+        "wait.h": "c",
+        "generator.h": "c"
     },
     "cSpell.words": [
         "blockstates",

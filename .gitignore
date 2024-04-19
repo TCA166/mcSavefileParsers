@@ -19,6 +19,7 @@ mtlGen
 *.exe
 *.ow
 *.txt
+!license.txt
 *Check*
 tests/benchmark
 mtlFiles

@@ -3,8 +3,8 @@
 #include <string.h>
 #include <errno.h>
 
-#include "errorDefs.h"
-#include "regionParser.h"
+#include "./lib/errorDefs.h"
+#include "./lib/regionParser.h"
 
 //https://minecraft.fandom.com/wiki/Region_file_format
 

@@ -7,9 +7,9 @@
 #include <stdbool.h>
 #include <signal.h>
 
-#include "errorDefs.h"
-#include "generator.h"
-#include "regionParser.h"
+#include "./lib/errorDefs.h"
+#include "./lib/generator.h"
+#include "./lib/regionParser.h"
 
 #if defined(__unix__)
     //All of these are POSIX compliant according to this https://pubs.opengroup.org/onlinepubs/9699919799/idx/head.html

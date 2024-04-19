@@ -5,8 +5,8 @@
 
 #include <math.h>
 
-#include "errorDefs.h"
-#include "regionParser.h"
+#include "./lib/errorDefs.h"
+#include "./lib/regionParser.h"
 
 //Program for extracting specific chunks from all region files
 int main(int argc, char** argv){

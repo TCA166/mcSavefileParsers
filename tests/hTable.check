@@ -1,4 +1,4 @@
-#include "../hTable.h"
+#include "../src/lib/hTable.h"
 #include <stdio.h>
 #include <stdlib.h>
 
