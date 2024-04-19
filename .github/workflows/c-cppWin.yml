@@ -17,6 +17,8 @@ jobs:
       with:
         update: true
         install: zlib zlib-devel make mingw-w64-x86_64-gcc mingw-w64-x86_64-check 
+    - name: config
+      run: git submodule update --init --recursive
     - name: make
       run:  C:\Windows\system32\cmd.exe /D /S /C D:\a\_temp\setup-msys2\msys2.cmd -c "make"
     - name: make check
