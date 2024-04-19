@@ -1,3 +1,9 @@
+/*!
+ @file chunkExtractor.c
+ @brief Extracts specific chunks from all region files
+ @details This program extracts specific chunks from all region files   
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -8,7 +14,13 @@
 #include "./lib/errorDefs.h"
 #include "./lib/regionParser.h"
 
-//Program for extracting specific chunks from all region files
+/*!
+ @brief Extracts a chunk from a region file
+ @details Loads a chunk from a region file using the regionParser library, then writes it to a file using extractChunk.
+ @see regionParser.h
+ @see @ref extractChunk
+ @return The chunk object
+*/
 int main(int argc, char** argv){
     if(argc < 3){
         argCountError();

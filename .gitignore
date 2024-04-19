@@ -23,3 +23,4 @@ mtlGen
 *Check*
 tests/benchmark
 mtlFiles
+doc/build/*

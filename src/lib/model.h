@@ -1,21 +1,44 @@
+/*!
+ @file model.h
+ @brief Definitions for 3D model structs and functions
+*/
+
+/*!
+ @defgroup model 3D Model
+ @brief Definitions for 3D model structs and functions
+*/
+
 #include "hTable.h"
 #include <stdbool.h>
 
-//mtl material
+/*!
+ @struct material
+ @brief A material struct that can be used in a model
+ @ingroup model
+*/
 typedef struct material{
     char* name;
     //here i could add more fields... but field d is the only one we need
     float d;
 } material;
 
-//obj file vertex
+/*!
+ @struct vertex
+ @brief A 3D vertex struct
+ @ingroup model
+*/
 typedef struct vertex{
     float x;
     float y;
     float z;
 } vertex;
 
-//A face with only 4 vertices. V variables point to vertices in the associated cube object
+/*!
+ @struct cubeFace
+ @brief A face of a cube
+ @details A face with only 4 vertices. V variables point to vertices in the associated cube object
+ @ingroup model
+*/
 typedef struct cubeFace{
     unsigned int v1;
     unsigned int v2;
@@ -23,7 +46,12 @@ typedef struct cubeFace{
     unsigned int v4;
 } cubeFace;
 
-//obj file cube with 6 cubeFaces and 8 defining vertices
+/*!
+ @struct cube
+ @brief obj file cube with 6 cubeFaces and 8 defining vertices
+ @details A cube with 6 cubeFaces and 8 defining vertices. The cube is defined by it's x, y, z and side.
+ @ingroup model
+*/
 typedef struct cube{
     float x;
     float y;
@@ -35,10 +63,12 @@ typedef struct cube{
     material* m;
 } cube;
 
-/*
-A strict 3D model struct that is made up of cubes in a strict 3D arrangement.
-Can be transformed into a normal loose model.
-Ideally if you plan on generating a model of something that can be represented by cubes you first generate this.
+/*!
+ @struct cubeModel
+ @brief A strict 3D model struct that is made up of cubes in a strict 3D arrangement.
+ @note Can be transformed into a normal loose model.
+ @note Ideally if you plan on generating a model of something that can be represented by cubes you first generate this.
+ @ingroup model
 */
 typedef struct cubeModel{
     unsigned int x; //Max x index
@@ -47,14 +77,24 @@ typedef struct cubeModel{
     struct cube**** cubes; //nullable 3d array of cubes
 } cubeModel;
 
-//A dynamic array of vertices - an object face
+/*!
+ @struct objFace
+ @brief A dynamic array of vertices - an object face
+ @details A dynamic array of vertices - an object face. The vertices are relative to the object's x, y, z coordinates.
+ @ingroup model
+*/
 typedef struct objFace{
     size_t vertexCount;
     int* vertices;
     material* m;
 } objFace;
 
-//A dynamic obj file object
+/*!
+ @struct object
+ @brief A 3D object struct that is made up of vertices and faces.
+ @details A 3D object struct that is made up of vertices and faces. The vertices are relative to the object's x, y, z coordinates.
+ @ingroup model
+*/
 typedef struct object{
     float x;
     float y;
@@ -69,8 +109,11 @@ typedef struct object{
 
 //The idea behind the materialArr is that it's way more memory efficient to store materials once rather than possibly hundreds of times
 
-/*
-A loose array of even looser objects with an associated array of materials that objects can point to.
+/*!
+ @struct model
+ @brief A loose array of even looser objects with an associated array of materials that objects can point to.
+ @details A loose array of even looser objects with an associated array of materials that objects can point to.
+ @ingroup model
 */
 typedef struct model{
     object** objects; //Nullable array of objects
@@ -79,111 +122,225 @@ typedef struct model{
     size_t materialCount; //Size of materialArr
 } model;
 
+/*!
+ @def dimensionalFor
+ @brief A 3D model struct that is made up of vertices and faces.
+ @details A 3D model struct that is made up of vertices and faces. The vertices are relative to the model's x, y, z coordinates.
+ @param xLim The maximum x index
+ @param yLim The maximum y index
+ @param zLim The maximum z index
+ @ingroup model
+*/
 #define dimensionalFor(xLim, yLim, zLim) \
     for(int x = 0; x < xLim; x++) \
     for(int y = 0; y < yLim; y++) \
     for(int z = 0; z < zLim; z++)
 
-//Foreach object in a model*. Provides index variable o, and assures that the object will not be null
+/*!
+ @def foreachVertex
+ @brief Foreach object in a model*. Provides index variable o, and assures that the object will not be null
+ @param model The model to iterate over
+ @ingroup model
+*/
 #define foreachObject(model) \
     for(int o = 0; o < model->objectCount; o++) \
     if(model->objects[o] != NULL)
 
-//Foreach cube in a cubeModel*. Provides x, y and z, and assures that the cube will not be null
+/*!
+ @def foreachCube
+ @brief Foreach cube in a cubeModel*. Provides x, y and z, and assures that the cube will not be null
+ @param cubeModel The cubeModel to iterate over
+ @ingroup model
+*/
 #define foreachCube(cubeModel) \
     dimensionalFor(cubeModel->x, cubeModel->y, cubeModel->z) \
     if(cubeModel->cubes[x][y][z] != NULL)
 
-//Type for holding vertex offset (unsigned long)
+/*! 
+ @typedef offset_t
+ @brief Type for holding vertex offset (unsigned long)
+ @ingroup model
+*/
 typedef unsigned long offset_t;
 
-/*
-Initialises a model variable and allocates necessary memory.
-Returns a new reference that will need to be freed.
+/*!
+ @brief Initialises a model variable and allocates necessary memory.
+ @param objectCount The number of objects in the model
+ @return a new reference that will need to be freed.
+ @ingroup model
 */
 model initModel(int objectCount);
 
-/*
-Initialises a new cubeModel variable with dimensions x*y*z cubes and allocates necessary memory.
-Returns a new reference that will need to be freed.
+/*!
+ @brief Initialises a new cubeModel variable with dimensions x*y*z cubes and allocates necessary memory.
+ @param x The x dimension of the cubeModel
+ @param y The y dimension of the cubeModel
+ @param z The z dimension of the cubeModel
+ @return Returns a new reference that will need to be freed.
+ @ingroup model
 */
 cubeModel initCubeModel(int x, int y, int z);
 
-//Creates a new vertex
+/*!
+ @brief Creates a new vertex
+ @param x The x coordinate of the vertex
+ @param y The y coordinate of the vertex
+ @param z The z coordinate of the vertex
+ @return The created vertex
+ @ingroup model
+*/
 vertex newVertex(int x, int y, int z);
 
-/*
-Removes all outward or internal faces from a model.
-All cubes that are NULL or whose type is in ignoreType are considered to be outward and faces touching those cubes are not culled.
-Culled faces are free'd and set as null.
+/*!
+ @brief Removes all outward or internal faces from a model.
+ @details All cubes that are NULL or whose type is in ignoreType are considered to be outward and faces touching those cubes are not culled.
+ @note Culled faces are free'd and set as null.
+ @param thisModel The model to cull faces from
+ @param cullChunkBorder Whether to cull faces on the chunk border
+ @param specialObjects A hash table of special objects to not cull faces from
+ @return The number of faces culled
+ @ingroup model
 */
 unsigned int cullFaces(cubeModel* thisModel, bool cullChunkBorder, hashTable* specialObjects);
 
-/*
-Converts a cubeModel to a normal model, and inserts special objects if specialObjects!=NULL when types match.
-Uses initModel to create a new model reference, and also creates new object references within the new model.
+/*!
+ @brief Converts a cubeModel to a normal model, and inserts special objects if specialObjects!=NULL when types match.
+ @details Uses initModel to create a new model reference, and also creates new object references within the new model.
+ @param m The cubeModel to convert
+ @param specialObjects A hash table of special objects to insert into the model
+ @return The new model reference
+ @ingroup model
 */
 model cubeModelToModel(const cubeModel* m, hashTable* specialObjects);
 
-/*
-Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
-outSize, materialFileName and offset can be NULL, if you wish to not get those values back.
-If materialFileName is NULL the mttlib line will not be added, but usemtl will be generated normally.
+/*!
+ @brief Generates a model from a cubeModel.
+ @details Generates a model from a cubeModel. The model will have the same dimensions as the cubeModel.
+ @note Returns a string that are valid .obj file contents. Be sure to free the contents once you are done with them.
+ @note outSize, materialFileName and offset can be NULL, if you wish to not get those values back.
+ @note If materialFileName is NULL the mttlib line will not be added, but usemtl will be generated normally.
+ @param thisModel The model to generate
+ @param outSize The size of the generated model
+ @param materialFileName The name of the material file
+ @param offset The offset of the model
+ @return The generated model
+ @ingroup model
 */
 char* generateModel(const model* thisModel, size_t* outSize, const char* materialFileName, offset_t* offset);
 
-//Frees all cube faces, cubes and the model itself. Doesn't free the material.
+/*!
+ @brief Frees all cube faces, cubes and the model itself. Doesn't free the material.
+ @param m The cubeModel to free
+ @ingroup model
+*/
 void freeCubeModel(cubeModel* m);
 
-//Frees everything that can be allocated in a model m. This includes the materials
+/*!
+ @brief Frees everything that can be allocated in a model m. This includes the materials
+ @param m The model to free
+ @ingroup model
+*/
 void freeModel(model* m);
 
-//Creates and allocates necessary memory for a new cubeFace object
+/*!
+ @brief Creates and allocates necessary memory for a new cubeFace object
+ @param a The first vertex index
+ @param b The second vertex index
+ @param c The third vertex index
+ @param d The fourth vertex index
+ @return The new cubeFace reference
+ @ingroup model
+*/
 cubeFace* newCubeFace(int a, int b, int c, int d);
 
-/*
-Extracts materials from a mtl file.
-Allocates necessary memory for material type strings.
-Returns a new reference to a material hash table.
+/*!
+ @brief Extracts materials from a mtl file.
+ @details Allocates necessary memory for material type strings.
+ @param filename The name of the mtl file
+ @return Returns a new reference to a material hash table.
+ @ingroup model
 */
 hashTable* getMaterials(char* filename);
 
-//Creates a clone of a material struct in memory
+/*!
+ @brief Creates a clone of a material struct in memory
+ @param input The material to clone
+ @return The cloned material
+ @ingroup model
+*/
 material* cloneMaterial(const material* input);
 
-/*
-Converts a cubeFace to the dynamic obj face.
-Allocates necessary for face vertices.
+/*!
+ @brief Converts a cubeFace to the dynamic obj face.
+ @param face the face to convert
+ @return The converted face
+ @ingroup model
 */
 objFace deCube(cubeFace face);
 
-/*
-Converts a cube into an object.
-Allocates memory for faces, vertices and type.
-Utilizes deCube for face conversion so by proxy allocates memory for face vertices.
+/*!
+ @brief Converts a cube into an object.
+ @details Allocates memory for faces, vertices and type.
+ @note Utilizes deCube for face conversion so by proxy allocates memory for face vertices.
+ @param c The cube to convert
+ @return The converted object
+ @ingroup model
 */
 object deCubeObject(cube* c);
 
-/*
-Returns a hash table with objects from a wavefront file. Returns NULL if fails.
+/*!
+ @brief Converts a cubeModel to a model.
+ @details Returns a hash table with objects from a wavefront file. Returns NULL if fails.
+ @param filename The name of the wavefront file
+ @param materials The materials hash table to use for the model
+ @param side The side of the block to render
+ @return The hash table of objects
+ @ingroup model
 */
 hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side);
 
-//Returns the distance between two vectors
+/*!
+ @brief Returns the distance between two vectors
+ @param a The first vector
+ @param b The second vector
+ @return The distance between the two vectors
+ @ingroup model
+*/
 double distanceBetweenVectors(vertex a, vertex b);
 
-//Returns true if two vertices are equal
+/*!
+ @brief Returns true if two vertices are equal
+ @param a The first vertex
+ @param b The second vertex
+ @return True if the vertices are equal
+ @ingroup model
+*/
 bool verticesEqual(vertex a, vertex b);
 
-//Returns the number of vertices in the model. Should be equivalent to the offset value if the model were to be generated -1
+/*!
+ @brief Returns the number of vertices in the model. 
+ @note Should be equivalent to the offset value if the model were to be generated -1
+ @param m The model to count the vertices of
+ @return The number of vertices in the model
+ @ingroup model
+*/
 offset_t getTotalVertexCount(model m);
 
-//Returns a generic cube object
+/*!
+ @brief Returns a generic cube object
+ @param side The side of the cube
+ @return The generic cube object
+ @ingroup model
+*/
 cube createGenericCube(unsigned int side);
 
-/*
-Converts a model to a single well optimized object.
-Removes overlapping vertices.
-type can be null, but shouldn't be free'd as it's assigned to the result.
+/*!
+ @brief Converts a model to a single well optimized object.
+ @note Removes overlapping vertices.
+ @note type can be null, but shouldn't be free'd as it's assigned to the result.
+ @param m The model to convert
+ @param type The type of the object
+ @return The optimized object
+ @ingroup model
 */
 object modelToObject(const model* m, const char* type);

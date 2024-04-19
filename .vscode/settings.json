@@ -19,7 +19,10 @@
         "types.h": "c",
         "semaphore.h": "c",
         "wait.h": "c",
-        "generator.h": "c"
+        "generator.h": "c",
+        "stdbool.h": "c",
+        "htable.h": "c",
+        "stdlib.h": "c"
     },
     "cSpell.words": [
         "blockstates",

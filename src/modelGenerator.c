@@ -1,3 +1,9 @@
+/*!
+ @file modelGenerator.c
+ @brief Generates a 3d model from nbt data
+ @details This program generates a 3d model from nbt data
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
@@ -9,6 +15,16 @@
 #include "./lib/errorDefs.h"
 #include "./lib/generator.h"
 
+/*!
+ @brief Generates a 3d model from nbt data
+ @details Loads an extracted nbt file and generates a 3d model from it using the generator library
+ @see generator.h
+ @see getMaterials
+ @see readWavefront
+ @see generateFromNbt
+ @see generateModel
+ @return The exit status
+*/
 int main(int argc, char** argv){
     if(argc < 2){
         argCountError();

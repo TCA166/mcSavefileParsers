@@ -1,3 +1,9 @@
+/*!
+ @file chunkExtractor.c
+ @brief Extracts all chunks from all region files
+ @details This program extracts all chunks from all region files
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -8,7 +14,13 @@
 
 //https://minecraft.fandom.com/wiki/Region_file_format
 
-//Program for extracting all nbts from a savefile
+/*!
+ @brief Extracts all chunks from all region files
+ @details Loads all chunks from all region files using the regionParser library, then writes them to files in the given directories.
+ @see regionParser.h
+ @see @ref extractChunk
+ @return The exit status
+*/
 int main(int argc, char** argv){
     if(argc < 2){
         argCountError();

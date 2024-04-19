@@ -1,3 +1,9 @@
+/*!
+ @file mtlGen.c
+ @brief Generates a simplified mtl file from a directory of png files
+ @todo Not implemented yet, just a stub, use the python script for now
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

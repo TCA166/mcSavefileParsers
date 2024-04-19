@@ -1,33 +1,85 @@
+/*!
+ @file hTable.h
+ @brief A hash table implementation
+*/
 
+/*!
+ @defgroup hTable Hash Table
+ @brief A hash table implementation
+*/
+
+/*!
+ @struct hTableItem
+ @brief A hash table item structure
+ @ingroup hTable
+*/
 struct hTableItem{
     char* key;
     void* value;
     struct hTableItem* next;
 };
 
-//A hash table storing keys and void* as values. For collision handling a linked list approach has been chosen
+/*!
+ @struct hashTable
+ @brief A hash table storing keys and void* as values. For collision handling a linked list approach has been chosen
+ @ingroup hTable
+*/
 typedef struct hashTable{
     struct hTableItem** items;
     size_t size; //the size of the array
     int count; //how many elements we have in the array
 } hashTable;
 
-//Macro wrapper for two for loops that provides a struct hTableItem* item variable for your use
+/*!
+ @def getIndex(key, table)
+ @brief Macro wrapper for two for loops that provides a struct hTableItem* item variable for your use
+ @param key The key to get the index for
+ @param table The hash table to get the index for
+ @ingroup hTable
+*/
 #define forHashTableItem(table) \
     for(int tableIndex=0; tableIndex < table->size; tableIndex++)\
     for(struct hTableItem* item = table->items[tableIndex]; item != NULL; item=item->next)
 
-//Initializes a hash table with a given size preallocated and set to NULL
+/*!
+ @brief Initializes a hash table with a given size preallocated and set to NULL
+ @param size The size of the hash table
+ @return The initialized hash table
+ @ingroup hTable
+*/
 hashTable* initHashTable(size_t size);
 
-//Frees all the allocated memory in the hash table including the items, but not the values of the items.
+/*!
+ @brief Frees all the allocated memory in the hash table including the items, but not the values of the items.
+ @param table The hash table to free
+ @ingroup hTable
+*/
 void freeHashTable(hashTable* table);
 
-//Inserts the given void* as the value of the given key in the given hashTable. 
+/*!
+ @brief Inserts the given void* as the value of the given key in the given hashTable. 
+ @details If the key already exists in the hashTable, the value is updated.
+ @param table The hashTable to insert the value into
+ @param key The key to insert the value under
+ @param value The value to insert
+ @return The number of elements in the hashTable
+ @ingroup hTable
+*/
 int insertHashItem(hashTable* table, const char* key, const void* value);
 
-//Retrieves the value from the hashTable. Be sure to cast the returned pointer
+/*!
+ @brief Retrieves the value from the hashTable. Be sure to cast the returned pointer
+ @param table The hashTable to retrieve the value from
+ @param key The key to retrieve the value from
+ @return The value pointer or NULL if the key doesn't exist
+ @ingroup hTable
+*/
 void* getVal(hashTable* table, const char* key);
 
-//Returns an array of all value pointers in the hash table
+/*!
+ @brief Returns an array of all value pointers in the hash table
+ @param table The hash table to convert to an array
+ @return The array of value pointers
+ @ingroup hTable
+*/
 void** hashTableToArray(hashTable* table);

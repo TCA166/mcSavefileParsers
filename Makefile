@@ -120,3 +120,6 @@ check: hTable.o regionParser.o chunkParser.o cNBT.o model.o
 	checkmk tests/model.check > tests/modelCheck.c
 	gcc tests/modelCheck.c model.o hTable.o -lcheck -lm $(SUBUNIT) -o tests/modelCheck
 	./tests/modelCheck
+
+doc: src/lib/*.h src/*.c src/lib/*.c doc/Doxyfile.conf
+	doxygen ./doc/Doxyfile.conf

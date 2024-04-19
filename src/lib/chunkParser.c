@@ -12,11 +12,31 @@
 
 #include <inttypes.h>
 
+/*!
+ @def createMask
+ @brief Creates a mask for a given bit range
+ @param startBit The starting bit
+ @param X The number of bits
+*/
 #define createMask(startBit, X) ((((uint64_t)1) << X) - 1) << startBit
 
+/*!
+ @def statesFormula
+ @brief Calculates the index of a block in a section
+ @param x The x coordinate
+ @param y The y coordinate
+ @param z The z coordinate
+*/
 #define statesFormula(x, y, z) (y*16*16) + (z*16) + x
 
-char* getProperty(const char* property, nbt_node* tree){
+/*!
+ @brief Gets a property from a compound node
+ @details Gets a property from a compound node
+ @param property The name of the property
+ @param tree The compound node
+ @return The property value
+*/
+static inline char* getProperty(const char* property, nbt_node* tree){
     char* result = NULL;
     nbt_node* colorNode = nbt_find_by_name(tree, property);
     if(colorNode != NULL){
@@ -26,7 +46,15 @@ char* getProperty(const char* property, nbt_node* tree){
     return result;
 }
 
-char* appendProperty(char* string, char* property, const char* propertyName){
+/*!
+ @brief Appends a property to a string
+ @details Appends a property to a string
+ @param string The string to append to
+ @param property The property to append
+ @param propertyName The name of the property
+ @return The new string
+*/
+static inline char* appendProperty(char* string, char* property, const char* propertyName){
     string = realloc(string, strlen(string) + 3 + strlen(property) + strlen(propertyName));
     strcat(string, propertyName);
     strcat(string, "=");
@@ -243,7 +271,15 @@ block createBlock(int x, int y, int z, unsigned int* blockStates, section parent
     return newBlock;
 }
 
-bool contains(char** arr, char* str, int arrLen){
+/*!
+ @brief Checks if a string is in an array
+ @details Checks if a string is in an array
+ @param arr The array to check
+ @param str The string to check for
+ @param arrLen The length of the array
+ @return If the string is in the array
+*/
+static inline bool contains(char** arr, char* str, int arrLen){
     for(int i = 0; i < arrLen; i++){
         if(strcmp(arr[i], str) == 0){
             return true;

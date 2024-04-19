@@ -1,3 +1,11 @@
+/*!
+ @file radiusGenerator.c
+ @brief Generates a 3d model from a radius of chunks
+ @details This program generates a 3d model from a radius of chunks
+ @note This program is a bit more complex than modelGenerator as it has to handle multiple processes and shared memory
+ @note In order to properly preserve behavior on Windows an extensive ifdef is used
+*/
+
 #define _GNU_SOURCE
 
 #include <stdlib.h>
@@ -100,6 +108,17 @@
     #error "Not being compiled on POSIX compliant system"
 #endif
 
+/*!
+ @brief Generates a 3d model from a radius of chunks
+ @details This program loads a radius of chunks, then generates a 3d model from them using the generator library, with each model->string conversion being done in a separate process or thread
+ @warning Behavior significantly differs between Windows and Unix systems
+ @see generator.h
+ @see regionParser.h
+ @see getMaterials
+ @see readWavefront
+ @see generateFromNbt
+ @see generateModel
+*/
 int main(int argc, char** argv){
     //very similar to modelGenerator
     if(argc < 5){
