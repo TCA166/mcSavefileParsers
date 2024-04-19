@@ -57,9 +57,8 @@ typedef struct{
 } hashTable;
 
 /*!
- @def getIndex(key, table)
+ @def forHashTableItem(key, table)
  @brief Macro wrapper for two for loops that provides a struct hTableItem* item variable for your use
- @param key The key to get the index for
  @param table The hash table to get the index for
  @ingroup hTable
 */

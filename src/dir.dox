@@ -1,0 +1,17 @@
+
+/*!
+@dir /src
+@brief Root directory for the sourcecode
+@details contains C executable sourcecode 
+*/
+
+/*!
+@dir /src/lib
+@brief Directory for library sourcecode
+@details contains all of the C libraries
+*/
+
+/*!
+@dir /src/scripts
+@brief Directory for Python utility scripts
+*/

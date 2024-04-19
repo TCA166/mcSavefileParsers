@@ -102,6 +102,7 @@ clean:
 	rm -f chunkExtractor.exe
 	rm -f regionFileReader
 	rm -f regionFileReader.exe
+	rm -rf doc/build
 
 check: hTable.o regionParser.o chunkParser.o cNBT.o model.o
 	#hTable tests
@@ -120,10 +121,12 @@ check: hTable.o regionParser.o chunkParser.o cNBT.o model.o
 	checkmk tests/model.check > tests/modelCheck.c
 	gcc tests/modelCheck.c model.o hTable.o -lcheck -g -lm $(SUBUNIT) -o tests/modelCheck
 	./tests/modelCheck
-	#wavefront tests
-	checkmk tests/wavefront.check > tests/wavefrontCheck.c
-	gcc tests/wavefrontCheck.c model.o hTable.o -lcheck -g -lm $(SUBUNIT) -o tests/wavefrontCheck
-	./tests/wavefrontCheck
+	#wavefront tests - doesn't work on windows because os bs
+	#checkmk tests/wavefront.check > tests/wavefrontCheck.c
+	#gcc tests/wavefrontCheck.c model.o hTable.o -lcheck -g -lm $(SUBUNIT) -o tests/wavefrontCheck
+	#./tests/wavefrontCheck
 
-doc: src/lib/*.h src/*.c src/lib/*.c doc/Doxyfile.conf
+doc: doc/build/html
+
+doc/build/html: src/lib/*.h src/*.c src/lib/*.c doc/Doxyfile.conf src/dir.dox doc/src/*
 	doxygen ./doc/Doxyfile.conf
