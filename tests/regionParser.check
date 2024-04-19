@@ -33,7 +33,7 @@
     ck_assert_msg(!chunkIsNull(hopefullyChunk), "Chunk that shouldn't be NULL actually is");
     //We check if any chunk has had it's data extracted
     short b = 0;
-    for(int i = 0; i < chunkN; i++){
+    for(int i = 0; i < 1024; i++){
         if(mockChunks[i].byteLength > 0){
             b = !b;
         }

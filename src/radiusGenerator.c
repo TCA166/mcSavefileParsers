@@ -296,7 +296,7 @@ int main(int argc, char** argv){
     sharedFree(sem, sizeof(sem_t));
     if(materials != NULL){
         forHashTableItem(materials){
-            struct material* mat = (struct material*)item->value;
+            material* mat = (material*)item->value;
             free(mat->name);
             free(mat);
         }

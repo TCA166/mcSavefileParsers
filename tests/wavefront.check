@@ -1,0 +1,11 @@
+#include "../src/lib/model.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+#suite wavefrontTests
+
+#test getMaterialsTest
+
+    hashTable* ht = getMaterials("out.mtl");
+    ck_assert_msg(ht != NULL, "getMaterials failed");
+    ck_assert_msg(ht->count == 895, "getMaterials failed");

@@ -11,7 +11,7 @@
 
 model generateFromNbt(unsigned char* data, int dataSize, hashTable* materials, hashTable* objects, bool yLim, int upLim, int downLim, bool b, bool f, unsigned int side, int chunkX, int chunkZ){
     //Array of sections in this chunk
-    struct section sections[maxSections] = {0};
+    section sections[maxSections] = {0};
     int n = getSections(data, dataSize, sections);
     free(data);
     /*It is possible to not have to iterate over each block again, and do everything in a single loop.
@@ -54,7 +54,7 @@ model generateFromNbt(unsigned char* data, int dataSize, hashTable* materials, h
     return newModel;
 }
 
-cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, unsigned int side, bool matCheck, int xOff, int zOff){
+cubeModel createCubeModel(section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, unsigned int side, bool matCheck, int xOff, int zOff){
     cubeModel cubeModel = initCubeModel(16,16 * sectionLen, 16);
     for(int i = 0; i < sectionLen; i++){
         //create the block state array
@@ -64,7 +64,7 @@ cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* m
         for(int x = 0; x < 16; x++){
             for(int y = 0; y < 16; y++){
                 for(int z = 0; z < 16; z++){
-                    struct block newBlock = createBlock(x, y, z, states, sections[i]);
+                    block newBlock = createBlock(x, y, z, states, sections[i]);
                     if((newBlock.y > upLim || newBlock.y < downLim) && yLim){
                         newBlock.type = mcAir;
                     }
@@ -100,7 +100,7 @@ cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* m
     return cubeModel;
 }
 
-cube cubeFromBlock(struct block block, const unsigned int side, material* material){
+cube cubeFromBlock(block block, const unsigned int side, material* material){
     cube newCube = createGenericCube(side);
     
     newCube.x = block.x;

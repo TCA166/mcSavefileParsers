@@ -15,14 +15,42 @@
 /*!
  @struct section
  @brief 16x16x16 section of a chunk
+ @details The section structure contains the block data, the block palette, the y coordinate of the section and the lengths of the block data and palette
+ @note This struct is mainly used for holding the raw nbt data of a section
+ @todo Add biomes
+ @see getBlockStates
  @ingroup chunkParser
 */
-typedef struct section{
+typedef struct{
     //we ignore the biomes because we don't need that data
-    uint64_t* blockData; //raw nbt file block data
+    /*! 
+     @var blockData
+     @brief raw nbt section block data
+     @details Packed array with padding, so that the individual block data isn't split.
+     @details The length of one element in this packed array is 4 or log2(paletteLen) whichever is higher.
+     @details the individual values stored here point to the identifiers in blockPalette
+     @warning can be NULL, in which case the section is full of the same block type: blockPalette[0]
+    */
+    uint64_t* blockData; 
+    /*!
+     @var blockPalette
+     @brief A string array of block identifiers
+    */
     char** blockPalette;
-    size_t blockDataLen; //the length of blockData in bytes
+    /*!
+     @var blockDataLen
+     @brief Length of the blockData long array
+    */
+    size_t blockDataLen;
+    /*!
+     @var paletteLen
+     @brief Length of the blockPalette array
+    */
     size_t paletteLen;
+    /*!
+     @var y
+     @brief the y index of this section. They go from -4 to whatever the height limit of the world is but divided by 16
+    */
     short y;
 } section;
 
@@ -31,10 +59,27 @@ typedef struct section{
  @brief A block structure with it's own coordinates and a string containing it's type
  @ingroup chunkParser
 */
-typedef struct block{
+typedef struct{
+    /*!
+     @var x
+     @brief The x position of the block
+    */
     int x;
+    /*!
+     @var y
+     @brief The y position of the block
+    */
     int y;
+    /*!
+     @var z
+     @brief The z position of the block
+    */
     int z;
+    /*!
+     @var type
+     @brief A string block type identifier
+     @note Shouldn't be NULL
+    */
     char* type;
 } block;
 

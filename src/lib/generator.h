@@ -23,7 +23,7 @@
  @return The created cube object
  @ingroup generator
 */
-cube cubeFromBlock(struct block block, const unsigned int side, struct material* material);
+cube cubeFromBlock(block block, const unsigned int side, material* material);
 
 /*!
  @brief Creates a new cube based model object from a section array.
@@ -40,7 +40,7 @@ cube cubeFromBlock(struct block block, const unsigned int side, struct material*
  @return The created cube model object
  @ingroup generator
 */
-cubeModel createCubeModel(struct section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, unsigned int side, bool matCheck, int xOff, int zOff);
+cubeModel createCubeModel(section* sections, int sectionLen, hashTable* materials, bool yLim, int upLim, int downLim, unsigned int side, bool matCheck, int xOff, int zOff);
 
 //Generally speaking i could just pass a whole chunk object from regionParser here, but I like the design of having that be completely separate
 

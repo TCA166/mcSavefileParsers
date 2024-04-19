@@ -12,9 +12,12 @@
 //taken from https://benhoyt.com/writings/hash-table-in-c/
 //i am not smart enough to come up with my own hash function
 
-//Generates a hash from a string
-uint64_t hash(const char* key)
-{
+/*!
+ @brief Generates a hash from a string
+ @param key the key to hash
+ @return a numeric hash
+*/
+static uint64_t hash(const char* key){
     uint64_t hash = FNV_OFFSET;
     for (const char* p = key; *p; p++) {
         hash ^= (uint64_t)(unsigned char)(*p);
@@ -23,7 +26,13 @@ uint64_t hash(const char* key)
     return hash;
 }
 
-struct hTableItem* initHashItem(const char* key, const void* value){
+/*!
+ @brief Initializes a hash item with the given values
+ @param key the key under which the value is held
+ @param value the value of the item
+ @return a newly allocated object
+*/
+static struct hTableItem* initHashItem(const char* key, const void* value){
     struct hTableItem* item = malloc(sizeof(struct hTableItem));
     item->key = malloc(strlen(key) + 1);
     strcpy(item->key, key);
@@ -40,7 +49,11 @@ hashTable* initHashTable(size_t size){
     return table;
 }
 
-void freeHashItem(struct hTableItem* item){
+/*!
+ @brief Frees a given hash item
+ @param item the item to free
+*/
+static void freeHashItem(struct hTableItem* item){
     if(item->next != NULL){
         freeHashItem(item->next);
     }

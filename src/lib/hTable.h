@@ -14,8 +14,21 @@
  @ingroup hTable
 */
 struct hTableItem{
+    /*!
+     @var key
+     @brief the item key, used to identify the value in hash collisions
+    */
     char* key;
+    /*!
+     @var value
+     @brief whatever value the key is holding
+    */
     void* value;
+    /*!
+     @var next
+     @brief the next item in the linked list
+     @details can be NULL
+    */
     struct hTableItem* next;
 };
 
@@ -24,10 +37,23 @@ struct hTableItem{
  @brief A hash table storing keys and void* as values. For collision handling a linked list approach has been chosen
  @ingroup hTable
 */
-typedef struct hashTable{
+typedef struct{
+    /*!
+     @var items
+     @brief Nullable array of hash table items
+     @details Key hashes point into this array, and if the value under the hash isn't null then the item is inserted at the end of the underlying linked list
+    */
     struct hTableItem** items;
+    /*!
+     @var size
+     @brief The size of the array, not meant to be changed
+    */
     size_t size; //the size of the array
-    int count; //how many elements we have in the array
+    /*!
+     @var count
+     @brief how many elements we have in the array
+    */
+    int count;
 } hashTable;
 
 /*!

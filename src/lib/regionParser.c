@@ -11,7 +11,22 @@
 
 #define getRegion(coord) coord>>5
 
-int handleFirstSegment(chunk* output, FILE* regionFile, char* regionFileName){
+/*!
+ @def segmentLength
+ @brief Length in bytes of savefile segment 
+ @ingroup regionParser
+*/
+#define segmentLength 4096
+
+/*!
+ @brief handles the first segment of the region file
+ @param output the chunk to write to
+ @param regionFile the file to read from
+ @param reigonFileName the filename for debug purposes
+ @warning this function is fpointer sensitive
+ @return 0 on success
+*/
+static int handleFirstSegment(chunk* output, FILE* regionFile, char* regionFileName){
     //so the numbers are stored as big endian AND as int24
     byte bytes[3];
     size_t s1 = fread(&bytes, 1, 3, regionFile);
@@ -30,14 +45,27 @@ int handleFirstSegment(chunk* output, FILE* regionFile, char* regionFileName){
     return (s1 + s2 == 4) - 1 || (output->offset == 0 && output->sectorCount == 0);
 }
 
-int handleSecondSegment(chunk* output, FILE* regionFile){
+/*!
+ @brief handles the second segment of the region file
+ @param output the output to write to
+ @param regionFile the file to read from
+ @return 0 on success
+*/
+static int handleSecondSegment(chunk* output, FILE* regionFile){
     byte bytes[4];
     size_t s1 = fread(&bytes, 1, 4, regionFile);
     output->timestamp = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
     return (s1 == 4) - 1 && output->timestamp > 0;
 }
 
-int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName){
+/*!
+ @brief gets the chunk's data from region file
+ @param thisChunk the chunk to read from and write data to
+ @param regionFile the file containing the raw chunk data we are looking for
+ @param regionFileName for debug
+ @return 0 on success
+*/
+static int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName){
     //find the corresponding section
     if(fseek(regionFile, segmentLength * thisChunk->offset, SEEK_SET) != 0){
         fileError(regionFileName, "seek");
@@ -49,9 +77,12 @@ int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName){
     }
     thisChunk->byteLength = (bytes[0] << 24) + (bytes[1] << 16) + (bytes[2] << 8) + bytes[3];
     //get the compression type
-    if(fread(&thisChunk->compression, 1, 1, regionFile) != 1){
+    byte comp;
+    if(fread(&comp, 1, 1, regionFile) != 1){
         fileError(regionFileName, "parsed:2");
     }
+    //without this cast nasty things happen
+    thisChunk->compression = (compression_t)comp;
     //fseek(regionFile, 2, SEEK_CUR);
     //Then get the data
     thisChunk->byteLength += 5;
@@ -64,7 +95,7 @@ int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName){
     }
     //fseek(regionFile, (chunks[i].sectorCount * segmentLength) - chunks[i].byteLength, SEEK_CUR);
     //handle different compression types
-    if(thisChunk->compression == Uncompressed){
+    if(thisChunk->compression == None){
         thisChunk->data = data;
     }
     else{

@@ -14,78 +14,190 @@
 /*!
  @struct material
  @brief A material struct that can be used in a model
+ @todo add all the wavefront material properties
+ @see model
  @ingroup model
 */
-typedef struct material{
+typedef struct{
+    /*!
+     @var name
+     @brief the material name
+    */
     char* name;
     //here i could add more fields... but field d is the only one we need
+    /*!
+     @var d
+     @brief the material density
+    */
     float d;
 } material;
 
 /*!
- @struct vertex
- @brief A 3D vertex struct
+ @union vertex
+ @brief A 3D vertex struct holding three floats
+ @see cubeFace
+ @see object
  @ingroup model
 */
-typedef struct vertex{
-    float x;
-    float y;
-    float z;
+typedef union {
+    /*!
+     @var coordinates
+     @brief a look into the vertex coordinates
+    */
+    struct{
+        /*!
+        @var x
+        @brief the x position of the vertices
+        */
+        float x;
+        /*!
+        @var y
+        @brief the y position of the vertices
+        */
+        float y;
+        /*!
+        @var z
+        @brief the z position of the vertices
+        */
+        float z;
+    } coordinates;
+    /*!
+     @var arr
+     @brief a look into the vertex as an array of floats
+    */
+    float arr[3];
 } vertex;
 
 /*!
- @struct cubeFace
- @brief A face of a cube
+ @union cubeFace
+ @brief A face of a cube containing pointers to vertices
  @details A face with only 4 vertices. V variables point to vertices in the associated cube object
+ @see cube
  @ingroup model
 */
-typedef struct cubeFace{
-    unsigned int v1;
-    unsigned int v2;
-    unsigned int v3;
-    unsigned int v4;
+typedef union{
+    /*!
+     @var vertices
+     @brief a look into the cubeFace as individual integers
+    */
+    struct{
+        unsigned int v1;
+        unsigned int v2;
+        unsigned int v3;
+        unsigned int v4;
+    } vertices;
+    /*!
+     @var arr
+     @brief a look at a cubeFace as an array of pointers
+    */
+    unsigned int arr[4];
 } cubeFace;
 
 /*!
  @struct cube
  @brief obj file cube with 6 cubeFaces and 8 defining vertices
- @details A cube with 6 cubeFaces and 8 defining vertices. The cube is defined by it's x, y, z and side.
+ @details A static array of vertices with set positions define the shape, while a static array of faces point to these vertices giving information on how walls look like
+ @see cubeModel
  @ingroup model
 */
-typedef struct cube{
+typedef struct{
+    /*!
+     @var x
+     @brief the x position of the cube
+    */
     float x;
+    /*!
+     @var y
+     @brief the y position
+    */
     float y;
+    /*!
+     @var z
+     @brief the z position
+    */
     float z;
+    /*!
+     @var side
+     @brief length of the cube side
+    */
     float side; //Cannot be lower than 0 for very obvious reasons
-    vertex vertices[8]; //array of relative to x,y,z vertices
-    cubeFace* faces[6]; //array of pointers so that it may be nullable
-    char* type; //text representing a cube name or a broad type. Feel free to make it NULL
+    /*!
+     @var vertices
+     @brief array of vertices relative to the cube
+    */
+    vertex vertices[8];
+    /*!
+     @var faces
+     @brief nullable array of faces
+    */
+    cubeFace* faces[6];
+    /*!
+     @var type
+     @brief the type of the cube, usually Minecraft material
+     @note may be NULL
+    */
+    char* type;
+    /*!
+     @var m
+     @brief the material associated with the cube
+     @note may be NULL
+    */
     material* m;
 } cube;
 
 /*!
  @struct cubeModel
  @brief A strict 3D model struct that is made up of cubes in a strict 3D arrangement.
+ @details A cubeModel consists of a nullable 3d array of cubes that transforms a 3d position aligned to 1 into a cube*
  @note Can be transformed into a normal loose model.
  @note Ideally if you plan on generating a model of something that can be represented by cubes you first generate this.
  @ingroup model
 */
-typedef struct cubeModel{
-    unsigned int x; //Max x index
-    unsigned int y; //Max y index
-    unsigned int z; //Max z index
-    struct cube**** cubes; //nullable 3d array of cubes
+typedef struct{
+    /*!
+     @var x
+     @brief the maximum x index, or the size of the allocated x dimension
+    */
+    unsigned int x;
+    /*!
+     @var y
+     @brief the maximum y index, or the size of the allocated y dimension
+    */
+    unsigned int y;
+    /*!
+     @var z
+     @brief the maximum z index, or the size of the allocated z dimension
+    */
+    unsigned int z;
+    /*!
+     @var cubes
+     @brief nullable 3d array of cubes
+    */
+    cube**** cubes;
 } cubeModel;
 
 /*!
  @struct objFace
  @brief A dynamic array of vertices - an object face
  @details A dynamic array of vertices - an object face. The vertices are relative to the object's x, y, z coordinates.
+ @see object
  @ingroup model
 */
-typedef struct objFace{
+typedef struct{
+    /*!
+     @var vertexCount
+     @brief the number of vertices
+    */
     size_t vertexCount;
+    /*!
+     @var vertices
+     @brief an allocated array of vertices
+    */
     int* vertices;
+    /*!
+     @var m
+     @brief NULL or pointer to the material
+    */
     material* m;
 } objFace;
 
@@ -93,17 +205,54 @@ typedef struct objFace{
  @struct object
  @brief A 3D object struct that is made up of vertices and faces.
  @details A 3D object struct that is made up of vertices and faces. The vertices are relative to the object's x, y, z coordinates.
+ @see model
  @ingroup model
 */
-typedef struct object{
+typedef struct{
+    /*!
+     @var x
+     @brief the x position of the object
+    */
     float x;
+    /*!
+     @var y
+     @brief the y position of the object
+    */
     float y;
+    /*!
+     @var z
+     @brief the z position
+    */
     float z;
+    /*!
+     @var vertexCount
+     @brief the number of vertices this object uses
+    */
     size_t vertexCount;
-    vertex* vertices; //array of relative to x, y, z vertices
+    /*!
+     @var vertices
+     @brief an array of vertices this object uses
+    */
+    vertex* vertices;
+    /*!
+     @var faceCount
+     @brief the number of faces in this model
+    */
     size_t faceCount;
-    objFace* faces; //doesn't need to be nullable
+    /*!
+     @var faces
+     @brief an array of faces
+    */
+    objFace* faces;
+    /*!
+     @var m
+     @brief the material pointer
+    */
     material* m;
+    /*!
+     @var type
+     @brief the type of the object, generally a Minecraft identifier
+    */
     char* type;
 } object;
 
@@ -112,14 +261,31 @@ typedef struct object{
 /*!
  @struct model
  @brief A loose array of even looser objects with an associated array of materials that objects can point to.
- @details A loose array of even looser objects with an associated array of materials that objects can point to.
+ @details A loose set of objects located in an undefined space, with materials pointing to materialArr.
+ @warning Having objects not using materialArr might lead to nasty memory leaks
  @ingroup model
 */
-typedef struct model{
+typedef struct{
+    /*!
+     @var objects
+     @brief a nullable list of objects
+    */
     object** objects; //Nullable array of objects
-    size_t objectCount; //Size of objects
-    material** materialArr; //Optional array of materials, that objects can point to
-    size_t materialCount; //Size of materialArr
+    /*!
+     @var objectCount
+     @brief the size of the objects array
+    */
+    size_t objectCount;
+    /*!
+     @var materialArr
+     @brief Optional array of materials, that objects can point to
+    */
+    material** materialArr; 
+    /*!
+     @var materialCount
+     @brief Size of materialArr
+    */
+    size_t materialCount;
 } model;
 
 /*!

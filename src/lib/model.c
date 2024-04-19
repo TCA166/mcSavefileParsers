@@ -21,7 +21,12 @@
 
 #define reallocMult 1.5
 
-int digits(int i){
+/*!
+ @brief Calculates the number of digits in a number
+ @param i the number
+ @return the number of digits
+*/
+static int digits(int i){
     if(i == 0){
         return 1;
     }
@@ -33,12 +38,12 @@ int digits(int i){
     return result;
 }
 
-double distanceBetweenVectors(struct vertex a, struct vertex b){
-    return sqrt(sq(a.x - b.x) + sq(a.y - b.y) + sq(a.z - b.z));
+double distanceBetweenVectors(vertex a, vertex b){
+    return sqrt(sq(a.coordinates.x - b.coordinates.x) + sq(a.coordinates.y - b.coordinates.y) + sq(a.coordinates.z - b.coordinates.z));
 }
 
-bool verticesEqual(struct vertex a, struct vertex b){
-    return (a.x == b.x) && (a.y == b.y) && (a.z == b.z);
+bool verticesEqual(vertex a, vertex b){
+    return (a.coordinates.x == b.coordinates.x) && (a.coordinates.y == b.coordinates.y) && (a.coordinates.z == b.coordinates.z);
 }
 
 model initModel(int objectCount){
@@ -96,11 +101,11 @@ cube createGenericCube(unsigned int side){
     return newCube;
 }
 
-struct vertex newVertex(int x, int y, int z){
-    struct vertex new;
-    new.x = x;
-    new.y = y;
-    new.z = z;
+vertex newVertex(int x, int y, int z){
+    vertex new;
+    new.coordinates.x = x;
+    new.coordinates.y = y;
+    new.coordinates.z = z;
     return new;
 }
 
@@ -108,26 +113,29 @@ struct vertex newVertex(int x, int y, int z){
 //a > b && c < d
 cubeFace* newCubeFace(int a, int b, int c, int d){
     cubeFace* face = malloc(sizeof(cubeFace));
-    face->v1 = a;
-    face->v2 = b;
-    face->v3 = c;
-    face->v4 = d;
+    face->vertices.v1 = a;
+    face->vertices.v2 = b;
+    face->vertices.v3 = c;
+    face->vertices.v4 = d;
     return face;
 }
 
-struct objFace deCube(cubeFace face){
-    struct objFace new;
+objFace deCube(cubeFace face){
+    objFace new;
     new.vertices = malloc(sizeof(int) * 4);
-    new.vertices[0] = face.v1;
-    new.vertices[1] = face.v2;
-    new.vertices[2] = face.v3;
-    new.vertices[3] = face.v4;
+    memcpy(new.vertices, face.arr, sizeof(int) * 4);
     new.vertexCount = 4;
     new.m = NULL;
     return new;
 }
 
-bool isPresent(char* string, hashTable* objects){
+/*!
+ @brief Checks if a key is present within a hashTable
+ @param string the key to check
+ @param objects the hashTable
+ @return true if string is a valid key
+*/
+static inline bool isPresent(char* string, hashTable* objects){
     if(objects == NULL || string == NULL){
         return false;
     }
@@ -216,7 +224,7 @@ object deCubeObject(cube* c){
     //here we deCube faces, and check which vertices are needed
     for(int i = 0; i < 6; i++){
         if(c->faces[i] != NULL){
-            result.faces = realloc(result.faces, (result.faceCount + 1) * sizeof(struct objFace));
+            result.faces = realloc(result.faces, (result.faceCount + 1) * sizeof(objFace));
             result.faces[result.faceCount] = deCube(*(c->faces[i]));
             for(int n = 0; n < result.faces[result.faceCount].vertexCount; n++){
                 if(vertexNeeded[result.faces[result.faceCount].vertices[n]] == -1){
@@ -228,10 +236,10 @@ object deCubeObject(cube* c){
         }
     }
     result.vertexCount = neededVertexCount;
-    result.vertices = calloc(neededVertexCount, sizeof(struct vertex));
+    result.vertices = calloc(neededVertexCount, sizeof(vertex));
     //If all vertices are used we can just copy stuff over 
     if(neededVertexCount == 8){
-        memcpy(result.vertices, c->vertices, 8 * sizeof(struct vertex));
+        memcpy(result.vertices, c->vertices, 8 * sizeof(vertex));
     }
     else if(neededVertexCount > 0){
         //Else we need to create a transformation for face vertices indexes
@@ -295,10 +303,10 @@ model cubeModelToModel(const cubeModel* m, hashTable* specialObjects){
                         newObject->y = m->cubes[x][y][z]->y * m->cubes[x][y][z]->side; 
                         newObject->z = m->cubes[x][y][z]->z * m->cubes[x][y][z]->side;
                         //we need to copy everything so that we can free the entire hash table earlier
-                        newObject->vertices = calloc(newObject->vertexCount, sizeof(struct vertex));
-                        memcpy(newObject->vertices, prot->vertices, sizeof(struct vertex) * newObject->vertexCount);
-                        newObject->faces = calloc(newObject->faceCount, sizeof(struct objFace));
-                        memcpy(newObject->faces, prot->faces, sizeof(struct objFace) * newObject->faceCount);
+                        newObject->vertices = calloc(newObject->vertexCount, sizeof(vertex));
+                        memcpy(newObject->vertices, prot->vertices, sizeof(vertex) * newObject->vertexCount);
+                        newObject->faces = calloc(newObject->faceCount, sizeof(objFace));
+                        memcpy(newObject->faces, prot->faces, sizeof(objFace) * newObject->faceCount);
                         for(int i = 0; i < newObject->faceCount; i++){
                             newObject->faces[i].vertices = calloc(prot->faces[i].vertexCount, sizeof(int));
                             memcpy(newObject->faces[i].vertices, prot->faces[i].vertices, sizeof(int) * prot->faces[i].vertexCount);
@@ -321,7 +329,12 @@ model cubeModelToModel(const cubeModel* m, hashTable* specialObjects){
     return result;
 }
 
-bool isNotEmpty(object* c){
+/*!
+ @brief Checks if object is emtpy
+ @param c
+ @return true if the object is valid
+*/
+static inline bool isNotEmpty(object* c){
     if(c == NULL){
         return false;
     }
@@ -331,8 +344,15 @@ bool isNotEmpty(object* c){
     return false;
 }
 
-//Function for allocating the buffer in increasingly large sizes. This is faster than repeatedly reallocating
-void* reallocBy(void* ptr, size_t* curSize, size_t* sizeTaken, float mult){
+/*!
+ @brief Function for allocating the buffer in increasingly large sizes. This is faster than repeatedly reallocating
+ @param ptr the pointer to realloc
+ @param curSize the current size of the buffer
+ @param sizeTaken the size that is taken up in the buffer
+ @param mult the multiplier to realloc by 
+ @return a valid buffer pointer
+*/
+static void* reallocBy(void* ptr, size_t* curSize, size_t* sizeTaken, float mult){
     if(*sizeTaken > *curSize){
         *curSize = *sizeTaken * mult;
         return realloc(ptr, *sizeTaken * mult);
@@ -342,8 +362,15 @@ void* reallocBy(void* ptr, size_t* curSize, size_t* sizeTaken, float mult){
     }
 }
 
-//Simple procedure taken out of generateModel to prevent duplicate code
-char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize, size_t* alloc){
+/*!
+ @brief Simple procedure taken out of generateModel to prevent duplicate code
+ @param mtlName the name of the mtl file
+ @param appendTo the string to append to
+ @param outSize output pointer for size
+ @param alloc pointer to current size
+ @return pointer to a new buffer with appended mtl line
+*/
+static char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize, size_t* alloc){
     size_t mtlLineSize = 9 + strlen(mtlName);
     char* mtlLine = malloc(mtlLineSize);
     if(snprintf(mtlLine, mtlLineSize, "usemtl %s\n", mtlName) < 0){
@@ -413,18 +440,18 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
             free(objectLine);
             //foreach vertex
             for(int i = 0; i < thisObject->vertexCount; i++){
-                struct vertex v = thisObject->vertices[i];
-                v.x += thisObject->x;
-                v.y += thisObject->y;
-                v.z += thisObject->z;
-                size_t size = 27 + digits((int)v.x) + digits((int)v.y) + digits((int)v.z);
+                vertex v = thisObject->vertices[i];
+                v.coordinates.x += thisObject->x;
+                v.coordinates.y += thisObject->y;
+                v.coordinates.z += thisObject->z;
+                size_t size = 27 + digits((int)v.coordinates.x) + digits((int)v.coordinates.y) + digits((int)v.coordinates.z);
                 //printf("%d %d %2f\n", size, digits(v.x), v.x);
                 char* vertexLine = NULL;
                 vertexLine = malloc(size);
                 if(vertexLine == NULL){
                     mallocError("vertexLine", size);
                 }
-                if(snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.x, v.y , v.z) < 0){
+                if(snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.coordinates.x, v.coordinates.y , v.coordinates.z) < 0){
                     stringError("snprintf")
                 }
                 *outSize += size - 1;
@@ -434,7 +461,7 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
             }
             //foreach face
             for(int i = 0; i < thisObject->faceCount; i++){
-                struct objFace face = thisObject->faces[i];
+                objFace face = thisObject->faces[i];
                 if(face.m != NULL){
                     fileContents = appendMtlLine(face.m->name, fileContents, outSize, &alloc);
                 }
@@ -551,13 +578,20 @@ hashTable* getMaterials(char* filename){
                 if(f != NULL){
                     f++;
                     newMaterial.d = atof(f);
+                    //we alloc a new buffer
                     material* ptr = malloc(sizeof(material));
+                    //write the stack value to it
                     *ptr = newMaterial;
+                    //and store it in a hashtable
                     insertHashItem(result, newMaterial.name, ptr);
+                    newMaterial.name = NULL; //if we properly stored everything we indicate that
                 }
             }
         }
         token = strtok(NULL, "\n");
+    }
+    if(newMaterial.name != NULL){ //if the file ended before there was a d line this will happen
+        free(newMaterial.name);
     }
     free(bytes);
     return result;
@@ -645,10 +679,10 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
                     parsingError(filename, "vertex definition parsing")
                 }
                 if(newObject.vertices == NULL){
-                    newObject.vertices = malloc(sizeof(struct vertex));
+                    newObject.vertices = malloc(sizeof(vertex));
                 }
                 else{
-                    newObject.vertices = realloc(newObject.vertices, (newObject.vertexCount + 1) * sizeof(struct vertex));
+                    newObject.vertices = realloc(newObject.vertices, (newObject.vertexCount + 1) * sizeof(vertex));
                 }
                 newObject.vertices[newObject.vertexCount] = newVertex(x * side, y * side, z * side);
                 newObject.vertexCount++;
@@ -688,7 +722,7 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
                     f++;
                 }
                 free(num);
-                struct objFace newFace;
+                objFace newFace;
                 newFace.vertexCount = f;
                 newFace.vertices = vertices;
                 if(nextM != NULL){
@@ -699,10 +733,10 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
                     newFace.m = NULL;
                 }
                 if(newObject.faces == NULL){
-                    newObject.faces = malloc(sizeof(struct objFace));
+                    newObject.faces = malloc(sizeof(objFace));
                 }
                 else{
-                    newObject.faces = realloc(newObject.faces, (newObject.faceCount + 1) * sizeof(struct objFace));
+                    newObject.faces = realloc(newObject.faces, (newObject.faceCount + 1) * sizeof(objFace));
                 }
                 newObject.faces[newObject.faceCount] = newFace;
                 newObject.faceCount++;
@@ -745,12 +779,12 @@ object modelToObject(const model* m, const char* type){
         object* thisObject = m->objects[o];
         int vertexCount = 0; //the amount of local vertices that was appended to the result array
         int* localV = calloc(thisObject->vertexCount, sizeof(int)); //local transformation of face vertex 
-        result.vertices = realloc(result.vertices, (result.vertexCount + thisObject->vertexCount) * sizeof(struct vertex));
+        result.vertices = realloc(result.vertices, (result.vertexCount + thisObject->vertexCount) * sizeof(vertex));
         for(int i = 0; i < thisObject->vertexCount; i++){
-            struct vertex evalV = thisObject->vertices[i];
-            evalV.x += thisObject->x;
-            evalV.y += thisObject->y;
-            evalV.z += thisObject->z;
+            vertex evalV = thisObject->vertices[i];
+            evalV.coordinates.x += thisObject->x;
+            evalV.coordinates.y += thisObject->y;
+            evalV.coordinates.z += thisObject->z;
             bool done = false; //if we found the equivalent already stored
             for(int n = 0; n < result.vertexCount; n++){
                 if(verticesEqual(evalV, result.vertices[n])){
@@ -766,7 +800,7 @@ object modelToObject(const model* m, const char* type){
         }
         result.vertexCount += vertexCount;
         //now just append faces and apply the localV transformation
-        result.faces = realloc(result.faces, (result.faceCount + thisObject->faceCount) * sizeof(struct objFace));
+        result.faces = realloc(result.faces, (result.faceCount + thisObject->faceCount) * sizeof(objFace));
         for(int i = 0; i < thisObject->faceCount; i++){
             result.faces[result.faceCount + i] = thisObject->faces[i];
             bool prevMatOverlap = false;

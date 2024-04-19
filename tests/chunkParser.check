@@ -20,7 +20,7 @@
 
 #test getSectionsTest
     getTestChunk
-    struct section sections[maxSections];
+    section sections[maxSections];
     int numSections = getSections(data, sz, sections);
     ck_assert_msg(numSections > 0, "No sections were extracted");
     for(int i = 0; i < numSections; i++){
@@ -47,7 +47,7 @@
 
 #test statesTest
     getTestChunk
-    struct section sections[maxSections];
+    section sections[maxSections];
     int numSections = getSections(data, sz, sections);
     for(int i = 0; i < numSections; i++){
         int sz = 0;
@@ -72,9 +72,9 @@
 
 #test dataTest
     getTestChunk
-    struct section sections[maxSections];
+    section sections[maxSections];
     int numSections = getSections(data, sz, sections);
-    struct section first = sections[0];
+    section first = sections[0];
     ck_assert_msg(first.y == -4, "Wrong section");
     for(int i = 0; i < 16; i++){
         ck_assert_msg(first.blockData[i] == 0, "0 section isn't 0");
@@ -86,7 +86,7 @@
     for(int i = 16 + 64; i < 16 + 64 + 18; i++){
         ck_assert_msg(first.blockData[i] == 2459565876494606882, "Later longs");
     }
-    struct section third = sections[2];
+    section third = sections[2];
     ck_assert_msg(third.y == -2, "Wrong section");
     for(int i = 0; i < 8; i++){
         ck_assert_msg(third.blockData[i] == 0, "First 8 longs aren't 0");

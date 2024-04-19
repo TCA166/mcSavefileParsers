@@ -26,11 +26,11 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
 #suite modelTests
 
 #test createCubeModel
-    struct cubeModel model = initCubeModel(3, 3, 3);
+    cubeModel model = initCubeModel(3, 3, 3);
     int i = 0;
     dimensionalFor(3, 3, 3){
         i++;
-        model.cubes[x][y][z] = malloc(sizeof(struct cube));
+        model.cubes[x][y][z] = malloc(sizeof(cube));
         *(model.cubes[x][y][z]) = createGenericCube(2);
         ck_assert_msg(model.cubes[x][y][z]->side == 2, "Wrong cube side");
         for(int i = 0; i < 6; i++){
@@ -41,11 +41,11 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
     freeCubeModel(&model);
 
 #test cullTest
-    struct cubeModel model = initCubeModel(3, 3, 3);
+    cubeModel model = initCubeModel(3, 3, 3);
     int i = 0;
     dimensionalFor(3, 3, 3){
         i++;
-        model.cubes[x][y][z] = malloc(sizeof(struct cube));
+        model.cubes[x][y][z] = malloc(sizeof(cube));
         *(model.cubes[x][y][z]) = createGenericCube(2);
     }
     ck_assert_msg(i == 27, "test model creation failed");
@@ -60,8 +60,8 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
     freeCubeModel(&model);
     
 #test deCubeObjectTest
-    struct cube c = createGenericCube(2);
-    struct object o = deCubeObject(&c);
+    cube c = createGenericCube(2);
+    object o = deCubeObject(&c);
     ck_assert_msg(o.faceCount == 6, "Less than 6 faces");
     for(int i = 0; i < o.faceCount; i++){
         for(int n = 0; n < o.faces[i].vertexCount; n++){
@@ -71,11 +71,11 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
     ck_assert_msg(o.vertexCount == 8, "Less than 8 vertices");
 
 #test cubeModelToModelTest
-    struct cubeModel cModel = initCubeModel(3, 3, 3);
+    cubeModel cModel = initCubeModel(3, 3, 3);
     int i = 0;
     dimensionalFor(3, 3, 3){
         i++;
-        cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
+        cModel.cubes[x][y][z] = malloc(sizeof(cube));
         *(cModel.cubes[x][y][z]) = createGenericCube(2);
     }
     model preCull = cubeModelToModel(&cModel, NULL);
@@ -88,11 +88,11 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
     ck_assert_msg(preVertex == 216 && postVertex == 152, "Vertex counts aren't valid");
 
 #test vertexCountTest
-    struct cubeModel cModel = initCubeModel(3, 3, 3);
+    cubeModel cModel = initCubeModel(3, 3, 3);
     int i = 0;
     dimensionalFor(3, 3, 3){
         i++;
-        cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
+        cModel.cubes[x][y][z] = malloc(sizeof(cube));
         *(cModel.cubes[x][y][z]) = createGenericCube(2);
     }
     model nModel = cubeModelToModel(&cModel, NULL);
@@ -105,11 +105,11 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
     freeModel(&nModel);
 
 #test generateTest
-    struct cubeModel cModel = initCubeModel(3, 3, 3);
+    cubeModel cModel = initCubeModel(3, 3, 3);
     int i = 0;
     dimensionalFor(3, 3, 3){
         i++;
-        cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
+        cModel.cubes[x][y][z] = malloc(sizeof(cube));
         *(cModel.cubes[x][y][z]) = createGenericCube(2);
     }
     model nModel = cubeModelToModel(&cModel, NULL);
@@ -120,11 +120,11 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
     verifyModelStr(modelStr, vertexCount);
 
 #test simplifyTest
-    struct cubeModel cModel = initCubeModel(3, 3, 3);
+    cubeModel cModel = initCubeModel(3, 3, 3);
     int i = 0;
     dimensionalFor(3, 3, 3){
         i++;
-        cModel.cubes[x][y][z] = malloc(sizeof(struct cube));
+        cModel.cubes[x][y][z] = malloc(sizeof(cube));
         *(cModel.cubes[x][y][z]) = createGenericCube(2);
         cModel.cubes[x][y][z]->x = x;
         cModel.cubes[x][y][z]->y = y;
@@ -133,7 +133,7 @@ void verifyModelStr(char* modelStr, unsigned long vertexCount){
     model nModel = cubeModelToModel(&cModel, NULL);
     freeCubeModel(&cModel);
     unsigned long oldVertexCount = getTotalVertexCount(nModel);
-    struct object nObj = modelToObject(&nModel, NULL);
+    object nObj = modelToObject(&nModel, NULL);
     freeModel(&nModel);
     //fprintf(stderr, "%d %ld\n", nObj.vertexCount, oldVertexCount);
     ck_assert_msg(nObj.vertexCount > 0 && nObj.vertexCount + 152 == oldVertexCount, "Invalid vertexCount");

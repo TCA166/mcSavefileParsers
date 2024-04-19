@@ -15,18 +15,19 @@
 */
 #define chunkN 1024
 
-/*!
- @def segmentLength
- @brief Length in bytes of savefile segment 
- @ingroup regionParser
-*/
-#define segmentLength 4096
 
 //How to translate the compression byte
 
-#define GZip 1
-#define Zlib 2
-#define Uncompressed 3
+/*!
+ @enum compression_t
+ @brief Minecraft indicator for how the chunk is compressed
+ @ingroup regionParser
+*/
+typedef enum{
+    GZip = 1,
+    Zlib = 2,
+    None = 3
+} compression_t;
 
 /*!
  @def chunkIsNull
@@ -67,14 +68,49 @@ typedef unsigned char byte;
  @brief A chunk structure
  @ingroup regionParser
 */
-typedef struct chunk{
-    int x; //x coordinate in chunk coordinates
-    int z; //z coordinate in chunk coordinates
+typedef struct{
+    /*!
+     @var x
+     @brief the x chunk coordinate
+    */
+    int x;
+    /*!
+     @var z
+     @brief the y chunk coordinate
+    */
+    int z;
+    /*!
+     @var offset
+     @brief the offset within the region file
+     @note this isn't particularly useful
+    */
     unsigned int offset; //3 bytes of offset
+    /*!
+     @var sectorCount
+     @brief a single byte indicating how many region file sectors this chunk takes up
+     @note this isn't particularly useful
+    */
     byte sectorCount; //1 byte indicating chunk data length
+    /*!
+     @var timestamp
+     @brief the minecraft timestamp
+    */
     unsigned int timestamp;
+    /*!
+     @var byteLength
+     @brief length of region in bytes
+    */
     int byteLength; //it actually is signed in the files
-    byte compression;
+    /*!
+     @var compression
+     @brief enum value indicating compression type
+     @note this isn't particularly useful
+    */
+    compression_t compression;
+    /*!
+     @var data
+     @brief decompressed data
+    */
     byte* data; //pointer to decompressed bytes
 } chunk;
 

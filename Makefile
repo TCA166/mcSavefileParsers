@@ -106,20 +106,24 @@ clean:
 check: hTable.o regionParser.o chunkParser.o cNBT.o model.o
 	#hTable tests
 	checkmk tests/hTable.check > tests/hTableCheck.c
-	gcc tests/hTableCheck.c hTable.o -lcheck -lm $(SUBUNIT) -Wall -o tests/hTableCheck
+	gcc tests/hTableCheck.c hTable.o -lcheck -g -lm $(SUBUNIT) -Wall -o tests/hTableCheck
 	./tests/hTableCheck
 	#regionParser tests
 	checkmk tests/regionParser.check > tests/regionParserCheck.c
-	gcc tests/regionParserCheck.c regionParser.o -lcheck -lm $(ZLIB) $(SUBUNIT) -o tests/regionParserCheck
+	gcc tests/regionParserCheck.c regionParser.o -lcheck -g -lm $(ZLIB) $(SUBUNIT) -o tests/regionParserCheck
 	./tests/regionParserCheck
 	#chunkParser tests
 	checkmk tests/chunkParser.check > tests/chunkParserCheck.c
-	gcc tests/chunkParserCheck.c chunkParser.o cNBT.o -lcheck -lm $(SUBUNIT) -o tests/chunkParserCheck
+	gcc tests/chunkParserCheck.c chunkParser.o cNBT.o -lcheck -g -lm $(SUBUNIT) -o tests/chunkParserCheck
 	./tests/chunkParserCheck
 	#model tests
 	checkmk tests/model.check > tests/modelCheck.c
-	gcc tests/modelCheck.c model.o hTable.o -lcheck -lm $(SUBUNIT) -o tests/modelCheck
+	gcc tests/modelCheck.c model.o hTable.o -lcheck -g -lm $(SUBUNIT) -o tests/modelCheck
 	./tests/modelCheck
+	#wavefront tests
+	checkmk tests/wavefront.check > tests/wavefrontCheck.c
+	gcc tests/wavefrontCheck.c model.o hTable.o -lcheck -g -lm $(SUBUNIT) -o tests/wavefrontCheck
+	./tests/wavefrontCheck
 
 doc: src/lib/*.h src/*.c src/lib/*.c doc/Doxyfile.conf
 	doxygen ./doc/Doxyfile.conf
