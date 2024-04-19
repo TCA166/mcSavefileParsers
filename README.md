@@ -1,11 +1,8 @@
 # mcSavefileParsers
 
 [![GitHub Pages Documentation](https://img.shields.io/badge/GitHub_Pages-Documentation-blue)](https://tca166.github.io/mcSavefileParsers/)
-
 [![CodeQL](https://github.com/TCA166/mcSavefileParsers/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/TCA166/mcSavefileParsers/actions/workflows/github-code-scanning/codeql)
-
 [![Linux](https://github.com/TCA166/mcSavefileParsers/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/TCA166/mcSavefileParsers/actions/workflows/c-cpp.yml)
-
 [![Windows](https://github.com/TCA166/mcSavefileParsers/actions/workflows/c-cppWin.yml/badge.svg)](https://github.com/TCA166/mcSavefileParsers/actions/workflows/c-cppWin.yml)
 
 Multiple programs for Minecraft [save file data extraction](#data-extraction-utilities) and [3D model generation](#3d-model-generation) based on save files.
