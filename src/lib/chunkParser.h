@@ -6,7 +6,6 @@
 
 /*!
  @defgroup chunkParser Chunk Parser
- @ingroup chunkParser
  @brief Chunk data parsing functions
 */
 
@@ -47,8 +46,18 @@ typedef struct block{
 */
 #define maxSections 24
 
+/*!
+ @def mcAir
+ @brief The minecraft air block identifier
+ @ingroup chunkParser
+*/
 #define mcAir "minecraft:air"
-#define minY -64
+/*!
+ @def minY
+ @brief The minimum y coordinate
+ @ingroup chunkParser
+*/
+#define minY -maxSections*4
 
 /*!
  @brief Extracts sections from raw nbtFileData of size into sections array

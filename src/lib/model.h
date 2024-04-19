@@ -137,7 +137,7 @@ typedef struct model{
     for(int z = 0; z < zLim; z++)
 
 /*!
- @def foreachVertex
+ @def foreachObject
  @brief Foreach object in a model*. Provides index variable o, and assures that the object will not be null
  @param model The model to iterate over
  @ingroup model
