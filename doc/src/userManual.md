@@ -69,10 +69,11 @@ I created two handy Python scripts for generating these files, but you don't nee
 I have included one for your convenience in the repo.
 You will need to install Python to run them, but they shouldn't require any non standard libraries.
 When you install Python be sure to check the box that adds it to PATH.
-Having installed Python, get the absolute path of **the .minecraft directory** and run the following command in the repository directory:
+Having installed Python, you will need to find a Minecraft resource pack.
+Get the absolute path of **the /assets/minecraft** and run the following command in the repository directory:
 
 ```cmd
-python src/scripts/objGen.py *the .minecraft directory path*/assets/minecraft
+python src/scripts/objGen.py *path to /assets/minecraft directory of a resource pack*
 ```
 
 This will generate a special obj file in the repository directory.

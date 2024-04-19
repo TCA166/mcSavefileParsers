@@ -8,6 +8,15 @@
 Multiple programs for Minecraft [save file data extraction](#data-extraction-utilities) and [3D model generation](#3d-model-generation) based on save files.
 Also several well documented custom C libraries with minimal prerequisites for wavefront 3d model handling and Minecraft save file handling.
 
+[**User Manual**](https://tca166.github.io/mcSavefileParsers/md_doc_src_userManual.html)
+
+## Capabilities
+
+- Generate a 3d model based on your Minecraft savefile blazing fast
+- extract chunk nbt from region files
+- generate mtl from minecraft resource packs
+- generate obj files from minecraft resource packs
+
 ## Getting started
 
 In order to get started either download the parts of the precompiled release that apply to your system or compile the source code yourself.
@@ -148,7 +157,7 @@ These are compiled automatically using make, and then linked together into cNBT.
 Most of the code has been organized into four "libraries".
 These may prove to be useful should you want to parse Minecraft save files or generate wavefront 3D models.
 Feel free to use these as libraries in your projects just make sure to read the license before you do so.
-The documentation for functions in these libraries should be mainly in header files and on GitHub Pages, and I will gladly expand it should there be a need so just let me know.
+The documentation for functions in these libraries should be mainly in header files and on [GitHub Pages](https://tca166.github.io/mcSavefileParsers/), and I will gladly expand it should there be a need so just let me know.
 
 - regionParser  
     This library provides three functions for parsing region files.
