@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 
 /*!
  @defgroup mcErrno Error Reporting
@@ -70,19 +71,40 @@ typedef enum{
 extern mcError_t mcErrno;
 
 /*!
+ @def raiseError
+ @brief Raises an error
+ @details Prints the error message, sets errno to EXIT_FAILURE and exits the program
+ @param func The name of the function that is being checked
+ @ingroup mcErrno
+*/
+#define raiseError(func) \
+    perror(func); \
+    exit(EXIT_FAILURE); \
+    return EXIT_FAILURE; \
+
+//this return is here to suppress static analysis warnings
+
+/*!
+ @def errorCheck
  @brief Checks if an error has been set and exits the program if it has
  @details Mainly a convenience function, call this after performing an operation that might set an error
  @param func The name of the function that is being checked
  @ingroup mcErrno
 */
-void errorCheck(const char* func);
+#define errorCheck(func) \
+    if(mcErrno != none || errno != 0){ \
+        raiseError(func); \
+    }
 
 /*!
+ @def clearError
  @brief Clears the error
  @details Sets mcErrno to none and errno to 0
  @ingroup mcErrno
 */
-void clearError();
+#define clearError() \
+    mcErrno = none; \
+    errno = 0;
 
 /*!
  * @def cNBTError

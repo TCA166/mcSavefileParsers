@@ -12,6 +12,7 @@
  @brief Chunk data parsing functions
 */
 
+#include <stddef.h>
 #include <stdbool.h>
 #include <inttypes.h>
 
@@ -114,6 +115,7 @@ typedef struct{
  @param sz The size of the nbt file data
  @param sections The array of sections to be filled
  @return The number of sections extracted
+ @exception plenty of things can go wrong, check for 0
  @ingroup chunkParser
 */
 unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections);
@@ -124,6 +126,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
  @param s The section to create the block states from
  @param outLen The length of the block states array
  @return The block states array, or NULL if it cannot be created
+ @exception malloc can fail: check for NULL
  @ingroup chunkParser
 */
 unsigned int* getBlockStates(section s, int* outLen);

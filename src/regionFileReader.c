@@ -23,6 +23,7 @@
 int main(int argc, char** argv){
     if(argc < 2){
         argCountError("regionFileReader <path to region file> <output directory>");
+        raiseError("argCountError");
     }
     //foreach argument
     for(int i = 2; i < argc; i+=2){
@@ -41,9 +42,11 @@ int main(int argc, char** argv){
                 FILE* chunkFile = fopen(filename, "wb");
                 if(chunkFile == NULL){
                     fileError(filename, "opened");
+                    raiseError("fopen");
                 }
                 if(fwrite(chunks[n].data, chunks[n].byteLength, 1, chunkFile) != 1){
                     fileError(filename, "written to");
+                    raiseError("fwrite");
                 }
                 free(filename);
                 free(chunks[n].data);

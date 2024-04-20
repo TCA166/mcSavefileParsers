@@ -135,7 +135,14 @@ static int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName
 
 chunk* getChunks(FILE* regionFile){
     chunk* chunks = malloc(sizeof(chunk) * chunkN);
-    fseek(regionFile, 0, SEEK_SET);
+    if(chunks == NULL){
+        mallocError("chunks", sizeof(chunk) * chunkN);
+        return NULL;
+    }
+    if(fseek(regionFile, 0, SEEK_SET) != 0){
+        fileError("region file", "seek");
+        return NULL;
+    }
     //despite what it might seem with these loops we are doing a simple linear go through the file
     //first there is a 4096 byte long section of 1024 4 bit fields. Each field is made up of 3 big endian encoded int24s and a single int8
     for(int i = 0; i < chunkN; i++){
@@ -225,14 +232,17 @@ chunk extractChunk(char* regionDirPath, int x, int z){
     //I could use errno here, or rework getChunk so that it returns an errno value, but I like it this way better
     if(chunkIsNull(ourChunk)){
         parsingError(filename, "parsing of the first segment; chunk isn't saved")
+        fclose(regionFile);
         return ourChunk;
     }
     else if(ourChunk.offset == -1){
         parsingError(filename, "parsing of the first segment; chunk offset is corrupted and larger than filesize")
+        fclose(regionFile);
         return ourChunk;
     }
     else if(ourChunk.timestamp < 0){
         parsingError(filename, "parsing of the second segment")
+        fclose(regionFile);
         return ourChunk;
     }
     free(filename);

@@ -295,6 +295,10 @@ model cubeModelToModel(const cubeModel* m, hashTable* specialObjects){
                         prot = (object*)getVal(specialObjects, strippedName);
                     }
                     result.objects[index] = malloc(sizeof(object));
+                    if(result.objects[index] == NULL){
+                        mallocError("object", (size_t)sizeof(object));
+                        return result;
+                    }
                     if(prot != NULL){
                         memcpy(result.objects[index], prot, sizeof(object));
                         object* newObject = result.objects[index];
@@ -374,6 +378,7 @@ static char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize,
     size_t mtlLineSize = 9 + strlen(mtlName);
     char* mtlLine = malloc(mtlLineSize);
     if(snprintf(mtlLine, mtlLineSize, "usemtl %s\n", mtlName) < 0){
+        free(mtlLine);
         stringError("snprintf")
         return NULL;
     }
@@ -392,6 +397,10 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
     }
     (*outSize)++;
     fileContents = malloc(*outSize);
+    if(fileContents == NULL){
+        mallocError("fileContents", *outSize);
+        return NULL;
+    }
     fileContents[0] = '\0';
     if(materialFileName != NULL){
         *outSize += 9 + strlen(materialFileName);
@@ -430,10 +439,13 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
             char* objectLine = NULL;
             objectLine = malloc(objectLineSize);
             if(objectLine == NULL){
+                free(fileContents);
                 mallocError("object line", objectLineSize);
                 return NULL;
             }
             if(snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%lu\n", x, y, z, type, *offset) < 0){
+                free(objectLine);
+                free(fileContents);
                 stringError("snprintf");
                 return NULL;
             }
@@ -456,6 +468,7 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
                     return NULL;
                 }
                 if(snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.coordinates.x, v.coordinates.y , v.coordinates.z) < 0){
+                    free(vertexLine);
                     stringError("snprintf")
                     return NULL;
                 }
@@ -477,6 +490,7 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
                 }
                 char* line = malloc(size);
                 if(line == NULL){
+                    free(fileContents);
                     mallocError("line", size);
                     return NULL;
                 }
@@ -498,6 +512,7 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
                 free(line);
             }
             if(*offset + thisObject->vertexCount > __LONG_MAX__){
+                free(fileContents);
                 overflowError("ULONG")
                 return NULL;
             }
@@ -566,6 +581,10 @@ hashTable* getMaterials(char* filename){
     }
     bytes[sz] = '\0';
     hashTable* result = initHashTable(objCount);
+    if(result == NULL){
+        mallocError("hashTable", (size_t)objCount);
+        return NULL;
+    }
     char* token = strtok(bytes, "\n");
     material newMaterial;
     newMaterial.name = NULL;
@@ -578,6 +597,9 @@ hashTable* getMaterials(char* filename){
                 char* name = strchr(token, ' ');
                 if(name != NULL){
                     name++;
+                    if(newMaterial.name != NULL){ //this can happen in malformed files
+                        free(newMaterial.name);
+                    }
                     newMaterial.name = malloc(strlen(name) + 1);
                     strcpy(newMaterial.name, name);
                 }
@@ -592,10 +614,19 @@ hashTable* getMaterials(char* filename){
                     newMaterial.d = atof(f);
                     //we alloc a new buffer
                     material* ptr = malloc(sizeof(material));
+                    if(ptr == NULL){
+                        free(newMaterial.name);
+                        mallocError("material", sizeof(material));
+                        return NULL;
+                    }
                     //write the stack value to it
                     *ptr = newMaterial;
                     //and store it in a hashtable
-                    insertHashItem(result, newMaterial.name, ptr);
+                    if(insertHashItem(result, newMaterial.name, (void*)ptr) < 0){
+                        free(ptr);
+                        mallocError("hashTable", (size_t)objCount);
+                        return NULL;
+                    } 
                     newMaterial.name = NULL; //if we properly stored everything we indicate that
                 }
             }
@@ -665,7 +696,11 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
                     if(newObject.vertexCount > 0 && newObject.faceCount > 0){
                         object* ptr = malloc(sizeof(object));
                         *ptr = newObject;
-                        insertHashItem(result, newObject.type, ptr);
+                        if(insertHashItem(result, newObject.type, ptr) < 0){
+                            free(ptr);
+                            mallocError("hashTable", (size_t)objCount);
+                            return NULL;
+                        }
                     }
                     //free(newObject.type);
                 }
@@ -713,6 +748,10 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
             case 'f':;
                 int* vertices = NULL;
                 char* num = calloc(1, 1);
+                if(num == NULL){
+                    mallocError("num", (size_t)1);
+                    return NULL;
+                }
                 num[0] = '\0';
                 int n = 0;
                 int f = 0;
@@ -802,6 +841,10 @@ object modelToObject(const model* m, const char* type){
         object* thisObject = m->objects[o];
         int vertexCount = 0; //the amount of local vertices that was appended to the result array
         int* localV = calloc(thisObject->vertexCount, sizeof(int)); //local transformation of face vertex 
+        if(localV == NULL){
+            mallocError("localV", thisObject->vertexCount * sizeof(int));
+            return result;
+        }
         result.vertices = realloc(result.vertices, (result.vertexCount + thisObject->vertexCount) * sizeof(vertex));
         for(int i = 0; i < thisObject->vertexCount; i++){
             vertex evalV = thisObject->vertices[i];

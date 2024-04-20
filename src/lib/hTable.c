@@ -34,7 +34,14 @@ static uint64_t hash(const char* key){
 */
 static struct hTableItem* initHashItem(const char* key, const void* value){
     struct hTableItem* item = malloc(sizeof(struct hTableItem));
+    if(item == NULL){
+        return NULL;
+    }
     item->key = malloc(strlen(key) + 1);
+    if(item->key == NULL){
+        free(item);
+        return NULL;
+    }
     strcpy(item->key, key);
     item->value = (void*)value;
     item->next = NULL;
@@ -43,9 +50,16 @@ static struct hTableItem* initHashItem(const char* key, const void* value){
 
 hashTable* initHashTable(size_t size){
     hashTable* table = malloc(sizeof(hashTable));
+    if(table == NULL){
+        return NULL;
+    }
     table->count = 0;
     table->size = size;
     table->items = calloc(size, sizeof(struct hTableItem*));
+    if(table->items == NULL){
+        free(table);
+        return NULL;
+    }
     return table;
 }
 
@@ -81,6 +95,9 @@ int insertHashItem(hashTable* table, const char* key, const void* value){
     int index = getIndex(key, table);
     struct hTableItem* currentItem = table->items[index]; //currently stored item
     struct hTableItem* newItem = initHashItem(key, value);
+    if(newItem == NULL){ //fails, doesn't write value, value may leak
+        return -1;
+    }
     if(currentItem == NULL){ //if the item is NULL we insert it
         table->items[index] = newItem;
         table->count++;
@@ -107,10 +124,10 @@ int insertHashItem(hashTable* table, const char* key, const void* value){
             freeHashItem(newItem, NULL);
             return table->count;
         }
+        //we insert the new item at the end of the linked list, value doesn't leak
         currentItem->next = newItem;
         table->count++;  
     }
-    
     return table->count;
 }
 
@@ -134,6 +151,9 @@ void* getVal(hashTable* table, const char* key){
 
 void** hashTableToArray(hashTable* table){
     void** result = calloc(table->count, sizeof(void*));
+    if(result == NULL){
+        return NULL;
+    }
     int n = 0;
     forHashTableItem(table){
         result[n] = item->value;

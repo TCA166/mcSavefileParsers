@@ -6,6 +6,8 @@
 #ifndef HTABLE_H
 #define HTABLE_H
 
+#include <stddef.h>
+
 /*!
  @defgroup hTable Hash Table
  @brief A hash table implementation
@@ -81,7 +83,8 @@ typedef void (*freeFunction)(void* ptr);
 /*!
  @brief Initializes a hash table with a given size preallocated and set to NULL
  @param size The size of the hash table
- @return The initialized hash table
+ @return The initialized hash table or NULL if it failed
+ @exception malloc can fail: check for NULL
  @ingroup hTable
 */
 hashTable* initHashTable(size_t size);
@@ -101,6 +104,9 @@ void freeHashTable(hashTable* table, freeFunction freeValue);
  @param key The key to insert the value under
  @param value The value to insert
  @return The number of elements in the hashTable
+ @note Static analyzers don't understand the internal linked list and think value is not held in the hashTable. This is incorrect
+ @warning Can fail, due to a malloc error. At that point returns -1. Check for that please
+ @exception malloc can fail: check for -1
  @ingroup hTable
 */
 int insertHashItem(hashTable* table, const char* key, const void* value);
@@ -118,6 +124,7 @@ void* getVal(hashTable* table, const char* key);
  @brief Returns an array of all value pointers in the hash table
  @param table The hash table to convert to an array
  @return The array of value pointers
+ @exception malloc can fail: check for NULL
  @ingroup hTable
 */
 void** hashTableToArray(hashTable* table);

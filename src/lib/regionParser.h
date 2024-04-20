@@ -5,6 +5,8 @@
 
 #ifndef REGIONPARSER_H
 
+#include <stdio.h>
+
 /*!
  @defgroup regionParser Region Parser
  @brief A parser for region files

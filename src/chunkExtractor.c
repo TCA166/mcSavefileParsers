@@ -34,10 +34,10 @@ int main(int argc, char** argv){
         sprintf(filename, "./%d.%d.nbt", x, z);
         FILE* outFile = fopen(filename, "wb");
         if(outFile == NULL){
-            errorCheck("fopen");
+            raiseError("fopen");
         }
         if(fwrite(ourChunk.data, ourChunk.byteLength, 1, outFile) != 1){
-            errorCheck("fwrite");
+            raiseError("fopen");
         }
         free(filename);
         fclose(outFile);

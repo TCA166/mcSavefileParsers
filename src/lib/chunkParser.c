@@ -233,6 +233,10 @@ unsigned int* getBlockStates(section s, int* outLen){
         unsigned short numPerLong = (unsigned short)(64/l);
         //fprintf(stderr, "%d %d\n", l, numPerLong);
         states = malloc(numPerLong * s.blockDataLen * sizeof(unsigned int));
+        if(states == NULL){
+            mallocError("block states", numPerLong * s.blockDataLen * sizeof(unsigned int));
+            return NULL;
+        }
         //foreach long
         for(int a=0; a < s.blockDataLen; a++){
             uint64_t comp = s.blockData[a];

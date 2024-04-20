@@ -54,7 +54,9 @@ int main(int argc, char** argv){
             char* key = sections[i].blockPalette[0];
             if(getVal(blockCount, key) == NULL){
                 int* val = malloc(sizeof(int));
-                insertHashItem(blockCount, key, val);
+                if(insertHashItem(blockCount, key, val) < 0){
+                    free(val);
+                }
             }
             else{
                 int* val = getVal(blockCount, key);
@@ -66,7 +68,9 @@ int main(int argc, char** argv){
                 char* key = sections[i].blockPalette[blockStates[j]];
                 if(getVal(blockCount, key) == NULL){
                     int* val = malloc(sizeof(int));
-                    insertHashItem(blockCount, key, val);
+                    if(insertHashItem(blockCount, key, (void*)val) < 0){
+                        free(val);
+                    }
                 }
                 else{
                     int* val = getVal(blockCount, key);

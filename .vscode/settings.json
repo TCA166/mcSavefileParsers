@@ -23,7 +23,8 @@
         "stdbool.h": "c",
         "htable.h": "c",
         "stdlib.h": "c",
-        "functional": "c"
+        "functional": "c",
+        "errordefs.h": "c"
     },
     "cSpell.words": [
         "blockstates",

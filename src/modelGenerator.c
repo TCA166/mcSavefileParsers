@@ -27,7 +27,8 @@
 int main(int argc, char** argv){
     if(argc < 2){
         argCountError("modelGenerator <path to nbt file> <arg1> <arg2> ...");
-        errorCheck("argCountError");
+
+        raiseError("argCountError");
     }
     bool yLim = false; //if we wan't to remove some verticality
     int upLim = 0; //y+ cutoff
@@ -43,7 +44,7 @@ int main(int argc, char** argv){
         if(strcmp(argv[i], "-l") == 0){
             if(argc <= i + 2){
                 argError("-l", "2");
-                errorCheck("argError");
+                raiseError("argError");
             }
             yLim = true;
             upLim = atoi(argv[i + 1]);
@@ -64,7 +65,7 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "-s") == 0){
             if(argc <= i + 1){
                 argError("-s", "1");
-                errorCheck("argError");
+                raiseError("argError");
             }
             side = atoi(argv[i + 1]);
             i+=1;
@@ -72,7 +73,7 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "-m") == 0){
             if(argc <= i + 1){
                 argError("-m", "1");
-                errorCheck("argError");
+                raiseError("argError");
             }
             materialFilename = argv[i + 1];
             i += 1;
@@ -80,7 +81,7 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "-o") == 0){
             if(argc <= i + 1){
                 argError("-o", "1");
-                errorCheck("argError");
+                raiseError("argError");
             }
             objFilename = argv[i + 1];
             i += 1;
@@ -88,7 +89,7 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "-out") == 0){
             if(argc <= i + 1){
                 argError("-out", "1");
-                errorCheck("argError");
+                raiseError("argError");
             }
             outFilename = argv[i + 1];
             i += 1;
@@ -99,7 +100,10 @@ int main(int argc, char** argv){
     if(materialFilename != NULL){
         //parse the material file, after-all we have to account for transparent textures
         materials = getMaterials(materialFilename);
-        errorCheck("getMaterials");
+        if(materials == NULL){
+            raiseError("getMaterials");
+        }
+        
     } 
     /*Note on the objects
     So generally the workflow looks thusly: file->sections->blocks->cubes->objects->model
@@ -112,44 +116,46 @@ int main(int argc, char** argv){
     hashTable* objects = NULL; //special objects
     if(objFilename != NULL){
         objects = readWavefront(objFilename, materials, side);
-        errorCheck("getMaterials");
+        raiseError("getMaterials");
     }
     //Get the nbt data
     FILE* nbtFile = fopen(argv[1], "rb");
     if(nbtFile == NULL){
-        errorCheck("fopen");
+        raiseError("fopen");
     }
     if(fseek(nbtFile, 0L, SEEK_END) != 0){
-        errorCheck("fseek");
+        raiseError("fseek");
     }
     long sz = ftell(nbtFile);
     if(fseek(nbtFile, 0, SEEK_SET) != 0){
-        errorCheck("fseek");
+        raiseError("fseek");
     }
     unsigned char* data = malloc(sz); //raw NBT file bytes
     if(fread(data, sz, 1, nbtFile) != 1){
-        errorCheck("fread");
+        raiseError("fread");
     }
     if(fclose(nbtFile) == EOF){
-        errorCheck("fclose");
+        raiseError("fclose");
     }
     model newModel = generateFromNbt(data, sz, materials, objects, yLim, upLim, downLim, b, f, side, 0, 0);
     errorCheck("generateFromNbt");
     size_t size = 0;
     //chunk can hold a maximum of 98304 objects
     char* content = generateModel(&newModel, &size, materialFilename, NULL);
-    errorCheck("generateModel");
+    if(content == NULL){
+        raiseError("generateModel");
+    }
     freeModel(&newModel);
     printf("Model string generated\n");
     FILE* outFile = fopen(outFilename, "w");
     if(outFile == NULL){
-        errorCheck("fileError");
+        raiseError("fileError");
     }
     if(fwrite(content, size, 1, outFile) != 1){
-        errorCheck("fwrite");
+        raiseError("fwrite");
     }
     if(fclose(outFile) == EOF){
-        errorCheck("fclose");
+        raiseError("fclose");
     }
     free(content);
     return EXIT_SUCCESS;

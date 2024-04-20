@@ -10,7 +10,7 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include "errorDefs.h"
+#include "lib/errorDefs.h"
 
 #ifdef WIN32
 #define directorySeperator "\\"
@@ -48,7 +48,10 @@ int main(int argc, char** argv){
                     fseek(fp, 0, SEEK_END);
                     long sz = ftell(fp);
                     unsigned char* bytes = malloc(sz);
-                    fread(bytes, sz, 1, fp);
+                    if(fread(bytes, sz, 1, fp) != 1){
+                        fileError(fullname, "read");
+                        raiseError("fread");
+                    }
                     //Check PNG header
                     if(bytes[0] == 137 && bytes[1] == 80 && bytes[2] == 78 && bytes[3] == 71 && bytes[4] == 13 && bytes[5] == 10 && bytes[6] == 26 && bytes[7] == 10){
                         
