@@ -378,6 +378,7 @@ unsigned int cullFaces(cubeModel* thisModel, bool cullChunkBorder, hashTable* sp
  @param m The cubeModel to convert
  @param specialObjects A hash table of special objects to insert into the model
  @return The new model reference
+ @exception mallocError if memory cannot be allocated
  @ingroup model
 */
 model cubeModelToModel(const cubeModel* m, hashTable* specialObjects);
@@ -393,6 +394,9 @@ model cubeModelToModel(const cubeModel* m, hashTable* specialObjects);
  @param materialFileName The name of the material file
  @param offset The offset of the model
  @return The generated model
+ @exception stringError if the string operations fail
+ @exception mallocError if memory cannot be allocated
+ @exception overflowError if the model is too large
  @ingroup model
 */
 char* generateModel(const model* thisModel, size_t* outSize, const char* materialFileName, offset_t* offset);
@@ -427,6 +431,8 @@ cubeFace* newCubeFace(int a, int b, int c, int d);
  @details Allocates necessary memory for material type strings.
  @param filename The name of the mtl file
  @return Returns a new reference to a material hash table.
+ @exception fileError if the file operations fail
+ @exception mallocError if memory cannot be allocated
  @ingroup model
 */
 hashTable* getMaterials(char* filename);
@@ -464,6 +470,10 @@ object deCubeObject(cube* c);
  @param materials The materials hash table to use for the model
  @param side The side of the block to render
  @return The hash table of objects
+ @exception fileError if the file operations fail
+ @exception mallocError if memory cannot be allocated
+ @exception parseError if the wavefront file is invalid
+ @exception vertexWarning if a vertex is invalid
  @ingroup model
 */
 hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side);
@@ -510,6 +520,7 @@ cube createGenericCube(unsigned int side);
  @param m The model to convert
  @param type The type of the object
  @return The optimized object
+ @exception mallocError if memory cannot be allocated
  @ingroup model
 */
 object modelToObject(const model* m, const char* type);

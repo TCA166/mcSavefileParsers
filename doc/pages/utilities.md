@@ -28,6 +28,14 @@ This program extracts only a single chunk with the given chunk coordinates into 
 chunkExtractor <path to region directory> <x> <z>
 ```
 
+### blockPrint
+
+This program prints out quantities of specific blocks in a chunk
+
+```Bash
+blockPrint <path to a chunk nbt file>
+```
+
 ## 3D model generation
 
 Multiple tools that can take in Minecraft related files as input and create 3D representations of your worlds

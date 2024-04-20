@@ -115,7 +115,10 @@ typedef struct{
  @param sz The size of the nbt file data
  @param sections The array of sections to be filled
  @return The number of sections extracted
- @exception plenty of things can go wrong, check for 0
+ @exception cNBTError if the nbt data is invalid
+ @exception nbtTypeError if the nbt data is of the wrong type
+ @exception nbtTagError if the nbt data is missing a tag
+ @exception overflowError if the nbt data is too large
  @ingroup chunkParser
 */
 unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections);
@@ -126,7 +129,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
  @param s The section to create the block states from
  @param outLen The length of the block states array
  @return The block states array, or NULL if it cannot be created
- @exception malloc can fail: check for NULL
+ @exception mallocError if the block states array cannot be allocated
  @ingroup chunkParser
 */
 unsigned int* getBlockStates(section s, int* outLen);

@@ -8,7 +8,7 @@
 Multiple programs for Minecraft [save file data extraction](#data-extraction-utilities) and [3D model generation](#3d-model-generation) based on save files.
 Also several well documented custom C libraries with minimal prerequisites for wavefront 3d model handling and Minecraft save file handling.
 
-[**User Manual**](https://tca166.github.io/mcSavefileParsers/md_doc_src_userManual.html)
+[**User Manual**](https://tca166.github.io/mcSavefileParsers/md_doc_pages_userManual.html)
 
 ## Capabilities
 

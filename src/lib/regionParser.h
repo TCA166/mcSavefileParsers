@@ -126,6 +126,10 @@ typedef struct{
  @param z The z coordinate of the chunk
  @param regionFile The region file to read from
  @param regionFileName The name of the region file
+ @exception fileError if file operations fail
+ @exception mallocError if malloc fails
+ @exception parsingError if region file is invalid
+ @exception localizedFileError if file operations fail
  @return The chunk object
 */
 chunk getChunk(int x, int z, FILE* regionFile, char* regionFileName);
@@ -136,6 +140,10 @@ chunk getChunk(int x, int z, FILE* regionFile, char* regionFileName);
  @return Returns a dynamic array of chunks with 1024 chunks.
  @note High-er level function that does error handling on it's own.
  @param regionFile The region file to read from
+ @exception fileError if file operations fail
+ @exception mallocError if malloc fails
+ @exception parsingError if region file is invalid
+ @exception localizedFileError if file operations fail
  @ingroup regionParser
 */
 chunk* getChunks(FILE* regionFile);
@@ -147,6 +155,10 @@ chunk* getChunks(FILE* regionFile);
  @param x The x coordinate of the chunk
  @param z The z coordinate of the chunk
  @return The chunk object
+ @exception fileError if file operations fail
+ @exception mallocError if malloc fails
+ @exception parsingError if region file is invalid
+ @exception localizedFileError if file operations fail
  @ingroup regionParser
 */
 chunk extractChunk(char* regionDirPath, int x, int z);

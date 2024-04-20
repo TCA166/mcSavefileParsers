@@ -5,4 +5,4 @@
 [![Windows](https://github.com/TCA166/mcSavefileParsers/actions/workflows/c-cppWin.yml/badge.svg)](https://github.com/TCA166/mcSavefileParsers/actions/workflows/c-cppWin.yml)
 
 Welcome to mcSavefileParsers documentation!
-This is generally intended to be a resource for developers, but here's a [**User Manual**](https://tca166.github.io/mcSavefileParsers/md_doc_src_userManual.html) for the layman on how to use the utilities.
+This is generally intended to be a resource for developers, but here's a [**User Manual**](https://tca166.github.io/mcSavefileParsers/md_doc_pages_userManual.html) for the layman on how to use the utilities.

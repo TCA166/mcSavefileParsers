@@ -182,8 +182,7 @@ chunk* getChunks(FILE* regionFile){
             */
             int res = getChunkData(&chunks[i], regionFile, "region file");
             if(res < 0){
-                fprintf(stderr, "Inflate returned %d ", res);
-                perror("Decompression failed.");
+                return NULL;
             }
         }
     }
@@ -214,8 +213,7 @@ chunk getChunk(int x, int z, FILE* regionFile, char* regionFileName){
     }
     int res = getChunkData(&result, regionFile, regionFileName);
     if(res < 0){
-        fprintf(stderr, "Inflate returned %d ", res);
-        perror("Decompression failed.");
+        return result;
     }
     return result;
 }

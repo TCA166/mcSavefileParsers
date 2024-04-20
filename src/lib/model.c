@@ -426,6 +426,9 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
             if(thisObject->m != NULL){
                 //add the usemtl line
                 fileContents = appendMtlLine(thisObject->m->name, fileContents, outSize, &alloc);
+                if(fileContents == NULL){
+                    return NULL;
+                }
             }
             int x = (int)thisObject->x;
             int y = (int)thisObject->y;
@@ -482,6 +485,9 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
                 objFace face = thisObject->faces[i];
                 if(face.m != NULL){
                     fileContents = appendMtlLine(face.m->name, fileContents, outSize, &alloc);
+                    if(fileContents == NULL){
+                        return NULL;
+                    }
                 }
                 size_t size = 4;
                 for(int m = 0; m < face.vertexCount; m++){
