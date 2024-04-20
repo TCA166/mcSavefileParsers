@@ -122,7 +122,7 @@
 int main(int argc, char** argv){
     //very similar to modelGenerator
     if(argc < 5){
-        argCountError();
+        argCountError("radiusGenerator <path to region directory> <x> <z> <radius>");
     }
     bool yLim = false; //if we want to 
     int upLim = 0;
@@ -295,12 +295,7 @@ int main(int argc, char** argv){
     sem_destroy(sem);
     sharedFree(sem, sizeof(sem_t));
     if(materials != NULL){
-        forHashTableItem(materials){
-            material* mat = (material*)item->value;
-            free(mat->name);
-            free(mat);
-        }
-        freeHashTable(materials);
+        freeHashTable(materials, (freeFunction)freeMaterial);
     }
     if(objects != NULL){
         freeObjectsHashTable(objects);

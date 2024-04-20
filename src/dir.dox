@@ -10,8 +10,3 @@
 @brief Directory for library sourcecode
 @details contains all of the C libraries
 */
-
-/*!
-@dir /src/scripts
-@brief Directory for Python utility scripts
-*/

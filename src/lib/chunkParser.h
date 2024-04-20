@@ -4,6 +4,9 @@
  @details This file contains functions for parsing chunk data
 */
 
+#ifndef CHUNKPARSER_H
+#define CHUNKPARSER_H
+
 /*!
  @defgroup chunkParser Chunk Parser
  @brief Chunk data parsing functions
@@ -120,7 +123,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
  @details Returns NULL if it cannot be created. Be sure to free the result once you are done with it.
  @param s The section to create the block states from
  @param outLen The length of the block states array
- @return The block states array
+ @return The block states array, or NULL if it cannot be created
  @ingroup chunkParser
 */
 unsigned int* getBlockStates(section s, int* outLen);
@@ -156,3 +159,5 @@ char** createGlobalPalette(section* sections, int len, int* outLen, bool freeSec
  @ingroup chunkParser
 */
 void freeSections(section* sections, int sectionLen);
+
+#endif

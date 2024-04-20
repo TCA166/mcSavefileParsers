@@ -3,6 +3,9 @@
  @brief A hash table implementation
 */
 
+#ifndef HTABLE_H
+#define HTABLE_H
+
 /*!
  @defgroup hTable Hash Table
  @brief A hash table implementation
@@ -57,9 +60,18 @@ typedef struct{
 } hashTable;
 
 /*!
+ @typedef freeFunction
+ @brief A function pointer type for freeing memory
+ @param ptr The pointer to free
+ @ingroup hTable
+*/
+typedef void (*freeFunction)(void* ptr);
+
+/*!
  @def forHashTableItem(key, table)
  @brief Macro wrapper for two for loops that provides a struct hTableItem* item variable for your use
  @param table The hash table to get the index for
+ @details Provides a struct hTableItem* item variable for your use
  @ingroup hTable
 */
 #define forHashTableItem(table) \
@@ -77,9 +89,10 @@ hashTable* initHashTable(size_t size);
 /*!
  @brief Frees all the allocated memory in the hash table including the items, but not the values of the items.
  @param table The hash table to free
+ @param freeValue The function to free the values of the items, can be NULL
  @ingroup hTable
 */
-void freeHashTable(hashTable* table);
+void freeHashTable(hashTable* table, freeFunction freeValue);
 
 /*!
  @brief Inserts the given void* as the value of the given key in the given hashTable. 
@@ -108,3 +121,5 @@ void* getVal(hashTable* table, const char* key);
  @ingroup hTable
 */
 void** hashTableToArray(hashTable* table);
+
+#endif

@@ -597,6 +597,11 @@ hashTable* getMaterials(char* filename){
     return result;
 }
 
+void freeMaterial(material* m){
+    free(m->name);
+    free(m);
+}
+
 hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side){
     FILE* fp = fopen(filename, "r");
     if(fp == NULL){

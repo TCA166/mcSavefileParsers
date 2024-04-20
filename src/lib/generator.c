@@ -39,8 +39,8 @@ model generateFromNbt(unsigned char* data, int dataSize, hashTable* materials, h
         freeHashTable(materials);
     }
     if(!f){
-        long count = cullFaces(&cubeModel, !b, objects);
-        printf("%ld model faces culled\n", count);
+        cullFaces(&cubeModel, !b, objects);
+        //printf("%ld model faces culled\n", count);
     }
     model newModel = cubeModelToModel(&cubeModel, objects);
     newModel.materialArr = materialsArr;
@@ -59,7 +59,6 @@ cubeModel createCubeModel(section* sections, int sectionLen, hashTable* material
     for(int i = 0; i < sectionLen; i++){
         //create the block state array
         unsigned int* states = getBlockStates(sections[i], NULL);
-        free(sections[i].blockData);
         //if we want to do face culling we first need to actually have all the blocks in one place
         for(int x = 0; x < 16; x++){
             for(int y = 0; y < 16; y++){

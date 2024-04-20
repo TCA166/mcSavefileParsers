@@ -3,6 +3,8 @@
  @brief A parser for region files
 */
 
+#ifndef REGIONPARSER_H
+
 /*!
  @defgroup regionParser Region Parser
  @brief A parser for region files
@@ -146,3 +148,5 @@ chunk* getChunks(FILE* regionFile);
  @ingroup regionParser
 */
 chunk extractChunk(char* regionDirPath, int x, int z);
+
+#endif

@@ -4,6 +4,9 @@
  @details This file contains functions for generating 3d models from nbt data
 */
 
+#ifndef GENERATOR_H
+#define GENERATOR_H
+
 #include <stdbool.h>
 #include "model.h"
 #include "chunkParser.h"
@@ -70,3 +73,5 @@ model generateFromNbt(unsigned char* data, int dataSize, hashTable* materials, h
  @ingroup generator
 */
 void freeObjectsHashTable(hashTable* objects);
+
+#endif

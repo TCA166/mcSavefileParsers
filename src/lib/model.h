@@ -3,6 +3,9 @@
  @brief Definitions for 3D model structs and functions
 */
 
+#ifndef MODEL_H
+#define MODEL_H
+
 /*!
  @defgroup model 3D Model
  @brief Definitions for 3D model structs and functions
@@ -510,3 +513,11 @@ cube createGenericCube(unsigned int side);
  @ingroup model
 */
 object modelToObject(const model* m, const char* type);
+
+/*!
+ @brief Frees a material struct
+ @param m The material to free
+*/
+void freeMaterial(material* m);
+
+#endif

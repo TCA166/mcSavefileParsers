@@ -52,20 +52,24 @@ hashTable* initHashTable(size_t size){
 /*!
  @brief Frees a given hash item
  @param item the item to free
+ @param freeValue the function to free the value of the item
 */
-static void freeHashItem(struct hTableItem* item){
+static void freeHashItem(struct hTableItem* item, freeFunction freeValue){
     if(item->next != NULL){
-        freeHashItem(item->next);
+        freeHashItem(item->next, freeValue);
+    }
+    if(freeValue != NULL){
+        freeValue(item->value);
     }
     free(item->key);
     free(item);
 }
 
-void freeHashTable(hashTable* table){
+void freeHashTable(hashTable* table, freeFunction freeValue){
     for(int i = 0; i < table->size; i++){
         struct hTableItem* item = table->items[i];
         if(item != NULL){
-            freeHashItem(item);
+            freeHashItem(item, freeValue);
             table->items[i] = NULL;
         }
     }
@@ -83,14 +87,14 @@ int insertHashItem(hashTable* table, const char* key, const void* value){
     }
     else if(strcmp(key, currentItem->key) == 0){ //if it isn't we try updating it
         currentItem->value = (void*)value;
-        freeHashItem(newItem);
+        freeHashItem(newItem, NULL);
     }
     else{ //else we navigate the linked list
         struct hTableItem* nextItem = currentItem->next;
         while(nextItem != NULL){ //as long as the next item isn't NULL
             if(strcmp(key, currentItem->key) == 0){ //we try updating
                 currentItem->value = (void*)value;
-                freeHashItem(newItem);
+                freeHashItem(newItem, NULL);
                 return table->count;
             }
             else{ //or move forward
@@ -100,7 +104,7 @@ int insertHashItem(hashTable* table, const char* key, const void* value){
         }
         if(strcmp(key, currentItem->key) == 0){ //one last try at updating
             currentItem->value = (void*)value;
-            freeHashItem(newItem);
+            freeHashItem(newItem, NULL);
             return table->count;
         }
         currentItem->next = newItem;

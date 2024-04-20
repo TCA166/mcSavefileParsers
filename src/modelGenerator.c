@@ -23,11 +23,10 @@
  @see readWavefront
  @see generateFromNbt
  @see generateModel
- @return The exit status
 */
 int main(int argc, char** argv){
     if(argc < 2){
-        argCountError();
+        argCountError("modelGenerator <path to nbt file> <arg1> <arg2> ...");
     }
     bool yLim = false; //if we wan't to remove some verticality
     int upLim = 0; //y+ cutoff

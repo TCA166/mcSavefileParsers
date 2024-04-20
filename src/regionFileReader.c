@@ -18,12 +18,11 @@
  @brief Extracts all chunks from all region files
  @details Loads all chunks from all region files using the regionParser library, then writes them to files in the given directories.
  @see regionParser.h
- @see @ref extractChunk
- @return The exit status
+ @see extractChunk
 */
 int main(int argc, char** argv){
     if(argc < 2){
-        argCountError();
+        argCountError("regionFileReader <path to region file> <output directory>");
     }
     //foreach argument
     for(int i = 2; i < argc; i+=2){

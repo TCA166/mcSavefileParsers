@@ -120,12 +120,13 @@ static int getChunkData(chunk* thisChunk, FILE* regionFile, char* regionFileName
             }
             while(res == -5);
         }
-                
-        thisChunk->byteLength = buffSize;
-        buff = realloc(buff, buffSize);
         if(res < 0){
+            free(data);
+            free(buff);
             return res;
         }
+        thisChunk->byteLength = buffSize;
+        buff = realloc(buff, buffSize);
         thisChunk->data = buff;
         free(data);
     }

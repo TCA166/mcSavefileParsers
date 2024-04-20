@@ -7,6 +7,10 @@
 
 //Since the ERRNO macros are very unspecific and as far as I can see usually associated with errors a kernel may encounter, I have only loosely associated them with my own error convention
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+
 /*!
  @defgroup errorDefs Error Definitions
  @brief Contains error definitions for the project
@@ -106,10 +110,11 @@
 /*!
  * @def argCountError
  * @brief Reports an error when an invalid amount of arguments is provided
+ * @param usage The usage of the program
  * @ingroup errorDefs
  */
-#define argCountError() \
-        fprintf(stderr, "Invalid number of arguments was provided\n."); \
+#define argCountError(usage) \
+        fprintf(stderr, "Invalid number of arguments was provided\n" usage "\n"); \
         errno = EINVAL; \
         perror("Arg count error."); \
         exit(EXIT_FAILURE);

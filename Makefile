@@ -14,10 +14,10 @@ ifneq (,$(findstring MSYS,$(UNAME)))
 endif
 
 all: CFLAGS := -O3
-all: radiusGenerator modelGenerator chunkExtractor regionFileReader
+all: radiusGenerator modelGenerator chunkExtractor regionFileReader blockPrint
 
 debug: CFLAGS := -Wall -Werror -Wpedantic -g
-debug: radiusGenerator modelGenerator chunkExtractor regionFileReader
+debug: radiusGenerator modelGenerator chunkExtractor regionFileReader blockPrint
 
 cNBT.o: 
 	gcc cNBT/buffer.c -o cNBT/buffer.o -c $(CFLAGS)
@@ -52,6 +52,9 @@ modelGenerator: model.o generator.o hTable.o chunkParser.o cNBT.o src/modelGener
 
 radiusGenerator: model.o generator.o hTable.o chunkParser.o regionParser.o cNBT.o src/radiusGenerator.c
 	gcc src/radiusGenerator.c generator.o model.o regionParser.o hTable.o chunkParser.o cNBT.o $(ZLIB) -lm -o radiusGenerator $(CFLAGS)
+
+blockPrint: src/blockPrint.c chunkParser.o cNBT.o hTable.o
+	gcc src/blockPrint.c chunkParser.o cNBT.o hTable.o -o blockPrint -lm $(CFLAGS)
 
 cNBT.ow:
 	x86_64-w64-mingw32-gcc-win32 cNBT/buffer.c -o cNBT/buffer.ow -c $(CFLAGS)
@@ -103,6 +106,8 @@ clean:
 	rm -f regionFileReader
 	rm -f regionFileReader.exe
 	rm -rf doc/build
+	rm -f blockPrint
+	rm -f blockPrint.exe
 
 check: hTable.o regionParser.o chunkParser.o cNBT.o model.o
 	#hTable tests
@@ -128,5 +133,5 @@ check: hTable.o regionParser.o chunkParser.o cNBT.o model.o
 
 doc: doc/build/html
 
-doc/build/html: src/lib/*.h src/*.c src/lib/*.c doc/Doxyfile.conf src/dir.dox doc/src/*
+doc/build/html: src/lib/*.h src/*.c src/lib/*.c doc/Doxyfile.conf src/dir.dox doc/pages/*
 	doxygen ./doc/Doxyfile.conf

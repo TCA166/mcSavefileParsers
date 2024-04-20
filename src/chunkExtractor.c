@@ -19,11 +19,10 @@
  @details Loads a chunk from a region file using the regionParser library, then writes it to a file using extractChunk.
  @see regionParser.h
  @see @ref extractChunk
- @return The chunk object
 */
 int main(int argc, char** argv){
     if(argc < 3){
-        argCountError();
+        argCountError("chunkExtractor <path to region directory> <x> <z>");
     }
     for(int i = 3; i < argc; i+=3){
         int x = atoi(argv[i - 1]);

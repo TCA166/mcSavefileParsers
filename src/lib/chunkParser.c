@@ -314,5 +314,6 @@ void freeSections(section* sections, int sectionLen){
             free(sections[i].blockPalette[n]);
         }
         free(sections[i].blockPalette);
+        free(sections[i].blockData);
     }
 }
