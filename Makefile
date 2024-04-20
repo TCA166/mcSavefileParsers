@@ -19,6 +19,9 @@ all: radiusGenerator modelGenerator chunkExtractor regionFileReader blockPrint
 debug: CFLAGS := -Wall -Werror -Wpedantic -g
 debug: radiusGenerator modelGenerator chunkExtractor regionFileReader blockPrint
 
+mcErrno.o: src/lib/mcErrno.c
+	gcc src/lib/mcErrno.c -o mcErrno.o -c $(CFLAGS)
+
 cNBT.o: 
 	gcc cNBT/buffer.c -o cNBT/buffer.o -c $(CFLAGS)
 	gcc cNBT/nbt_parsing.c -o cNBT/nbt_parsing.o -c $(CFLAGS)
@@ -38,23 +41,23 @@ hTable.o: src/lib/hTable.c
 model.o: src/lib/model.c
 	gcc src/lib/model.c -o model.o -c $(CFLAGS)
 
-regionFileReader: regionParser.o src/regionFileReader.c
-	gcc src/regionFileReader.c regionParser.o -o regionFileReader $(ZLIB) -lm $(CFLAGS)
+regionFileReader: regionParser.o mcErrno.o src/regionFileReader.c
+	gcc src/regionFileReader.c regionParser.o mcErrno.o -o regionFileReader $(ZLIB) -lm $(CFLAGS)
 
-chunkExtractor: regionParser.o src/chunkExtractor.c
-	gcc src/chunkExtractor.c regionParser.o -o chunkExtractor $(ZLIB) -lm $(CFLAGS)
+chunkExtractor: regionParser.o mcErrno.o src/chunkExtractor.c
+	gcc src/chunkExtractor.c regionParser.o mcErrno.o -o chunkExtractor $(ZLIB) -lm $(CFLAGS)
 
 generator.o: src/lib/generator.c
 	gcc src/lib/generator.c -o generator.o -c $(CFLAGS)
 
-modelGenerator: model.o generator.o hTable.o chunkParser.o cNBT.o src/modelGenerator.c
-	gcc src/modelGenerator.c generator.o model.o hTable.o chunkParser.o cNBT.o -o modelGenerator -lm $(CFLAGS)
+modelGenerator: model.o generator.o hTable.o mcErrno.o chunkParser.o cNBT.o src/modelGenerator.c
+	gcc src/modelGenerator.c generator.o model.o mcErrno.o hTable.o chunkParser.o cNBT.o -o modelGenerator -lm $(CFLAGS)
 
-radiusGenerator: model.o generator.o hTable.o chunkParser.o regionParser.o cNBT.o src/radiusGenerator.c
-	gcc src/radiusGenerator.c generator.o model.o regionParser.o hTable.o chunkParser.o cNBT.o $(ZLIB) -lm -o radiusGenerator $(CFLAGS)
+radiusGenerator: model.o generator.o hTable.o mcErrno.o chunkParser.o regionParser.o cNBT.o src/radiusGenerator.c
+	gcc src/radiusGenerator.c generator.o model.o mcErrno.o regionParser.o hTable.o chunkParser.o cNBT.o $(ZLIB) -lm -o radiusGenerator $(CFLAGS)
 
-blockPrint: src/blockPrint.c chunkParser.o cNBT.o hTable.o
-	gcc src/blockPrint.c chunkParser.o cNBT.o hTable.o -o blockPrint -lm $(CFLAGS)
+blockPrint: src/blockPrint.c chunkParser.o mcErrno.o cNBT.o hTable.o
+	gcc src/blockPrint.c chunkParser.o cNBT.o mcErrno.o hTable.o -o blockPrint -lm $(CFLAGS)
 
 cNBT.ow:
 	x86_64-w64-mingw32-gcc-win32 cNBT/buffer.c -o cNBT/buffer.ow -c $(CFLAGS)
@@ -109,26 +112,26 @@ clean:
 	rm -f blockPrint
 	rm -f blockPrint.exe
 
-check: hTable.o regionParser.o chunkParser.o cNBT.o model.o
+check: hTable.o regionParser.o chunkParser.o cNBT.o model.o mcErrno.o
 	#hTable tests
 	checkmk tests/hTable.check > tests/hTableCheck.c
-	gcc tests/hTableCheck.c hTable.o -lcheck -g -lm $(SUBUNIT) -Wall -o tests/hTableCheck
+	gcc tests/hTableCheck.c hTable.o mcErrno.o -lcheck -g -lm $(SUBUNIT) -Wall -o tests/hTableCheck
 	./tests/hTableCheck
 	#regionParser tests
 	checkmk tests/regionParser.check > tests/regionParserCheck.c
-	gcc tests/regionParserCheck.c regionParser.o -lcheck -g -lm $(ZLIB) $(SUBUNIT) -o tests/regionParserCheck
+	gcc tests/regionParserCheck.c regionParser.o mcErrno.o -lcheck -g -lm $(ZLIB) $(SUBUNIT) -o tests/regionParserCheck
 	./tests/regionParserCheck
 	#chunkParser tests
 	checkmk tests/chunkParser.check > tests/chunkParserCheck.c
-	gcc tests/chunkParserCheck.c chunkParser.o cNBT.o -lcheck -g -lm $(SUBUNIT) -o tests/chunkParserCheck
+	gcc tests/chunkParserCheck.c chunkParser.o cNBT.o mcErrno.o -lcheck -g -lm $(SUBUNIT) -o tests/chunkParserCheck
 	./tests/chunkParserCheck
 	#model tests
 	checkmk tests/model.check > tests/modelCheck.c
-	gcc tests/modelCheck.c model.o hTable.o -lcheck -g -lm $(SUBUNIT) -o tests/modelCheck
+	gcc tests/modelCheck.c model.o hTable.o mcErrno.o -lcheck -g -lm $(SUBUNIT) -o tests/modelCheck
 	./tests/modelCheck
 	#wavefront tests - doesn't work on windows because os bs
 	#checkmk tests/wavefront.check > tests/wavefrontCheck.c
-	#gcc tests/wavefrontCheck.c model.o hTable.o -lcheck -g -lm $(SUBUNIT) -o tests/wavefrontCheck
+	#gcc tests/wavefrontCheck.c model.o hTable.o mcErrno.o -lcheck -g -lm $(SUBUNIT) -o tests/wavefrontCheck
 	#./tests/wavefrontCheck
 
 doc: doc/build/html

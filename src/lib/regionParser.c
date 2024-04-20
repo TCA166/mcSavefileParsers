@@ -149,6 +149,7 @@ chunk* getChunks(FILE* regionFile){
             }
             else{
                 parsingError("region file", "first segment");
+                return NULL;
             }
         }
         chunks[i] = newChunk;
@@ -157,6 +158,7 @@ chunk* getChunks(FILE* regionFile){
     for(int i = 0; i < chunkN; i++){
         if(handleSecondSegment(&chunks[i], regionFile) != 0 && !chunkIsNull(chunks[i])){
             parsingError("region file", "second segment");
+            return  NULL;
         }
     }
     //Then there's encoded chunk data in n*4096 byte long chunks
@@ -188,12 +190,14 @@ chunk getChunk(int x, int z, FILE* regionFile, char* regionFileName){
     result.z = z;
     if(fseek(regionFile, offset, SEEK_SET) != 0){
         fileError("region file", "seek");
+        return result;
     }
     if(handleFirstSegment(&result, regionFile, regionFileName) != 0){
         return result;
     }
     if(fseek(regionFile, offset + segmentLength, SEEK_SET) != 0){
         fileError("region file", "seek");
+        return result;
     }
     if(handleSecondSegment(&result, regionFile) != 0){
         return result;
@@ -215,17 +219,21 @@ chunk extractChunk(char* regionDirPath, int x, int z){
     FILE* regionFile = fopen(filename, "rb");
     if(regionFile == NULL){
         fileError(filename, "located");
+        return (chunk){0};
     }
     chunk ourChunk = getChunk(x, z, regionFile, filename);
     //I could use errno here, or rework getChunk so that it returns an errno value, but I like it this way better
     if(chunkIsNull(ourChunk)){
         parsingError(filename, "parsing of the first segment; chunk isn't saved")
+        return ourChunk;
     }
     else if(ourChunk.offset == -1){
         parsingError(filename, "parsing of the first segment; chunk offset is corrupted and larger than filesize")
+        return ourChunk;
     }
     else if(ourChunk.timestamp < 0){
         parsingError(filename, "parsing of the second segment")
+        return ourChunk;
     }
     free(filename);
     fclose(regionFile);

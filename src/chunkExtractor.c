@@ -23,19 +23,21 @@
 int main(int argc, char** argv){
     if(argc < 3){
         argCountError("chunkExtractor <path to region directory> <x> <z>");
+        errorCheck("argCountError");
     }
     for(int i = 3; i < argc; i+=3){
         int x = atoi(argv[i - 1]);
         int z = atoi(argv[i]);
         chunk ourChunk = extractChunk(argv[i - 2], x, z);
+        errorCheck("extractChunk");
         char* filename = malloc(8 + 10 + 10);
         sprintf(filename, "./%d.%d.nbt", x, z);
         FILE* outFile = fopen(filename, "wb");
         if(outFile == NULL){
-            fileError(filename, "opened");
+            errorCheck("fopen");
         }
         if(fwrite(ourChunk.data, ourChunk.byteLength, 1, outFile) != 1){
-            fileError(filename, "written to");
+            errorCheck("fwrite");
         }
         free(filename);
         fclose(outFile);

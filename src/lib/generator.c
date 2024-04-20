@@ -36,7 +36,7 @@ model generateFromNbt(unsigned char* data, int dataSize, hashTable* materials, h
         }*/
         materialsArr = (material**)hashTableToArray(materials);
         materialsLen = materials->count;
-        freeHashTable(materials);
+        freeHashTable(materials, NULL);
     }
     if(!f){
         cullFaces(&cubeModel, !b, objects);
@@ -123,5 +123,5 @@ void freeObjectsHashTable(hashTable* objects){
         free(obj->faces);
         free(obj);
     }
-    freeHashTable(objects);
+    freeHashTable(objects, NULL);
 }

@@ -21,7 +21,7 @@
         int* val = (int*)getVal(testTable, key);
         ck_assert_msg(*val == 127, "Got the wrong value back");
     }
-    freeHashTable(testTable);
+    freeHashTable(testTable, NULL);
 
 #test updateTest
     hashTable* testTable = initHashTable(2000);
@@ -34,7 +34,7 @@
         //If the returned values don't match something was inserted
         ck_assert_msg(oldSize == newSize, "Sizes differ");
     }
-    freeHashTable(testTable);
+    freeHashTable(testTable, NULL);
 
 #test readingTest
     hashTable* testTable = initHashTable(2000);
@@ -53,7 +53,7 @@
         int* val = (int*)getVal(testTable, key);
         ck_assert_msg(*val == i, "Got the wrong value back");
     }
-    freeHashTable(testTable);
+    freeHashTable(testTable, NULL);
 
 #test arrayTest
     hashTable* testTable = initHashTable(2000);
@@ -75,4 +75,4 @@
         int* oldI = getVal(testTable, key);
         ck_assert_msg(*oldI == val, "Val != i");
     }
-    freeHashTable(testTable);
+    freeHashTable(testTable, NULL);

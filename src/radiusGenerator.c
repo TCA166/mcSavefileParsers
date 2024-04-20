@@ -123,6 +123,7 @@ int main(int argc, char** argv){
     //very similar to modelGenerator
     if(argc < 5){
         argCountError("radiusGenerator <path to region directory> <x> <z> <radius>");
+        errorCheck("argCountError");
     }
     bool yLim = false; //if we want to 
     int upLim = 0;
@@ -137,11 +138,13 @@ int main(int argc, char** argv){
     int radius = atoi(argv[4]); 
     if(radius < 0){
         argValError("radius");
+        errorCheck("argValError");
     }
     for(int i = 5; i < argc; i++){
         if(strcmp(argv[i], "-l") == 0){
             if(argc <= i + 2){
                 argError("-l", "2");
+                errorCheck("argError");
             }
             yLim = true;
             upLim = atoi(argv[i + 1]);
@@ -156,6 +159,7 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "-s") == 0){
             if(argc <= i + 1){
                 argError("-s", "1");
+                errorCheck("argError");
             }
             side = atoi(argv[i + 1]);
             i+=1;
@@ -163,6 +167,7 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "-m") == 0){
             if(argc <= i + 1){
                 argError("-m", "1");
+                errorCheck("argError");
             }
             materialFilename = argv[i + 1];
             i += 1;
@@ -170,6 +175,7 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "-o") == 0){
             if(argc <= i + 1){
                 argError("-o", "1");
+                errorCheck("argError");
             }
             objFilename = argv[i + 1];
             i += 1;
@@ -177,6 +183,7 @@ int main(int argc, char** argv){
         else if(strcmp(argv[i], "-out") == 0){
             if(argc <= i + 1){
                 argError("-out", "1");
+                errorCheck("argError");
             }
             outFilename = argv[i + 1];
             i += 1;
@@ -186,10 +193,12 @@ int main(int argc, char** argv){
     hashTable* materials = NULL; 
     if(materialFilename != NULL){
         materials = getMaterials(materialFilename);
+        errorCheck("getMaterials");
     } 
     hashTable* objects = NULL; //special objects
     if(objFilename != NULL){
         objects = readWavefront(objFilename, materials, side);
+        errorCheck("readWavefront");
     }
 
     //matches the counter after the double for loop has run it's course
@@ -213,14 +222,17 @@ int main(int argc, char** argv){
     }
     else{
         shmError("offset mmap");
+        errorCheck("shmError");
     }
     //Unnamed shared semaphore
     sem_t *sem = sharedMalloc(sizeof(sem_t));
     if(sem == MAP_FAILED){
         shmError("semaphore map");
+        errorCheck("shmError");
     }
     if(sem_init(sem, 1, 1) < 0){
         semaphoreError("main", "be initialized");
+        errorCheck("semaphoreError");
     }
     //and now the big thing
     pid_t parentId = getpid();
@@ -234,6 +246,7 @@ int main(int argc, char** argv){
         fd[i] = calloc(2, sizeof(int));
         if(pipe(fd[i]) < 0){
             pipeError("", "creation");
+            errorCheck("pipeError");
         }
     }
     int counter = 0;
@@ -272,16 +285,19 @@ int main(int argc, char** argv){
                 int shmid = shmget(parentId + counter, size, 0644 | IPC_CREAT | IPC_EXCL);
                 if(shmid < 0){
                     shmError("shmget");
+                    errorCheck("shmError");
                 }
                 char* shmBuffer = (char*)shmat(shmid, NULL, 0);
                 if(shmBuffer == NULL){
                     shmError("shmat");
+                    errorCheck("shmError");
                 }
                 //Ok so we created the shared buffer now we can write to it
                 strcpy(shmBuffer, modelStr);
                 //And then we pipe over the size so that the other side can prepare itself for reading
                 if(write(fd[counter][WRITE_END], &size, sizeof(size_t)) != sizeof(size_t)){
                     pipeError("child", "writing size");
+                    errorCheck("pipeError");
                 }
                 close(fd[counter][WRITE_END]);
                 free(modelStr);
@@ -289,6 +305,7 @@ int main(int argc, char** argv){
             }
             else{
                 forkError("chunk");
+                errorCheck("forkError");
             }
         }
     }
@@ -324,19 +341,23 @@ int main(int argc, char** argv){
                 ssize_t res = read(fd[childNum][READ_END], &size, sizeof(size_t));
                 if(res < 0){
                     pipeError("parent", "reading 1");
+                    errorCheck("pipeError");
                 }
                 if(size < 1){
                     pipeError("parent", "reading-size value invalid");
+                    errorCheck("pipeError");
                 }
                 parts[childNum] = malloc(size);
                 close(fd[childNum][READ_END]);
                 int shmid = shmget(parentId + childNum, size, 0644);
                 if(shmid < 0){
                     shmError("parent shmget");
+                    errorCheck("shmError");
                 }
                 char* shmBuffer = (char*)shmat(shmid, NULL, 0);
                 if(shmBuffer == NULL){
                     shmError("parent shmat");
+                    errorCheck("shmError");
                 }
                 strcpy(parts[childNum], shmBuffer);
                 shmdt(shmBuffer);

@@ -3,23 +3,86 @@
  * @brief Contains error definitions for the project
  * 
  * @details Within this project errors are handled by calling one of these macros. They print an error message to stderr, set errno to a specific value and exit the program with EXIT_FAILURE.
- */
-
-//Since the ERRNO macros are very unspecific and as far as I can see usually associated with errors a kernel may encounter, I have only loosely associated them with my own error convention
+*/
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <errno.h>
+
+/*!
+ @defgroup mcErrno Error Reporting
+ @brief A shared error reporting system
+ @details This shared error reporting system is used to report errors in the project using a global variable mcErrno of type mcError_t
+*/
 
 /*!
  @defgroup errorDefs Error Definitions
  @brief Contains error definitions for the project
+ @details These macros are used to report errors in the project
+ @ingroup mcErrno
 */
 
 /*!
  @defgroup warningDefs Warning Definitions
  @brief Contains warning definitions for the project
+ @details These macros are used to report warnings in the project
+ @ingroup mcErrno
 */
+
+/*!
+ @enum mcError_t
+ @brief Contains error types for the project
+ @see mcErrno
+ @see errorDefs, warningDefs on how to set these
+ @ingroup mcErrno
+*/
+typedef enum{
+    none, /*!< No error, the default value */
+    cNBTError, /*!< Error encountered while parsing an NBT file */
+    nbtTypeError, /*!< Error when the tag has a different type */
+    nbtTagError, /*!< Error when the needed tag is missing */
+    fileError, /*!< Error related to C syscalls regarding files */
+    parsingError, /*!< Error encountered during the parsing of a file */
+    statesWarning, /*!< Warning when a minecraft block state is larger than the palette */
+    argError, /*!< Error when an invalid amount of sub-arguments is provided */
+    argCountError, /*!< Error when an invalid amount of arguments is provided */
+    dirError, /*!< Error when a directory cannot be opened */
+    materialWarning, /*!< Warning when the material for a type couldn't be found in the mtl file */
+    vertexWarning, /*!< Warning when there is a possible vertex-face mismatch in an object */
+    argValError, /*!< Error when an invalid value of an argument is provided */
+    pipeError, /*!< Error when something goes wrong with a pipe */
+    forkError, /*!< Error when fork fails */
+    shmError, /*!< Error when something goes wrong with shared memory */
+    localizedFileError, /*!< Error with a specific position in a file */
+    semaphoreError, /*!< Error when something goes wrong with a semaphore */
+    mallocError, /*!< Error when detecting NULL return value of malloc */
+    overflowError, /*!< Error when an overflow condition has been detected */
+    stringError /*!< Error when there is an issue with string operations */
+} mcError_t;
+
+/*!
+ @var mcErrno
+ @brief Contains the error type for the project
+ @see mcError_t
+ @see errorCheck on how to check this
+ @see errorDefs, warningDefs on how to set this
+ @ingroup mcErrno
+*/
+extern mcError_t mcErrno;
+
+/*!
+ @brief Checks if an error has been set and exits the program if it has
+ @details Mainly a convenience function, call this after performing an operation that might set an error
+ @param func The name of the function that is being checked
+ @ingroup mcErrno
+*/
+void errorCheck(const char* func);
+
+/*!
+ @brief Clears the error
+ @details Sets mcErrno to none and errno to 0
+ @ingroup mcErrno
+*/
+void clearError();
 
 /*!
  * @def cNBTError
@@ -28,9 +91,8 @@
  * @ingroup errorDefs
  */
 #define cNBTError(filename) \
-        fprintf(stderr, "cNBT encountered an error while parsing %s", filename); \
-        perror("cNBT error"); \
-        exit(EXIT_FAILURE); \
+    mcErrno = cNBTError; \
+    fprintf(stderr, "cNBT encountered an error while parsing %s", filename); \
 
 /*!
  * @def nbtTypeError
@@ -40,10 +102,8 @@
  * @ingroup errorDefs
  */
 #define nbtTypeError(type, expected) \
-        fprintf(stderr, "Expected type:%d, current type:%d.", expected, type);\
-        errno = EIO; \
-        perror("Nbt type error"); \
-        exit(EXIT_FAILURE);
+    mcErrno = nbtTypeError; \
+    fprintf(stderr, "Expected type:%d, current type:%d.", expected, type);\
 
 /*!
  * @def nbtTagError
@@ -52,10 +112,8 @@
  * @ingroup errorDefs
  */
 #define nbtTagError(tag) \
-        fprintf(stderr, "Tag %s was not found.", tag);\
-        errno = EIO; \
-        perror("Nbt type error"); \
-        exit(EXIT_FAILURE);
+    mcErrno = nbtTagError; \
+    fprintf(stderr, "Tag %s was not found.", tag);\
 
 /*!
  * @def fileError
@@ -65,10 +123,8 @@
  * @ingroup errorDefs
  */
 #define fileError(filename, action) \
-        fprintf(stderr, "File %s couldn't be " action ".", filename); \
-        errno = EIO; \
-        perror("File error.");\
-        exit(EXIT_FAILURE);
+    mcErrno = fileError; \
+    fprintf(stderr, "File %s couldn't be " action ".", filename); \
 
 /*!
  * @def parsingError
@@ -78,21 +134,20 @@
  * @ingroup errorDefs
  */
 #define parsingError(filename, action) \
-        fprintf(stderr, "Error encountered during " action " of %s.", filename); \
-        errno = EIO; \
-        perror("Parsing error.");\
-        exit(EXIT_FAILURE);
+    mcErrno = parsingError; \
+    fprintf(stderr, "Error encountered during " action " of %s.", filename); \
 
 /*!
- * @def statesError
+ * @def statesWarning
  * @brief Reports a warning when a minecraft block state is larger than the palette
  * @param state The current state value
  * @param paletteLen The length of the palette
  * @param block The name of the block
  * @ingroup errorDefs
  */
-#define statesError(state, paletteLen, block) \
-        fprintf(stderr, "%d >= %ld:states error\n", state, paletteLen); \
+#define statesWarning(state, paletteLen, block) \
+    mcErrno = statesWarning; \
+    fprintf(stderr, "%d >= %ld:states warning\n", state, paletteLen); \
 
 /*!
  * @def argError
@@ -102,10 +157,8 @@
  * @ingroup errorDefs
  */
 #define argError(argName, argCount) \
-        fprintf(stderr, "Incorrect number of arguments." argName " requires " argCount " arguments to follow."); \
-        errno = EINVAL; \
-        perror("Arg error"); \
-        break;
+    mcErrno = argError; \
+    fprintf(stderr, "Incorrect number of arguments." argName " requires " argCount " arguments to follow."); \
 
 /*!
  * @def argCountError
@@ -114,10 +167,8 @@
  * @ingroup errorDefs
  */
 #define argCountError(usage) \
-        fprintf(stderr, "Invalid number of arguments was provided\n" usage "\n"); \
-        errno = EINVAL; \
-        perror("Arg count error."); \
-        exit(EXIT_FAILURE);
+    mcErrno = argCountError; \
+    fprintf(stderr, "Invalid number of arguments was provided\n" usage "\n"); \
 
 /*!
  * @def dirError
@@ -126,10 +177,8 @@
  * @ingroup errorDefs
  */
 #define dirError(dirname) \
-        fprintf(stderr, "Directory %s couldn't be opened.\n", dirname); \
-        errno = ENOENT; \
-        perror("Dir error."); \
-        exit(EXIT_FAILURE);
+    mcErrno = dirError; \
+    fprintf(stderr, "Directory %s couldn't be opened.\n", dirname); \
 
 /*!
  * @def materialWarning
@@ -138,7 +187,8 @@
  * @ingroup warningDefs
  */
 #define materialWarning(type) \
-        fprintf(stdout, "Material for %s couldn't be found in the mtl file.\n", type);
+    mcErrno = materialWarning; \
+    fprintf(stdout, "Material for %s couldn't be found in the mtl file.\n", type);
 
 /*!
  * @def vertexWarning
@@ -147,7 +197,8 @@
  * @ingroup warningDefs
  */
 #define vertexWarning(objName) \
-        fprintf(stderr, "A possible vertex-face mismatch in object %s\n", objName);
+    mcErrno = vertexWarning; \
+    fprintf(stderr, "A possible vertex-face mismatch in object %s\n", objName);
 
 /*!
  * @def argValError
@@ -156,10 +207,8 @@
  * @ingroup errorDefs
  */
 #define argValError(arg) \
-        fprintf(stderr, "Invalid " arg " argument value.\n"); \
-        errno = EINVAL; \
-        perror("Arg val error"); \
-        exit(EXIT_FAILURE); 
+    mcErrno = argValError; \
+    fprintf(stderr, "Invalid " arg " argument value.\n"); \
 
 /*!
  * @def pipeError
@@ -169,10 +218,8 @@
  * @ingroup errorDefs
  */
 #define pipeError(pipe, operation) \
-        fprintf(stderr, "Pipe " pipe " " operation " failed.\n"); \
-        errno = EPIPE; \
-        perror("Pipe error"); \
-        exit(EXIT_FAILURE); 
+    mcErrno = pipeError; \
+    fprintf(stderr, "Pipe " pipe " " operation " failed.\n"); \
 
 /*!
  * @def forkError
@@ -181,10 +228,8 @@
  * @ingroup errorDefs
  */
 #define forkError(fork) \
-        fprintf(stderr, "Fork " fork " failed.\n"); \
-        errno = ECHILD; \
-        perror("Pipe error"); \
-        exit(EXIT_FAILURE);
+    mcErrno = forkError; \
+    fprintf(stderr, "Fork " fork " failed.\n"); \
 
 /*!
  * @def shmError
@@ -193,9 +238,8 @@
  * @ingroup errorDefs
  */
 #define shmError(shm) \
-        fprintf(stderr, shm " failed.\n"); \
-        perror("Shared memory error"); \
-        exit(EXIT_FAILURE);
+    mcErrno = shmError; \
+    fprintf(stderr, shm " failed.\n"); \
 
 /*!
  * @def localizedFileError
@@ -203,11 +247,13 @@
  * @param pos The position in the file
  * @param fileName The name of the file
  * @param action The action being performed on the file
+ * @extends fileError
  * @ingroup errorDefs
  */
 #define localizedFileError(pos, fileName, action) \
-        fprintf(stderr, "At %lu ", pos); \
-        fileError(fileName, action);
+    fprintf(stderr, "At %lu ", pos); \
+    fileError(fileName, action); \
+    mcErrno = localizedFileError; 
 
 /*!
  * @def semaphoreError
@@ -217,34 +263,34 @@
  * @ingroup errorDefs
  */
 #define semaphoreError(sem, action) \
-        fprintf(stderr, "Semaphore " sem " couldn't " action "\n"); \
-        perror("Semaphore error"); \
-        exit(EXIT_FAILURE);
+    mcErrno = semaphoreError; \
+    fprintf(stderr, "Semaphore " sem " couldn't " action "\n"); \
 
 /*!
  * @def mallocError
  * @brief Reports an error when detecting NULL return value of malloc
  * @param malloc The name of the malloc
  * @param size The size of the memory being allocated
+ * @extends perror
  * @ingroup errorDefs
  */
 #define mallocError(malloc, size) \
-        fprintf(stderr, "Malloc " malloc " of size %zu couldn't be performed. Check for uninitialized values.\n", size); \
-        if(errno == 0){errno = ENOMEM;} \
-        perror("Malloc error"); \
-        exit(EXIT_FAILURE);
+    mcErrno = mallocError; \
+    fprintf(stderr, "Malloc " malloc " of size %zu couldn't be performed. Check for uninitialized values.\n", size); \
+    if(errno == 0){errno = ENOMEM;} \
+    perror("Malloc error"); \
 
 /*!
  * @def overflowError
  * @brief Reports an error when an overflow condition has been detected
  * @param type The type of the overflow
+ * @extends EOVERFLOW
  * @ingroup errorDefs
  */
 #define overflowError(type) \
-        fprintf(stderr, "An overflow condition has been detected of " type ". To prevent a crash further down the line program will be shut down."); \
-        errno = EOVERFLOW; \
-        perror("Overflow error"); \
-        exit(EXIT_FAILURE);
+    mcErrno = overflowError; \
+    fprintf(stderr, "An overflow condition has been detected of " type "."); \
+    errno = EOVERFLOW; \
 
 /*!
  * @def stringError
@@ -252,6 +298,6 @@
  * @ingroup errorDefs
  */
 #define stringError(function) \
-        fprintf(stderr, "Function " function " encountered a problem.\n"); \
-        perror("String function error"); \
-        exit(EXIT_FAILURE);
+    mcErrno = stringError; \
+    fprintf(stderr, "Function " function " encountered a problem.\n"); \
+        

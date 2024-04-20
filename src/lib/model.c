@@ -375,6 +375,7 @@ static char* appendMtlLine(const char* mtlName, char* appendTo, size_t* outSize,
     char* mtlLine = malloc(mtlLineSize);
     if(snprintf(mtlLine, mtlLineSize, "usemtl %s\n", mtlName) < 0){
         stringError("snprintf")
+        return NULL;
     }
     *outSize += mtlLineSize - 1;
     appendTo = reallocBy(appendTo, alloc, outSize, reallocMult);
@@ -430,9 +431,11 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
             objectLine = malloc(objectLineSize);
             if(objectLine == NULL){
                 mallocError("object line", objectLineSize);
+                return NULL;
             }
             if(snprintf(objectLine, objectLineSize, "o cube%d-%d-%d:%s:%lu\n", x, y, z, type, *offset) < 0){
                 stringError("snprintf");
+                return NULL;
             }
             *outSize += objectLineSize - 1;
             fileContents = reallocBy(fileContents, &alloc, outSize, reallocMult);
@@ -450,9 +453,11 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
                 vertexLine = malloc(size);
                 if(vertexLine == NULL){
                     mallocError("vertexLine", size);
+                    return NULL;
                 }
                 if(snprintf(vertexLine, size, "v %.6f %.6f %.6f\n", v.coordinates.x, v.coordinates.y , v.coordinates.z) < 0){
                     stringError("snprintf")
+                    return NULL;
                 }
                 *outSize += size - 1;
                 fileContents = reallocBy(fileContents, &alloc, outSize, reallocMult);
@@ -473,6 +478,7 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
                 char* line = malloc(size);
                 if(line == NULL){
                     mallocError("line", size);
+                    return NULL;
                 }
                 line[0] = '\0';
                 strcat(line, "f ");
@@ -481,6 +487,7 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
                     size_t len = digits(face.vertices[m]) + 1;
                     if(snprintf(line + lineOff, len + 1, "%d ", face.vertices[m]) < 0){
                         stringError("snprintf")
+                        return NULL;
                     }
                     lineOff += len;
                 }
@@ -492,6 +499,7 @@ char* generateModel(const model* thisModel, size_t* outSize, const char* materia
             }
             if(*offset + thisObject->vertexCount > __LONG_MAX__){
                 overflowError("ULONG")
+                return NULL;
             }
             *offset += thisObject->vertexCount;
         }
@@ -540,17 +548,21 @@ hashTable* getMaterials(char* filename){
     FILE* mtlFile = fopen(filename, "r");
     if(mtlFile == NULL){
         fileError(filename, "opened");
+        return NULL;
     }
     if(fseek(mtlFile, 0, SEEK_END) != 0){
         fileError(filename, "seek");
+        return NULL;
     }
     long sz = ftell(mtlFile);
     if(fseek(mtlFile, 0, SEEK_SET) != 0){
         fileError(filename, "seek");
+        return NULL;
     } 
     char* bytes = malloc(sz + 1);
     if(fread(bytes, sz, 1, mtlFile) != 1){
         fileError(filename, "read");
+        return NULL;
     }
     bytes[sz] = '\0';
     hashTable* result = initHashTable(objCount);
@@ -609,18 +621,22 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
     }
     if(fseek(fp, 0, SEEK_END) != 0){
         fileError(filename, "seek");
+        return NULL;
     }
     long sz = ftell(fp);
     if(fseek(fp, 0, SEEK_SET) != 0){
         fileError(filename, "seek");
+        return NULL;
     }
     char* bytes = malloc(sz + 1);
     if(fread(bytes, sz, 1, fp) != 1){
         fileError(filename, "read");
+        return NULL;
     }
     bytes[sz] = '\0'; //done to fix an invalid read
     if(fclose(fp) == EOF){
         fileError(filename, "closed");
+        return NULL;
     }
     hashTable* result = initHashTable(objCount); 
     char* token = strtok(bytes, "\n");
@@ -670,6 +686,7 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
                 char* name = strchr(token, ' ');
                 if(name == NULL){
                     parsingError(filename, "object definition parsing; no space found")
+                    return NULL;
                 }
                 name++;
                 //these two lines cause a very weird memory error
@@ -682,6 +699,7 @@ hashTable* readWavefront(char* filename, hashTable* materials, unsigned int side
                 float z;
                 if(sscanf(token, "v %f %f %f", &x, &y, &z) != 3){
                     parsingError(filename, "vertex definition parsing")
+                    return NULL;
                 }
                 if(newObject.vertices == NULL){
                     newObject.vertices = malloc(sizeof(vertex));

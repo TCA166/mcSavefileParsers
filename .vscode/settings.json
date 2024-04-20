@@ -22,7 +22,8 @@
         "generator.h": "c",
         "stdbool.h": "c",
         "htable.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "functional": "c"
     },
     "cSpell.words": [
         "blockstates",

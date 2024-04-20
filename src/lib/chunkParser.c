@@ -68,9 +68,11 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
     nbt_node* node = nbt_parse(nbtFileData, sz);
     if(errno != 0){
         cNBTError("the nbt file")
+        return 0;
     }
     if(node->type != TAG_COMPOUND){
         nbtTypeError(node->type, 10);
+        return 0;
     }
     //Debug message   
     //const struct list_head* head = &node->payload.tag_compound->entry;
@@ -79,6 +81,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
     nbt_node* sectionsNode = nbt_find_by_name(node, "sections");
     if(sectionsNode == NULL){
         nbtTagError("sections");
+        return 0;
     }
     struct nbt_list* sectionsList = sectionsNode->payload.tag_list;
     struct list_head* pos;
@@ -93,12 +96,14 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
         nbt_node* yNode = nbt_find_by_name(compound, "Y");
         if(yNode == NULL){
             nbtTagError("Y");
+            return 0;
         }
         newSection.y = yNode->payload.tag_byte;
         //get the block data
         nbt_node* blockNode = nbt_find_by_name(compound, "block_states");
         if(blockNode == NULL){
             nbtTagError("block_states");
+            return 0;
         }
         //get the individual block data
         nbt_node* blockData = nbt_find_by_name(blockNode, "data");
@@ -115,6 +120,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
         nbt_node* palette = nbt_find_by_name(blockNode, "palette");
         if(palette == NULL){
             nbtTagError("palette");
+            return 0;
         }
         //const struct list_head* paletteHead = &palette->payload.tag_list->entry;
         char** blockPalette = malloc(sizeof(char*));
@@ -127,6 +133,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
             nbt_node* string = nbt_find_by_name(pal->data, "Name");
             if(string == NULL){
                 nbtTagError("Name");
+                return 0;
             }
             //Instead of appending all properties in block using a for loop we extract a few specific ones
             char* direction = NULL;
@@ -202,6 +209,7 @@ unsigned int getSections(unsigned char* nbtFileData, long sz, section* sections)
         newSection.blockPalette = blockPalette;
         if(i == UINT32_MAX){
             overflowError("UINT32");
+            return 0;
         }
         newSection.paletteLen = i;
         sections[n] = newSection;
@@ -260,7 +268,7 @@ block createBlock(int x, int y, int z, unsigned int* blockStates, section parent
         int state = blockStates[blockPos];
         //paletteLen and I are fine it must be something with the data extraction process
         if(state >= parentSection.paletteLen){
-            statesError(state, parentSection.paletteLen, newBlock);
+            statesWarning(state, parentSection.paletteLen, newBlock);
             newBlock.type = mcAir;
         }
         else{
